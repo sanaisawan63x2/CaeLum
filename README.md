@@ -1,16 +1,27 @@
 # CaeLum World Bible
 
-เว็บฐานข้อมูลโลกสำหรับโปรเจกต์ **CaeLum**
+ฐานข้อมูลโลกสำหรับโปรเจกต์ **CaeLum** ออกแบบให้เป็นเว็บ Static ที่เปิดได้ทั้งคอมพิวเตอร์และมือถือ
 
-โครงสร้างหลัก:
+## โครงสร้าง
 
-- `index.html` — หน้าเว็บ
-- `styles.css` — ดีไซน์
-- `app.js` — ระบบค้นหา อ่าน แก้ไข และบันทึกผ่าน GitHub API
-- `data/world.json` — ฐานข้อมูล Lore หลัก
+- `index.html` — หน้าเว็บหลัก
+- `styles.css` — Responsive UI
+- `app.js` — ระบบค้นหา แสดงข้อมูล Author Mode และบันทึกผ่าน GitHub API
+- `data/world.json` — ฐานข้อมูล Lore
 
-## แนวคิด
+## วิธีทำงาน
 
-คนทั่วไปใช้เว็บสำหรับอ่านข้อมูลที่เผยแพร่ได้ ส่วนเจ้าของสามารถเข้า Admin Mode เพื่อแก้ข้อมูลจากหน้าเว็บและบันทึกกลับเข้า GitHub โดยตรง
+หน้า Public อ่าน `data/world.json` และซ่อนรายการที่ตั้งเป็น `author-only`
 
-> ข้อมูลที่ทำเครื่องหมาย `author-only` เป็นเพียงการซ่อนใน UI ไม่ใช่การเข้ารหัส หากภายหลังเผยแพร่ repository/ไฟล์ data ต่อสาธารณะ ผู้ที่เข้าถึงไฟล์ต้นฉบับก็สามารถอ่านได้
+เจ้าของสามารถกด **Author Mode** และใส่ GitHub Fine-grained Personal Access Token ที่:
+- เป็นของบัญชี `sanaisawan63x2`
+- จำกัด Repository access ไว้ที่ `CaeLum`
+- Repository permission: **Contents: Read and write**
+
+Token ไม่ถูกฝังใน source code และถูกเก็บเฉพาะ `sessionStorage` ของแท็บปัจจุบัน เมื่อบันทึก เว็บจะใช้ GitHub Contents API แก้ `data/world.json` และสร้าง Commit อัตโนมัติ
+
+> หมายเหตุ: `author-only` คือการซ่อนจาก UI ไม่ใช่การเข้ารหัส หาก repository หรือไฟล์ `world.json` ถูกเปิดต่อสาธารณะ ผู้ที่เข้าไปดู source โดยตรงยังสามารถอ่านข้อมูลนั้นได้
+
+## การเผยแพร่
+
+เว็บถูกทำให้พร้อมสำหรับ GitHub Pages โดยใช้ไฟล์ Static ทั้งหมดจาก root ของ repository
