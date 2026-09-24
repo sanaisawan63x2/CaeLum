@@ -1,14 +1,205 @@
 {
-  "version": 1,
+  "schemaVersion": 2,
+  "version": 2,
   "project": {
     "name": "CaeLum",
     "subtitle": "World Bible",
-    "updatedAt": "2026-09-24T21:56:55.785Z"
+    "updatedAt": "2026-09-24T22:07:25.016Z"
   },
+  "sections": [
+    {
+      "id": "overview",
+      "name": "ภาพรวมโลก",
+      "icon": "◈",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 10,
+      "description": "Premise กฎพื้นฐาน และภาพรวมของโลก"
+    },
+    {
+      "id": "history",
+      "name": "ประวัติศาสตร์ / Timeline",
+      "icon": "◷",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 20,
+      "description": "เหตุการณ์สำคัญและลำดับเวลาของโลก"
+    },
+    {
+      "id": "magic",
+      "name": "เวทมนตร์",
+      "icon": "✦",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 30,
+      "description": "ระบบเวทและศาสตร์เวททั้งหมด"
+    },
+    {
+      "id": "magic-system",
+      "name": "ระบบเวทมนตร์",
+      "icon": "◇",
+      "parentId": "magic",
+      "visibility": "public",
+      "sort": 10,
+      "description": "Mana กฎการใช้เวท ข้อจำกัด และการฟื้นฟู"
+    },
+    {
+      "id": "magic-disciplines",
+      "name": "ศาสตร์และแขนงเวท",
+      "icon": "⌘",
+      "parentId": "magic",
+      "visibility": "public",
+      "sort": 20,
+      "description": "รูน ยันต์ ธาตุ วิญญาณ คำสาป และศาสตร์เฉพาะวัฒนธรรม"
+    },
+    {
+      "id": "caelum",
+      "name": "CaeLum University",
+      "icon": "▣",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 40,
+      "description": "ข้อมูลทั้งหมดของมหาวิทยาลัย CaeLum"
+    },
+    {
+      "id": "caelum-academics",
+      "name": "คณะ / สาขา / วิชา",
+      "icon": "▤",
+      "parentId": "caelum",
+      "visibility": "public",
+      "sort": 10,
+      "description": "โครงสร้างการศึกษา คณะ สาขา และรายวิชา"
+    },
+    {
+      "id": "caelum-life",
+      "name": "ชีวิตในมหาวิทยาลัย",
+      "icon": "⌂",
+      "parentId": "caelum",
+      "visibility": "public",
+      "sort": 20,
+      "description": "กฎ หอพัก อาคาร กิจกรรม และชีวิตนักศึกษา"
+    },
+    {
+      "id": "organizations",
+      "name": "องค์กร",
+      "icon": "◇",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 50,
+      "description": "องค์กรรัฐ เอกชน และสถาบันที่มีอำนาจ"
+    },
+    {
+      "id": "iadc",
+      "name": "I.A.D.C.",
+      "icon": "⬡",
+      "parentId": "organizations",
+      "visibility": "public",
+      "sort": 10,
+      "description": "โครงสร้าง แผนก อำนาจ และการปฏิบัติงานของ I.A.D.C."
+    },
+    {
+      "id": "characters",
+      "name": "ตัวละคร",
+      "icon": "◉",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 60,
+      "description": "ตัวละครหลัก ตัวละครรอง และบุคคลสำคัญ"
+    },
+    {
+      "id": "locations",
+      "name": "สถานที่",
+      "icon": "⌖",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 70,
+      "description": "ประเทศ เมือง เขต อาคาร และพื้นที่สำคัญ"
+    },
+    {
+      "id": "bangkok",
+      "name": "กรุงเทพฯ",
+      "icon": "⌂",
+      "parentId": "locations",
+      "visibility": "public",
+      "sort": 10,
+      "description": "กรุงเทพฯ ในโลก CaeLum และพื้นที่สำคัญภายในเมือง"
+    },
+    {
+      "id": "society",
+      "name": "สังคม / วัฒนธรรม",
+      "icon": "◎",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 80,
+      "description": "ชีวิตประจำวัน สื่อ ความเชื่อ กีฬา และวัฒนธรรม"
+    },
+    {
+      "id": "economy",
+      "name": "เศรษฐกิจ / อุตสาหกรรม",
+      "icon": "◫",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 90,
+      "description": "สินค้า บริษัท อาชีพ ราคา ตลาด และ Supply Chain"
+    },
+    {
+      "id": "law",
+      "name": "กฎหมาย / การปกครอง",
+      "icon": "⚖",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 100,
+      "description": "กฎหมายเวท ใบอนุญาต รัฐ และการบังคับใช้"
+    },
+    {
+      "id": "technology",
+      "name": "เทคโนโลยี / Magitech",
+      "icon": "⚙",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 110,
+      "description": "อุปกรณ์เวท การแพทย์ การขนส่ง และงานวิจัย"
+    },
+    {
+      "id": "items",
+      "name": "ไอเทม / Artifact",
+      "icon": "▱",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 120,
+      "description": "เครื่องราง ยา อาวุธ และวัตถุพิเศษ"
+    },
+    {
+      "id": "monsters",
+      "name": "มอนสเตอร์",
+      "icon": "◆",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 130,
+      "description": "ประเภท ระดับภัย พฤติกรรม และข้อมูลมอนสเตอร์"
+    },
+    {
+      "id": "story",
+      "name": "เหตุการณ์ / ปมเรื่อง",
+      "icon": "◌",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 140,
+      "description": "คดี เหตุการณ์ ความขัดแย้ง เบาะแส และผลที่ตามมา"
+    },
+    {
+      "id": "secrets",
+      "name": "Author Secrets",
+      "icon": "☒",
+      "parentId": null,
+      "visibility": "author-only",
+      "sort": 150,
+      "description": "ความจริงที่ยังไม่ควรเปิดเผยต่อผู้อ่าน"
+    }
+  ],
   "entries": [
     {
       "id": "world-core",
-      "category": "overview",
       "title": "ภาพรวมโลก CaeLum",
       "visibility": "public",
       "status": "canon",
@@ -24,11 +215,11 @@
         "CaeLum University",
         "I.A.D.C."
       ],
-      "openQuestions": ""
+      "openQuestions": "",
+      "sectionId": "overview"
     },
     {
       "id": "world-overlap",
-      "category": "timeline",
       "title": "เหตุการณ์โลกสองใบซ้อนกัน",
       "visibility": "public",
       "status": "canon",
@@ -43,11 +234,11 @@
         "ภาพรวมโลก CaeLum",
         "ต้นกำเนิดที่แท้จริงของมอนสเตอร์"
       ],
-      "openQuestions": "สาเหตุจริงของเหตุการณ์คืออะไร? ใครรู้ความจริงระดับไหนบ้าง?"
+      "openQuestions": "สาเหตุจริงของเหตุการณ์คืออะไร? ใครรู้ความจริงระดับไหนบ้าง?",
+      "sectionId": "history"
     },
     {
       "id": "magic-system",
-      "category": "magic",
       "title": "โครงระบบเวทมนตร์",
       "visibility": "public",
       "status": "canon",
@@ -64,11 +255,11 @@
         "ศาสตร์และแขนงเวท",
         "CaeLum University"
       ],
-      "openQuestions": "Mana ในเชิงจักรวาลคืออะไร? ขีดจำกัดทางชีวภาพของผู้ใช้เวททำงานอย่างไร?"
+      "openQuestions": "Mana ในเชิงจักรวาลคืออะไร? ขีดจำกัดทางชีวภาพของผู้ใช้เวททำงานอย่างไร?",
+      "sectionId": "magic-system"
     },
     {
       "id": "magic-disciplines",
-      "category": "disciplines",
       "title": "ศาสตร์และแขนงเวท",
       "visibility": "public",
       "status": "draft",
@@ -84,11 +275,11 @@
         "โครงระบบเวทมนตร์",
         "CaeLum University"
       ],
-      "openQuestions": "รายชื่อศาสตร์ที่เป็น Canon มีอะไรบ้าง? แต่ละศาสตร์มีหลักสูตรและข้อจำกัดอย่างไร?"
+      "openQuestions": "รายชื่อศาสตร์ที่เป็น Canon มีอะไรบ้าง? แต่ละศาสตร์มีหลักสูตรและข้อจำกัดอย่างไร?",
+      "sectionId": "magic-disciplines"
     },
     {
       "id": "caelum-university",
-      "category": "education",
       "title": "CaeLum University",
       "visibility": "public",
       "status": "canon",
@@ -104,11 +295,11 @@
         "โครงระบบเวทมนตร์",
         "แกนปริศนาช่วงต้นเรื่อง"
       ],
-      "openQuestions": "คณะและสาขาทั้งหมดมีอะไรบ้าง? ระบบหอพัก ค่าใช้จ่าย และการปกครองภายในเป็นอย่างไร?"
+      "openQuestions": "คณะและสาขาทั้งหมดมีอะไรบ้าง? ระบบหอพัก ค่าใช้จ่าย และการปกครองภายในเป็นอย่างไร?",
+      "sectionId": "caelum"
     },
     {
       "id": "iadc",
-      "category": "organizations",
       "title": "I.A.D.C.",
       "visibility": "public",
       "status": "canon",
@@ -123,11 +314,11 @@
         "CaeLum University",
         "ต้นกำเนิดที่แท้จริงของมอนสเตอร์"
       ],
-      "openQuestions": "โครงสร้างระดับโลก-ระดับประเทศ-ระดับเมืองแบ่งอำนาจอย่างไร? ฝ่ายย่อยทั้งหมดมีอะไรบ้าง?"
+      "openQuestions": "โครงสร้างระดับโลก-ระดับประเทศ-ระดับเมืองแบ่งอำนาจอย่างไร? ฝ่ายย่อยทั้งหมดมีอะไรบ้าง?",
+      "sectionId": "iadc"
     },
     {
       "id": "monster-origin",
-      "category": "monsters",
       "title": "ต้นกำเนิดที่แท้จริงของมอนสเตอร์",
       "visibility": "author-only",
       "status": "canon",
@@ -142,11 +333,11 @@
         "เหตุการณ์โลกสองใบซ้อนกัน",
         "I.A.D.C."
       ],
-      "openQuestions": "อะไรเป็นตัวกำหนดระดับการกลายพันธุ์? เพราะเหตุใดบางตัวจึงรักษาสติไว้ได้?"
+      "openQuestions": "อะไรเป็นตัวกำหนดระดับการกลายพันธุ์? เพราะเหตุใดบางตัวจึงรักษาสติไว้ได้?",
+      "sectionId": "monsters"
     },
     {
       "id": "inciting-incident",
-      "category": "story",
       "title": "แกนปริศนาช่วงต้นเรื่อง",
       "visibility": "author-only",
       "status": "canon",
@@ -162,7 +353,8 @@
         "ต้นกำเนิดที่แท้จริงของมอนสเตอร์",
         "I.A.D.C."
       ],
-      "openQuestions": "คำตอบชั้นแรกของคดีคืออะไร? ความจริงที่เปลี่ยนความหมายของเบาะแสเดิมคืออะไร?"
+      "openQuestions": "คำตอบชั้นแรกของคดีคืออะไร? ความจริงที่เปลี่ยนความหมายของเบาะแสเดิมคืออะไร?",
+      "sectionId": "story"
     }
   ]
 }
