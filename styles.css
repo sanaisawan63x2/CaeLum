@@ -272,3 +272,90 @@ a{color:inherit}
 @media(max-width:480px){
   .section-grid{grid-template-columns:1fr}
 }
+
+
+/* Story-first world bible */
+.nav-group-title{
+  margin:14px 8px 5px 32px;
+  color:#66798c;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase
+}
+.home-group{margin-bottom:4px}
+.section-head.compact{margin-top:18px;margin-bottom:10px}
+.world-importance{
+  margin:0 0 20px;
+  padding:18px 20px;
+  border:1px solid rgba(215,181,109,.24);
+  border-radius:15px;
+  background:linear-gradient(135deg,rgba(215,181,109,.08),rgba(18,27,37,.65))
+}
+.world-importance h2{font-size:17px;margin:2px 0 10px}
+.world-importance .prose{
+  white-space:pre-wrap;
+  color:#c8d1da;
+  line-height:1.8;
+  font-size:13px;
+  max-width:1000px
+}
+.section-feature{
+  margin:0 0 24px;
+  padding:clamp(18px,3vw,28px);
+  border:1px solid #314153;
+  border-radius:17px;
+  background:linear-gradient(180deg,#141d27,#0f161e);
+  box-shadow:0 16px 42px rgba(0,0,0,.13)
+}
+.section-feature-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px
+}
+.section-feature h2{font-size:clamp(20px,3vw,28px);margin:2px 0 0;letter-spacing:-.015em}
+.section-feature-summary{
+  color:#bdc8d3;
+  font-size:14px;
+  line-height:1.75;
+  margin:18px 0 0;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line-soft)
+}
+.section-feature-prose{
+  white-space:pre-wrap;
+  color:#d3dbe4;
+  font-size:14px;
+  line-height:1.88;
+  margin-top:18px
+}
+.section-feature-questions{
+  margin-top:20px;
+  padding:14px;
+  border:1px solid #3a4653;
+  border-radius:11px;
+  background:#101821;
+  color:#aebbc8;
+  font-size:12px;
+  line-height:1.65
+}
+.section-feature-questions strong{display:block;color:var(--accent);margin-bottom:5px}
+.check-field{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  border:1px solid #2c3a49;
+  border-radius:10px;
+  background:#0c1219;
+  padding:11px 12px
+}
+.check-field input{margin-top:3px}
+.check-field span{display:flex;flex-direction:column;gap:2px;color:#c4ced8;font-size:12px}
+.check-field small{color:#74879a;line-height:1.45}
+@media(max-width:720px){
+  .section-feature-head{flex-direction:column}
+  .section-feature-head .secondary-btn{width:100%}
+  .world-importance{padding:16px}
+  .nav-group-title{margin-left:32px}
+}
