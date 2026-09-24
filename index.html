@@ -3,117 +3,268 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1016">
-  <meta name="description" content="CaeLum World Bible">
-  <title>CaeLum World Bible</title>
+  <meta name="theme-color" content="#0a0d12">
+  <meta name="description" content="CaeLum World Archive — วิกิและ World Bible ของโลก CaeLum">
+  <title>CaeLum — World Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark">C</div>
-        <div><strong>CaeLum</strong><span>World Bible</span></div>
+      <a class="brand" href="#home" aria-label="CaeLum home">
+        <span class="brand-sigil">C</span>
+        <span class="brand-copy"><strong>CaeLum</strong><small>WORLD ARCHIVE</small></span>
+      </a>
+
+      <div class="sidebar-search">
+        <span>⌕</span>
+        <input id="sidebarSearch" type="search" placeholder="ค้นหาในคลัง…" autocomplete="off">
       </div>
-      <nav class="nav" id="categoryNav" aria-label="โครงสร้างโลก"></nav>
-      <div class="sidebar-footer">
-        <button class="ghost-btn full" id="adminButton" type="button">Author Mode</button>
-        <div class="version" id="versionLabel">Loading…</div>
+
+      <nav class="wiki-nav" id="categoryNav" aria-label="สารบัญ CaeLum"></nav>
+
+      <div class="sidebar-foot">
+        <button class="author-entry" id="adminButton" type="button">
+          <span class="author-dot"></span>
+          <span><strong>Author Mode</strong><small>บันทึกและแก้ไข World Bible</small></span>
+        </button>
+        <div class="data-version" id="versionLabel">Loading…</div>
       </div>
     </aside>
 
-    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+    <div class="drawer-backdrop" id="mobileBackdrop"></div>
 
-    <main class="main">
+    <main class="workspace">
       <header class="topbar">
-        <button class="icon-btn menu-btn" id="menuButton" aria-label="เปิดเมนู" type="button">☰</button>
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input id="searchInput" type="search" placeholder="ค้นหาโลก CaeLum…" autocomplete="off">
+        <button class="icon-button mobile-menu" id="menuButton" type="button" aria-label="เปิดสารบัญ">☰</button>
+        <div class="topbar-title">
+          <span class="topbar-kicker">CAE LUM ARCHIVE</span>
+          <span id="topbarContext">Reader</span>
         </div>
-        <div class="top-actions">
-          <span class="mode-badge" id="modeBadge">Public</span>
-          <button class="icon-btn" id="refreshButton" title="โหลดข้อมูลล่าสุด" type="button">↻</button>
+        <div class="topbar-actions">
+          <div class="desktop-search">
+            <span>⌕</span>
+            <input id="searchInput" type="search" placeholder="ค้นหาสถานที่ เวทมนตร์ องค์กร…" autocomplete="off">
+          </div>
+          <span class="mode-pill" id="modeBadge">Reader</span>
+          <button class="icon-button" id="refreshButton" title="โหลดข้อมูลล่าสุด" type="button">↻</button>
         </div>
       </header>
-      <section class="content" id="content" aria-live="polite"></section>
+
+      <section class="page" id="content" aria-live="polite"></section>
     </main>
   </div>
 
   <div class="toast-stack" id="toastStack"></div>
 
   <dialog class="modal" id="adminModal">
-    <div class="modal-card">
-      <div class="modal-head">
-        <div><p class="eyebrow">OWNER ACCESS</p><h2>Author Mode</h2></div>
-        <button class="icon-btn" data-close="adminModal" aria-label="ปิด" type="button">×</button>
-      </div>
+    <form method="dialog" class="modal-card" onsubmit="return false;">
+      <header class="modal-header">
+        <div>
+          <span class="modal-kicker">OWNER ACCESS</span>
+          <h2>เข้าสู่ Author Mode</h2>
+        </div>
+        <button class="icon-button" data-close="adminModal" type="button" aria-label="ปิด">×</button>
+      </header>
       <div class="modal-body">
-        <p class="muted">ใส่ GitHub Fine-grained Personal Access Token ที่มีสิทธิ์ <b>Contents: Read and write</b> เฉพาะ repo CaeLum ระบบจะยอมรับเฉพาะบัญชี <b>sanaisawan63x2</b></p>
+        <p class="helper-copy">โหมดผู้แต่งใช้สำหรับเปิดข้อมูลหลังบ้านและบันทึกการแก้ไขกลับไปยัง GitHub โดยตรง ระบบจะยอมรับเฉพาะบัญชี <b>sanaisawan63x2</b></p>
         <label class="field">
-          <span>GitHub Token</span>
+          <span>GitHub Fine-grained Token</span>
           <input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+          <small>ต้องให้สิทธิ์เฉพาะ repo CaeLum → Contents: Read and write</small>
         </label>
-        <div class="notice">Token จะเก็บเฉพาะใน session ของแท็บนี้ และไม่ถูกบันทึกลงไฟล์เว็บไซต์</div>
+        <div class="privacy-note">Token จะอยู่เฉพาะใน session ของแท็บนี้และไม่ถูกบันทึกลง World Bible</div>
       </div>
-      <div class="modal-actions">
-        <button class="secondary-btn" data-close="adminModal" type="button">ยกเลิก</button>
-        <button class="primary-btn" id="loginButton" type="button">เข้าสู่ Author Mode</button>
-      </div>
-    </div>
+      <footer class="modal-footer">
+        <button class="button secondary" data-close="adminModal" type="button">ยกเลิก</button>
+        <button class="button primary" id="loginButton" type="button">เข้าสู่ Author Mode</button>
+      </footer>
+    </form>
   </dialog>
 
   <dialog class="modal wide" id="editorModal">
-    <div class="modal-card editor-card">
-      <div class="modal-head">
-        <div><p class="eyebrow">WORLD ENTRY</p><h2 id="editorHeading">เพิ่มข้อมูล</h2></div>
-        <button class="icon-btn" data-close="editorModal" aria-label="ปิด" type="button">×</button>
-      </div>
-      <div class="modal-body editor-grid">
-        <label class="field span-2"><span>ชื่อหัวข้อ</span><input id="entryTitle" placeholder="เช่น ระบบมานา / คณะเวทประยุกต์"></label>
-        <label class="field"><span>หมวด</span><select id="entrySection"></select></label>
-        <label class="field"><span>สถานะ</span><select id="entryStatus"><option value="canon">Canon — ยืนยันแล้ว</option><option value="draft">Draft — ยังเปลี่ยนได้</option><option value="idea">Idea — ไอเดียรอพัฒนา</option></select></label>
-        <label class="field"><span>การมองเห็น</span><select id="entryVisibility"><option value="public">Public</option><option value="author-only">Author Only</option></select></label>
-        <label class="field"><span>Tags</span><input id="entryTags" placeholder="คั่นด้วย ,"></label>
-        <label class="field span-2"><span>สรุปสั้น</span><textarea id="entrySummary" rows="3" placeholder="ใจความสำคัญที่อยากจำ"></textarea></label>
-        <label class="check-field span-2"><input id="entryFeatured" type="checkbox"><span><b>ใช้เป็นภาพรวมหลักของหมวดนี้</b><small>หัวข้อนี้จะถูกแสดงเต็ม ๆ ทันทีเมื่อเปิดหมวด ไม่ต้องกดเข้าอีกชั้น</small></span></label>
-        <label class="field span-2"><span>รายละเอียด</span><textarea id="entryDetails" rows="12" placeholder="รายละเอียดหลังบ้านของโลก ใส่ได้เต็มที่"></textarea></label>
-        <label class="field span-2"><span>เชื่อมโยงกับหัวข้ออื่น</span><input id="entryLinks" placeholder="คั่นด้วย ,"></label>
-        <label class="field span-2"><span>คำถามที่ยังไม่ล็อก / ช่องโหว่</span><textarea id="entryQuestions" rows="4"></textarea></label>
-      </div>
-      <div class="modal-actions between">
-        <button class="danger-btn" id="deleteEntryButton" type="button">ลบรายการ</button>
-        <div class="action-group">
-          <button class="secondary-btn" data-close="editorModal" type="button">ยกเลิก</button>
-          <button class="primary-btn" id="saveEntryButton" type="button">บันทึกลง GitHub</button>
+    <form method="dialog" class="modal-card" onsubmit="return false;">
+      <header class="modal-header">
+        <div>
+          <span class="modal-kicker">WORLD ENTRY</span>
+          <h2 id="editorHeading">เพิ่มข้อมูล</h2>
         </div>
+        <button class="icon-button" data-close="editorModal" type="button" aria-label="ปิด">×</button>
+      </header>
+
+      <div class="modal-body form-grid">
+        <label class="field span-2">
+          <span>ชื่อหัวข้อ</span>
+          <input id="entryTitle" placeholder="เช่น ระบบเขตแดนของ CaeLum">
+        </label>
+
+        <label class="field">
+          <span>หมวด</span>
+          <select id="entrySection"></select>
+        </label>
+
+        <label class="field">
+          <span>สถานะ</span>
+          <select id="entryStatus">
+            <option value="canon">Canon — ยืนยันแล้ว</option>
+            <option value="draft">Draft — ยังเปลี่ยนได้</option>
+            <option value="idea">Idea — ไอเดียรอพัฒนา</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>การมองเห็น</span>
+          <select id="entryVisibility">
+            <option value="public">Public — ผู้อ่านเห็น</option>
+            <option value="author-only">Author Only — หลังบ้าน</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Tags</span>
+          <input id="entryTags" placeholder="คั่นด้วย ,">
+        </label>
+
+        <label class="check-field span-2">
+          <input id="entryFeatured" type="checkbox">
+          <span><b>ใช้เป็นบทความหลักของหมวด</b><small>เนื้อหานี้จะแสดงเต็มทันทีเมื่อเปิดหมวด เหมาะกับข้อมูลแกนกลาง เช่น เวทมนตร์ หรือ CaeLum University</small></span>
+        </label>
+
+        <label class="field span-2">
+          <span>ประโยคเปิด / น้ำเสียง</span>
+          <input id="entryKicker" placeholder="ประโยคสั้นที่ช่วยบอกอารมณ์หรือแก่นของหัวข้อนี้">
+        </label>
+
+        <label class="field span-2">
+          <span>สรุปสำหรับผู้อ่าน</span>
+          <textarea id="entrySummary" rows="4" placeholder="สรุปสิ่งสำคัญโดยไม่ทำลายน้ำหนักหรือปริศนาของเรื่อง"></textarea>
+        </label>
+
+        <label class="field span-2">
+          <span>รายละเอียดหลัก</span>
+          <textarea id="entryDetails" rows="14" placeholder="รายละเอียดของโลก เหตุและผล สถาบัน ชีวิตประจำวัน และสิ่งที่ต้องสอดคล้องกับ Canon"></textarea>
+        </label>
+
+        <div class="form-divider span-2"><span>บริบทสำหรับผู้แต่ง</span><small>ส่วนนี้จะแสดงเฉพาะ Author Mode</small></div>
+
+        <label class="field span-2">
+          <span>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</span>
+          <textarea id="entryPublicKnowledge" rows="4" placeholder="แยกความจริงของผู้เขียนออกจากความรู้สาธารณะ"></textarea>
+        </label>
+
+        <label class="field span-2">
+          <span>บทบาทต่อเนื้อเรื่อง</span>
+          <textarea id="entryStoryUse" rows="4" placeholder="หัวข้อนี้สร้างแรงกดดัน ปริศนา ธีม หรือผลต่อการตัดสินใจของตัวละครอย่างไร"></textarea>
+        </label>
+
+        <label class="field span-2">
+          <span>Continuity Notes</span>
+          <textarea id="entryContinuity" rows="4" placeholder="กฎที่ห้ามหลุด ข้อควรระวัง หรือสิ่งที่ต้องเช็กเวลาเขียนตอนใหม่"></textarea>
+        </label>
+
+        <label class="field span-2">
+          <span>เชื่อมโยงกับ</span>
+          <input id="entryLinks" placeholder="ใส่ชื่อหัวข้อ คั่นด้วย ,">
+        </label>
+
+        <label class="field span-2">
+          <span>คำถามที่ยังไม่ล็อก</span>
+          <textarea id="entryQuestions" rows="4" placeholder="สิ่งที่ยังตั้งใจเว้นไว้ ไม่ควรเผลอเขียนให้กลายเป็น Canon"></textarea>
+        </label>
       </div>
-    </div>
+
+      <footer class="modal-footer split">
+        <button class="button danger" id="deleteEntryButton" type="button">ลบข้อมูล</button>
+        <div class="button-row">
+          <button class="button secondary" data-close="editorModal" type="button">ยกเลิก</button>
+          <button class="button primary" id="saveEntryButton" type="button">บันทึกลง GitHub</button>
+        </div>
+      </footer>
+    </form>
   </dialog>
 
   <dialog class="modal" id="sectionModal">
-    <div class="modal-card">
-      <div class="modal-head">
-        <div><p class="eyebrow">STRUCTURE</p><h2 id="sectionHeading">เพิ่มหมวด</h2></div>
-        <button class="icon-btn" data-close="sectionModal" aria-label="ปิด" type="button">×</button>
-      </div>
-      <div class="modal-body editor-grid">
-        <label class="field span-2"><span>ชื่อหมวด</span><input id="sectionName" placeholder="เช่น เมือง / คณะ / สาขา"></label>
-        <label class="field"><span>อยู่ภายใต้หมวด</span><select id="sectionParent"></select></label>
-        <label class="field"><span>ไอคอนสั้น ๆ</span><input id="sectionIcon" maxlength="4" placeholder="⌂"></label>
-        <label class="field"><span>การมองเห็น</span><select id="sectionVisibility"><option value="public">Public</option><option value="author-only">Author Only</option></select></label>
-        <label class="field"><span>ลำดับ</span><input id="sectionSort" type="number" step="10" value="100"></label>
-        <label class="field span-2"><span>คำอธิบายหมวด</span><textarea id="sectionDescription" rows="4" placeholder="อธิบายว่าหมวดนี้คืออะไรในโลก CaeLum"></textarea></label>
-        <label class="field span-2"><span>ความสำคัญต่อโลก / เนื้อเรื่อง</span><textarea id="sectionImportance" rows="7" placeholder="หมวดนี้สำคัญต่อเซตติ้งอย่างไร ส่งผลต่อชีวิตคน ตัวละคร หรือปริศนาของเรื่องอย่างไร"></textarea></label>
-      </div>
-      <div class="modal-actions between">
-        <button class="danger-btn" id="deleteSectionButton" type="button">ลบหมวด</button>
-        <div class="action-group">
-          <button class="secondary-btn" data-close="sectionModal" type="button">ยกเลิก</button>
-          <button class="primary-btn" id="saveSectionButton" type="button">บันทึกหมวด</button>
+    <form method="dialog" class="modal-card" onsubmit="return false;">
+      <header class="modal-header">
+        <div>
+          <span class="modal-kicker">WORLD STRUCTURE</span>
+          <h2 id="sectionHeading">เพิ่มหมวด</h2>
         </div>
+        <button class="icon-button" data-close="sectionModal" type="button" aria-label="ปิด">×</button>
+      </header>
+
+      <div class="modal-body form-grid">
+        <label class="field span-2">
+          <span>ชื่อหมวด</span>
+          <input id="sectionName" placeholder="เช่น เมือง / เขตแดน / คณะ / สาขา">
+        </label>
+
+        <label class="field">
+          <span>อยู่ภายใต้หมวด</span>
+          <select id="sectionParent"></select>
+        </label>
+
+        <label class="field">
+          <span>กลุ่มหลัก</span>
+          <select id="sectionGroup">
+            <option value="core">แกนของโลก</option>
+            <option value="institutions">สถาบันและผู้คน</option>
+            <option value="lived">โลกที่ใช้ชีวิต</option>
+            <option value="danger">ภัยและเนื้อเรื่อง</option>
+            <option value="other">อื่น ๆ</option>
+          </select>
+          <small>ใช้กับหมวดระดับบนสุด หมวดย่อยจะตามกลุ่มของหมวดแม่</small>
+        </label>
+
+        <label class="field">
+          <span>ไอคอน</span>
+          <input id="sectionIcon" maxlength="4" placeholder="⌂">
+        </label>
+
+        <label class="field">
+          <span>การมองเห็น</span>
+          <select id="sectionVisibility">
+            <option value="public">Public</option>
+            <option value="author-only">Author Only</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>ลำดับ</span>
+          <input id="sectionSort" type="number" step="10" value="100">
+        </label>
+
+        <label class="field">
+          <span>ภาพประกอบ</span>
+          <select id="sectionImageKey">
+            <option value="bangkokNight">Bangkok — กลางคืน</option>
+            <option value="gothicCampus">Campus — Gothic</option>
+            <option value="oldLibrary">Library — Archive</option>
+          </select>
+        </label>
+
+        <label class="field span-2">
+          <span>คำอธิบายหมวด</span>
+          <textarea id="sectionDescription" rows="4" placeholder="อธิบายว่าหมวดนี้คืออะไรในโลก CaeLum"></textarea>
+        </label>
+
+        <label class="field span-2">
+          <span>ความสำคัญต่อโลก / เนื้อเรื่อง</span>
+          <textarea id="sectionImportance" rows="7" placeholder="อย่าอธิบายแค่ว่าเก็บอะไร—อธิบายว่ามันทำให้โลกนี้ทำงานอย่างไร และทำไมผู้อ่านหรือผู้แต่งควรสนใจ"></textarea>
+        </label>
       </div>
-    </div>
+
+      <footer class="modal-footer split">
+        <button class="button danger" id="deleteSectionButton" type="button">ลบหมวด</button>
+        <div class="button-row">
+          <button class="button secondary" data-close="sectionModal" type="button">ยกเลิก</button>
+          <button class="button primary" id="saveSectionButton" type="button">บันทึกหมวด</button>
+        </div>
+      </footer>
+    </form>
   </dialog>
 
   <script src="app.js"></script>
