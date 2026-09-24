@@ -9,6 +9,14 @@
     rawDataUrl: "https://raw.githubusercontent.com/sanaisawan63x2/CaeLum/main/data/world.json"
   };
 
+  const NAV_GROUPS = [
+    { id: "core", label: "แกนของโลก" },
+    { id: "institutions", label: "สถาบันและผู้คน" },
+    { id: "lived", label: "โลกที่ใช้ชีวิต" },
+    { id: "danger", label: "ภัยและเนื้อเรื่อง" },
+    { id: "other", label: "อื่น ๆ" }
+  ];
+
   let db = { schemaVersion: 2, version: 1, project: { name: "CaeLum" }, sections: [], entries: [] };
   let currentSectionId = "home";
   let currentEntryId = null;
@@ -81,6 +89,30 @@
     return visibleSections()
       .filter(s => (s.parentId || null) === (parentId || null))
       .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0) || a.name.localeCompare(b.name, "th"));
+  }
+
+  function sectionGroupId(sectionId) {
+    let cur = sectionById(sectionId);
+    const seen = new Set();
+    while (cur && cur.parentId && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      cur = sectionById(cur.parentId);
+    }
+    return cur?.group || "other";
+  }
+
+  function groupedRootsHtml(roots) {
+    const used = new Set();
+    let html = "";
+    for (const group of NAV_GROUPS) {
+      const items = roots.filter(s => (s.group || "other") === group.id);
+      if (!items.length) continue;
+      items.forEach(x => used.add(x.id));
+      html += '<section class="home-group"><div class="section-head compact"><div><h2>' + esc(group.label) + '</h2></div></div><div class="section-grid">' + items.map(sectionCardHtml).join("") + '</div></section>';
+    }
+    const rest = roots.filter(s => !used.has(s.id));
+    if (rest.length) html += '<section class="home-group"><div class="section-head compact"><div><h2>อื่น ๆ</h2></div></div><div class="section-grid">' + rest.map(sectionCardHtml).join("") + '</div></section>';
+    return html;
   }
 
   function entriesIn(sectionId, deep = false) {
@@ -164,10 +196,27 @@
   }
 
   function renderNav() {
+    const roots = childrenOf(null);
     let html = '<div class="nav-tree">';
     html += navButtonHtml("home", "⌂", "ภาพรวม", visibleEntries().length, 0);
     html += navButtonHtml("all", "▦", "ข้อมูลทั้งหมด", visibleEntries().length, 0);
-    for (const root of childrenOf(null)) html += renderNavNode(root, 0);
+
+    const used = new Set();
+    for (const group of NAV_GROUPS) {
+      const items = roots.filter(s => (s.group || "other") === group.id);
+      if (!items.length) continue;
+      html += '<div class="nav-group-title">' + esc(group.label) + '</div>';
+      for (const root of items) {
+        used.add(root.id);
+        html += renderNavNode(root, 0);
+      }
+    }
+    const rest = roots.filter(s => !used.has(s.id));
+    if (rest.length) {
+      html += '<div class="nav-group-title">อื่น ๆ</div>';
+      for (const root of rest) html += renderNavNode(root, 0);
+    }
+
     html += "</div>";
     categoryNav.innerHTML = html;
 
@@ -263,7 +312,7 @@
         <div class="hero-copy">
           <p class="eyebrow">CAE LUM ARCHIVE</p>
           <h1>World Bible</h1>
-          <p>ข้อมูลทุกอย่างของโลกถูกจัดเป็นหมวดและหมวดย่อย เพื่อให้หาเจอง่ายและเพิ่มรายละเอียดได้เรื่อย ๆ โดยไม่ต้องกองทุกอย่างไว้ในหน้าเดียว</p>
+          <p>ฐานข้อมูลหลังบ้านของ CaeLum สำหรับเก็บว่าโลกนี้ทำงานอย่างไร เหตุใดรายละเอียดแต่ละอย่างจึงสำคัญต่อเรื่อง และอะไรคือสิ่งที่ผู้อ่านยังไม่ควรรู้</p>
         </div>
         ${heroActionsHtml()}
       </section>
@@ -274,8 +323,7 @@
         <div class="stat-card"><span>Canon</span><strong>${canon}</strong></div>
         <div class="stat-card"><span>${authorMode ? "Author Only" : "หมวดหลัก"}</span><strong>${authorMode ? secret : roots.length}</strong></div>
       </section>
-      <div class="section-head"><div><h2>หมวดหลัก</h2><p>กดเข้าไปเพื่อดูหมวดย่อยและข้อมูลด้านใน</p></div></div>
-      <section class="section-grid">${roots.map(sectionCardHtml).join("")}</section>
+      ${groupedRootsHtml(roots)}
       <div class="section-head"><div><h2>ข้อมูลล่าสุด</h2><p>${latest.length} รายการ</p></div></div>
       <section class="cards">${latest.length ? latest.map(entryCardHtml).join("") : '<div class="empty">ยังไม่มีข้อมูล</div>'}</section>
     `;
@@ -318,6 +366,8 @@
     }
     const children = childrenOf(sectionId);
     const entries = entriesIn(sectionId, false).sort((a,b) => a.title.localeCompare(b.title,"th"));
+    const featured = entries.find(e => e.featured) || null;
+    const remaining = featured ? entries.filter(e => e.id !== featured.id) : entries;
     const breadcrumbs = breadcrumbHtml(sectionId);
 
     content.innerHTML = `
@@ -331,15 +381,40 @@
         ${heroActionsHtml(sectionId)}
       </section>
       ${authorBannerHtml()}
-      ${children.length ? '<div class="section-head"><div><h2>หมวดย่อย</h2><p>จัดข้อมูลให้แยกเป็นชั้น ๆ ได้ไม่จำกัด</p></div></div><section class="section-grid">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
-      <div class="section-head"><div><h2>ข้อมูลในหมวดนี้</h2><p>${entries.length} รายการ</p></div></div>
-      <section class="cards">${entries.length ? entries.map(entryCardHtml).join("") : '<div class="empty">ยังไม่มีข้อมูลในหมวดนี้' + (authorMode ? '<br><small>กด “+ เพิ่มข้อมูล” เพื่อเริ่มเขียน</small>' : '') + '</div>'}</section>
+      ${section.importance ? '<section class="world-importance"><p class="eyebrow">WHY IT MATTERS</p><h2>ความสำคัญต่อโลกและเนื้อเรื่อง</h2><div class="prose">' + esc(section.importance) + '</div></section>' : ''}
+      ${featured ? featuredEntryHtml(featured) : ''}
+      ${children.length ? '<div class="section-head"><div><h2>หัวข้อย่อย</h2><p>ใช้เมื่อเรื่องนี้มีรายละเอียดที่ควรแยกจริง ๆ ไม่ใช่บังคับให้กดหลายชั้น</p></div></div><section class="section-grid">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
+      ${remaining.length || (!featured && !entries.length) ? '<div class="section-head"><div><h2>ข้อมูลเพิ่มเติม</h2><p>' + remaining.length + ' รายการ</p></div></div><section class="cards">' + (remaining.length ? remaining.map(entryCardHtml).join("") : '<div class="empty">ยังไม่มีข้อมูลเพิ่มเติมในหมวดนี้' + (authorMode ? '<br><small>กด “+ เพิ่มข้อมูล” เพื่อเริ่มเขียน</small>' : '') + '</div>') + '</section>' : ''}
     `;
     bindHeroActions(sectionId);
     bindCards();
     bindSectionCards();
     bindBreadcrumbs();
     bindAuthorBanner();
+    bindFeaturedEntry();
+  }
+
+  function featuredEntryHtml(entry) {
+    const tags = (entry.tags || []).map(t => '<span class="badge">' + esc(t) + '</span>').join("");
+    return `<article class="section-feature">
+      <div class="section-feature-head">
+        <div>
+          <p class="eyebrow">CORE ENTRY</p>
+          <h2>${esc(entry.title)}</h2>
+          <div class="badges"><span class="badge ${esc(entry.status || "draft")}">${statusLabel(entry.status)}</span>${entry.visibility === "author-only" ? '<span class="badge">Author Only</span>' : ''}${tags}</div>
+        </div>
+        ${authorMode ? '<button class="secondary-btn" data-edit-feature="' + esc(entry.id) + '" type="button">แก้ไขเนื้อหา</button>' : ''}
+      </div>
+      <p class="section-feature-summary">${esc(entry.summary || "")}</p>
+      <div class="section-feature-prose">${esc(entry.details || "—")}</div>
+      ${authorMode && entry.openQuestions ? '<div class="section-feature-questions"><strong>สิ่งที่ยังไม่ล็อก</strong><div>' + esc(entry.openQuestions) + '</div></div>' : ''}
+    </article>`;
+  }
+
+  function bindFeaturedEntry() {
+    content.querySelectorAll("[data-edit-feature]").forEach(btn => {
+      btn.addEventListener("click", () => openEntryEditor(btn.dataset.editFeature));
+    });
   }
 
   function breadcrumbHtml(sectionId) {
@@ -411,7 +486,7 @@
   function renderSearch(query) {
     const results = visibleEntries().filter(e => {
       const section = sectionById(e.sectionId);
-      const text = [e.title,e.summary,e.details,e.openQuestions,section?.name,...(e.tags||[]),...(e.links||[])].join(" ").toLowerCase();
+      const text = [e.title,e.summary,e.details,e.openQuestions,section?.name,section?.description,section?.importance,...(e.tags||[]),...(e.links||[])].join(" ").toLowerCase();
       return text.includes(query);
     }).sort((a,b) => a.title.localeCompare(b.title,"th"));
 
@@ -616,6 +691,7 @@
     $("entryVisibility").value = entry?.visibility || "public";
     $("entryTags").value = (entry?.tags || []).join(", ");
     $("entrySummary").value = entry?.summary || "";
+    $("entryFeatured").checked = Boolean(entry?.featured);
     $("entryDetails").value = entry?.details || "";
     $("entryLinks").value = (entry?.links || []).join(", ");
     $("entryQuestions").value = entry?.openQuestions || "";
@@ -644,10 +720,16 @@
       details: $("entryDetails").value.trim(),
       links: $("entryLinks").value.split(",").map(x => x.trim()).filter(Boolean),
       openQuestions: $("entryQuestions").value.trim(),
+      featured: $("entryFeatured").checked,
       updatedAt: new Date().toISOString()
     };
 
     const backup = JSON.parse(JSON.stringify(db));
+    if (next.featured) {
+      for (const e of db.entries) {
+        if (e.sectionId === next.sectionId && e.id !== next.id) e.featured = false;
+      }
+    }
     if (editingEntryId) {
       const i = db.entries.findIndex(e => e.id === editingEntryId);
       if (i >= 0) db.entries[i] = next;
@@ -703,6 +785,7 @@
     $("sectionVisibility").value = section?.visibility || "public";
     $("sectionSort").value = Number(section?.sort ?? 100);
     $("sectionDescription").value = section?.description || "";
+    $("sectionImportance").value = section?.importance || "";
     $("sectionParent").innerHTML = sectionOptions(section?.parentId || defaultParentId || "", id, true);
     $("deleteSectionButton").style.visibility = section ? "visible" : "hidden";
     sectionModal.showModal();
@@ -734,7 +817,9 @@
       parentId,
       visibility: $("sectionVisibility").value,
       sort: Number($("sectionSort").value) || 100,
-      description: $("sectionDescription").value.trim()
+      description: $("sectionDescription").value.trim(),
+      importance: $("sectionImportance").value.trim(),
+      group: parentId ? sectionGroupId(parentId) : (sectionById(editingSectionId)?.group || "other")
     };
 
     const backup = JSON.parse(JSON.stringify(db));
