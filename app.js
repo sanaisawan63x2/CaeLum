@@ -26,6 +26,13 @@
   let searchQuery = "";
   let lastNavRouteKey = "";
   let expandedNav = new Set();
+  let readerHistory = [];
+  try {
+    readerHistory = JSON.parse(sessionStorage.getItem("caelum_reader_history") || "[]");
+    if (!Array.isArray(readerHistory)) readerHistory = [];
+  } catch {
+    readerHistory = [];
+  }
   try {
     expandedNav = new Set(JSON.parse(localStorage.getItem("caelum_nav_open") || "[]"));
   } catch {
@@ -34,6 +41,10 @@
 
   function saveExpandedNav() {
     localStorage.setItem("caelum_nav_open", JSON.stringify([...expandedNav]));
+  }
+
+  function saveReaderHistory() {
+    sessionStorage.setItem("caelum_reader_history", JSON.stringify(readerHistory.slice(-40)));
   }
 
 
@@ -52,15 +63,71 @@
     })[ch]);
   }
 
-  function proseHtml(value = "") {
+  function glossaryEntries() {
+    return visibleEntries().filter(entry => entry.sectionId === "glossary");
+  }
+
+  function glossaryLinkedHtml(value = "", currentEntryId = "") {
+    const raw = String(value || "");
+    const lower = raw.toLocaleLowerCase("en");
+    const candidates = [];
+
+    for (const entry of glossaryEntries()) {
+      if (entry.id === currentEntryId) continue;
+      const aliases = Array.isArray(entry.glossaryTerms) && entry.glossaryTerms.length
+        ? entry.glossaryTerms
+        : [entry.title];
+      let best = null;
+      for (const aliasValue of aliases) {
+        const alias = String(aliasValue || "").trim();
+        if (!alias) continue;
+        const index = lower.indexOf(alias.toLocaleLowerCase("en"));
+        if (index < 0) continue;
+        if (!best || index < best.index || (index === best.index && alias.length > best.length)) {
+          best = { index, length: alias.length, entryId: entry.id };
+        }
+      }
+      if (best) candidates.push(best);
+    }
+
+    candidates.sort((a,b) => a.index - b.index || b.length - a.length);
+    const chosen = [];
+    let end = -1;
+    for (const match of candidates) {
+      if (match.index < end) continue;
+      chosen.push(match);
+      end = match.index + match.length;
+    }
+
+    if (!chosen.length) return esc(raw).replace(/\n/g, "<br>");
+
+    let html = "";
+    let cursor = 0;
+    for (const match of chosen) {
+      html += esc(raw.slice(cursor, match.index)).replace(/\n/g, "<br>");
+      const label = raw.slice(match.index, match.index + match.length);
+      html += '<button class="glossary-term" data-glossary-entry="' + esc(match.entryId) + '" type="button" title="ดูความหมาย">' + esc(label) + '</button>';
+      cursor = match.index + match.length;
+    }
+    html += esc(raw.slice(cursor)).replace(/\n/g, "<br>");
+    return html;
+  }
+
+  function proseHtml(value = "", currentEntryId = "") {
     const normalized = String(value || "")
       .replace(/\\r\\n|\\n|\\r/g, "\n");
     return normalized
       .split(/\n\s*\n/)
       .map(block => block.trim())
       .filter(Boolean)
-      .map(block => '<p>' + esc(block).replace(/\n/g, "<br>") + '</p>')
+      .map(block => '<p>' + glossaryLinkedHtml(block, currentEntryId) + '</p>')
       .join("");
+  }
+
+  function bindGlossaryTerms() {
+    content.querySelectorAll("[data-glossary-entry]").forEach(btn => {
+      btn.addEventListener("click", () => navigate("entry", btn.dataset.glossaryEntry));
+    });
   }
 
   function readerMetaHtml(entry) {
@@ -211,9 +278,54 @@
     const next = type === "home" ? "#home" :
       type === "all" ? "#all" :
       "#" + type + "/" + encodeURIComponent(id);
-    if (location.hash === next) renderAll();
-    else location.hash = next;
+    const current = location.hash || "#home";
+    if (current !== next) {
+      if (readerHistory[readerHistory.length - 1] !== current) {
+        readerHistory.push(current);
+        saveReaderHistory();
+      }
+      location.hash = next;
+    } else {
+      renderAll();
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function readerBackHtml(fallback = "home") {
+    return '<div class="reader-back-row"><button class="reader-back" data-reader-back="' + esc(fallback) + '" type="button">← ย้อนกลับ</button></div>';
+  }
+
+  function goReaderBack(fallback = "home") {
+    const current = location.hash || "#home";
+    let target = "";
+    while (readerHistory.length) {
+      const candidate = readerHistory.pop();
+      if (candidate && candidate !== current) {
+        target = candidate;
+        break;
+      }
+    }
+    saveReaderHistory();
+
+    if (!target) {
+      if (fallback === "home") target = "#home";
+      else {
+        const split = fallback.indexOf(":");
+        const type = split >= 0 ? fallback.slice(0, split) : "home";
+        const id = split >= 0 ? fallback.slice(split + 1) : "";
+        target = type === "home" ? "#home" : "#" + type + "/" + encodeURIComponent(id);
+      }
+    }
+
+    if (location.hash === target) renderAll();
+    else location.hash = target;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function bindReaderBack() {
+    content.querySelectorAll("[data-reader-back]").forEach(btn => {
+      btn.addEventListener("click", () => goReaderBack(btn.dataset.readerBack || "home"));
+    });
   }
 
   async function loadPublicData() {
@@ -485,7 +597,9 @@
     const featured = entries.find(e => e.featured) || null;
     const rest = featured ? entries.filter(e => e.id !== featured.id) : entries;
 
+    const backFallback = section.parentId ? "section:" + section.parentId : "home";
     content.innerHTML = `
+      ${readerBackHtml(backFallback)}
       <section class="section-hero simple-section-hero">
         <div class="section-hero-bg" style="${styleBg(asset.url)}"></div>
         <div class="section-hero-content">
@@ -509,6 +623,7 @@
       ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
     `;
 
+    bindReaderBack();
     bindBreadcrumbs();
     bindSectionCards();
     bindEntryCards();
@@ -543,6 +658,7 @@
     const related = (entry.links || []).map(findRelationTarget).filter(Boolean);
 
     content.innerHTML = `
+      ${readerBackHtml("section:" + entry.sectionId)}
       <div class="breadcrumbs article-breadcrumbs">${breadcrumbsHtml(entry.sectionId)}<span class="sep">/</span><span>${esc(entry.title)}</span></div>
       ${authorStripHtml(entry.sectionId)}
 
@@ -556,14 +672,14 @@
         </header>
 
         <section class="reader-body">
-          ${proseHtml(entry.details || "—")}
+          ${proseHtml(entry.details || "—", entry.id)}
         </section>
 
-        ${entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge) + '</div></section>' : ''}
+        ${entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge, entry.id) + '</div></section>' : ''}
 
-        ${authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse) + '</div></section>' : ''}
-        ${authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes) + '</div></section>' : ''}
-        ${authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions) + '</div></section>' : ''}
+        ${authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse, entry.id) + '</div></section>' : ''}
+        ${authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes, entry.id) + '</div></section>' : ''}
+        ${authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions, entry.id) + '</div></section>' : ''}
 
         ${related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(relationButtonHtml).join("") + '</div></section>' : ''}
 
@@ -571,7 +687,9 @@
       </article>
     `;
 
+    bindReaderBack();
     bindBreadcrumbs();
+    bindGlossaryTerms();
     bindAuthorStrip();
     bindRelationButtons();
     content.querySelector("[data-edit-current]")?.addEventListener("click", () => openEntryEditor(entry.id));
@@ -825,7 +943,9 @@
     if (!title) return toast("ใส่ชื่อหัวข้อก่อน","error");
     if (!sectionId) return toast("เลือกหมวดก่อน","error");
 
+    const existingEntry = editingEntryId ? entryById(editingEntryId) : null;
     const next = {
+      ...(existingEntry || {}),
       id: editingEntryId || uid("entry"),
       sectionId,
       title,
