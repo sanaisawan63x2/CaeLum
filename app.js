@@ -502,7 +502,7 @@
 
       ${rest.length ? '<div class="reader-heading"><h2>' + (section.id === "caelum" ? "พื้นที่และข้อมูลของ CaeLum" : "ข้อมูลในหมวดนี้") + '</h2><p>แต่ละเรื่องเปิดอ่านแยกกัน ไม่ต้องไล่อ่านทั้งหน้า</p></div><section class="library-list">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
 
-      ${section.importance ? '<section class="section-note"><h2>ทำไมหมวดนี้สำคัญ</h2><p>' + esc(section.importance) + '</p></section>' : ''}
+      ${section.importance ? '<section class="section-note"><h2>อ่านส่วนนี้แล้วจะเข้าใจอะไร</h2><p>' + esc(section.importance) + '</p></section>' : ''}
 
       ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
     `;
@@ -609,8 +609,10 @@
     );
     const entryResults = visibleEntries().filter(e => {
       const section = sectionById(e.sectionId);
-      return [e.title,e.kicker,e.summary,e.details,e.publicKnowledge,e.storyUse,e.continuityNotes,e.openQuestions,section?.name,...(e.tags||[]),...(e.links||[])]
-        .join(" ").toLowerCase().includes(q);
+      const fields = authorMode
+        ? [e.title,e.kicker,e.summary,e.details,e.publicKnowledge,e.storyUse,e.continuityNotes,e.openQuestions,section?.name,...(e.tags||[]),...(e.links||[])]
+        : [e.title,e.kicker,e.summary,e.details,e.publicKnowledge,section?.name,...(e.tags||[]),...(e.links||[])];
+      return fields.join(" ").toLowerCase().includes(q);
     });
 
     const items = [
