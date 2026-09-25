@@ -24,6 +24,17 @@
   let editingEntryId = null;
   let editingSectionId = null;
   let searchQuery = "";
+  let expandedNav = new Set();
+  try {
+    expandedNav = new Set(JSON.parse(localStorage.getItem("caelum_nav_open") || "[]"));
+  } catch {
+    expandedNav = new Set();
+  }
+
+  function saveExpandedNav() {
+    localStorage.setItem("caelum_nav_open", JSON.stringify([...expandedNav]));
+  }
+
 
   const $ = id => document.getElementById(id);
   const content = $("content");
@@ -38,6 +49,23 @@
     return String(value).replace(/[&<>"']/g, ch => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
     })[ch]);
+  }
+
+  function proseHtml(value = "") {
+    return String(value || "")
+      .split(/\n\s*\n/)
+      .map(block => block.trim())
+      .filter(Boolean)
+      .map(block => '<p>' + esc(block).replace(/\n/g, "<br>") + '</p>')
+      .join("");
+  }
+
+  function readerMetaHtml(entry) {
+    if (!authorMode) return "";
+    return '<div class="reader-meta">' +
+      '<span>' + esc(statusLabel(entry.status)) + '</span>' +
+      (entry.visibility === "author-only" ? '<span>Author Only</span>' : '<span>Public</span>') +
+      '</div>';
   }
 
   function uid(prefix) {
@@ -182,7 +210,6 @@
       "#" + type + "/" + encodeURIComponent(id);
     if (location.hash === next) renderAll();
     else location.hash = next;
-    document.body.classList.remove("nav-open");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -216,16 +243,19 @@
   function renderNav() {
     const r = route();
     const activeSection = r.type === "section" ? r.id : r.type === "entry" ? entryById(r.id)?.sectionId : null;
-    const roots = childrenOf(null);
 
+    if (activeSection) {
+      for (const section of ancestorChain(activeSection)) expandedNav.add(section.id);
+      saveExpandedNav();
+    }
+
+    const roots = childrenOf(null);
     let html = '<div class="nav-tree">';
     html += navSimple("home", "⌂", "หน้าหลัก", r.type === "home");
     html += navSimple("all", "☰", "สารบัญทั้งหมด", r.type === "all");
     html += '<div class="nav-main-label">หมวดหลัก</div>';
 
-    for (const root of roots) {
-      html += navSectionNode(root, activeSection, 0);
-    }
+    for (const root of roots) html += navSectionNode(root, activeSection, 0);
 
     html += "</div>";
     categoryNav.innerHTML = html;
@@ -234,6 +264,17 @@
       btn.addEventListener("click", () => {
         const [type, id] = btn.dataset.go.split(":");
         navigate(type, id || "");
+      });
+    });
+
+    categoryNav.querySelectorAll("[data-nav-toggle]").forEach(btn => {
+      btn.addEventListener("click", event => {
+        event.stopPropagation();
+        const id = btn.dataset.navToggle;
+        if (expandedNav.has(id)) expandedNav.delete(id);
+        else expandedNav.add(id);
+        saveExpandedNav();
+        renderNav();
       });
     });
   }
@@ -247,14 +288,23 @@
   function navSectionNode(section, activeSection, depth) {
     const children = childrenOf(section.id);
     const active = section.id === activeSection;
-    const inPath = activeSection && ancestorChain(activeSection).some(s => s.id === section.id);
+    const open = expandedNav.has(section.id);
     let html = '<div class="nav-node">';
-    html += '<div class="nav-node-row"><button class="nav-toggle ' + (children.length ? "" : "placeholder") + '" tabindex="-1">' + (children.length ? (inPath ? "⌄" : "›") : "›") + '</button>';
+    html += '<div class="nav-node-row">';
+    if (children.length) {
+      html += '<button class="nav-toggle' + (open ? " open" : "") + '" data-nav-toggle="' + esc(section.id) + '" type="button" aria-label="' + (open ? "ย่อหมวด" : "ขยายหมวด") + '">' + (open ? "−" : "+") + '</button>';
+    } else {
+      html += '<button class="nav-toggle placeholder" tabindex="-1">+</button>';
+    }
     html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? " active" : "") + '" data-go="section:' + esc(section.id) + '">' +
       '<span class="nav-icon">' + esc(section.icon || "•") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span></button></div>';
-    if (children.length && inPath) {
+
+    if (children.length && open) {
+      html += '<div class="nav-children">';
       for (const child of children) html += navSectionNode(child, activeSection, depth + 1);
+      html += '</div>';
     }
+
     html += "</div>";
     return html;
   }
@@ -367,29 +417,25 @@
   }
 
   function sectionCardHtml(section) {
-    const asset = assetFor(section);
-    return `<article class="topic-card" data-section-card="${esc(section.id)}">
-      <div class="topic-card-bg" style="${styleBg(asset.url)}"></div>
-      <span class="count">${countUnder(section.id)} หัวข้อ</span>
-      <div class="topic-card-content">
-        <span class="icon">${esc(section.icon || "•")}</span>
+    return `<article class="library-item section-item" data-section-card="${esc(section.id)}">
+      <div class="library-item-icon">${esc(section.icon || "•")}</div>
+      <div class="library-item-copy">
         <h3>${esc(section.readerLabel || section.name)}</h3>
         <p>${esc(section.description || "หมวดข้อมูลของโลก CaeLum")}</p>
       </div>
+      <span class="library-arrow">→</span>
     </article>`;
   }
 
   function entryCardHtml(entry) {
     const section = sectionById(entry.sectionId);
-    const asset = assetFor(section);
-    return `<article class="topic-card" data-entry-card="${esc(entry.id)}">
-      <div class="topic-card-bg" style="${styleBg(asset.url)}"></div>
-      <span class="count">${esc(statusLabel(entry.status))}</span>
-      <div class="topic-card-content">
-        <span class="icon">${esc(section?.icon || "•")}</span>
+    return `<article class="library-item entry-item" data-entry-card="${esc(entry.id)}">
+      <div class="library-item-icon">${esc(section?.icon || "•")}</div>
+      <div class="library-item-copy">
         <h3>${esc(entry.title)}</h3>
         <p>${esc(entry.summary || "ยังไม่มีสรุป")}</p>
       </div>
+      <span class="library-arrow">→</span>
     </article>`;
   }
 
@@ -435,29 +481,27 @@
     const rest = featured ? entries.filter(e => e.id !== featured.id) : entries;
 
     content.innerHTML = `
-      <section class="section-hero compact-section-hero">
+      <section class="section-hero simple-section-hero">
         <div class="section-hero-bg" style="${styleBg(asset.url)}"></div>
         <div class="section-hero-content">
           <div class="breadcrumbs">${breadcrumbsHtml(sectionId)}</div>
-          <p class="eyebrow">WORLD SECTION</p>
-          <h1>${esc(section.icon || "•")} ${esc(section.readerLabel || section.name)}</h1>
+          <h1>${esc(section.readerLabel || section.name)}</h1>
           <p>${esc(section.description || "")}</p>
           ${authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section="' + esc(section.id) + '" type="button">แก้หมวดนี้</button></div>' : ''}
         </div>
-        ${photoCreditHtml(asset)}
       </section>
 
       ${authorStripHtml(sectionId)}
 
-      ${children.length ? '<div class="section-heading first-heading"><div><h2>เลือกหัวข้อ</h2><p>เข้าเฉพาะส่วนที่ต้องการอ่าน</p></div></div><section class="topic-grid child-topic-grid">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
+      ${featured ? '<section class="section-overview-link" data-entry-card="' + esc(featured.id) + '"><div><span class="section-overview-label">ภาพรวม</span><h2>' + esc(featured.title) + '</h2><p>' + esc(featured.summary || "") + '</p></div><span class="section-overview-arrow">อ่านต่อ →</span></section>' : ''}
 
-      ${featured ? featuredArticleHtml(featured) : ''}
+      ${children.length ? '<div class="reader-heading"><h2>หัวข้อย่อย</h2><p>เลือกส่วนที่ต้องการอ่านได้เลย</p></div><section class="library-list">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
 
-      ${section.importance ? '<details class="reader-details importance-details"><summary><span>ทำไมหมวดนี้สำคัญต่อ CaeLum</span><span class="details-hint">เปิดอ่าน</span></summary><div class="details-body"><p>' + esc(section.importance) + '</p></div></details>' : ''}
+      ${rest.length ? '<div class="reader-heading"><h2>' + (section.id === "caelum" ? "พื้นที่และข้อมูลของ CaeLum" : "ข้อมูลในหมวดนี้") + '</h2><p>แต่ละเรื่องเปิดอ่านแยกกัน ไม่ต้องไล่อ่านทั้งหน้า</p></div><section class="library-list">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
 
-      ${rest.length ? '<div class="section-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>เลือกอ่านเป็นเรื่อง ๆ</p></div></div><section class="topic-grid">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
+      ${section.importance ? '<section class="section-note"><h2>ทำไมหมวดนี้สำคัญ</h2><p>' + esc(section.importance) + '</p></section>' : ''}
 
-      ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีบทความ' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
+      ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
     `;
 
     bindBreadcrumbs();
@@ -465,30 +509,11 @@
     bindEntryCards();
     bindAuthorStrip();
     content.querySelector("[data-edit-section]")?.addEventListener("click", () => openSectionEditor(sectionId));
-    content.querySelectorAll("[data-edit-entry]").forEach(btn => btn.addEventListener("click", () => openEntryEditor(btn.dataset.editEntry)));
     updateTopbar(section.readerLabel || section.name);
   }
 
   function featuredArticleHtml(entry) {
-    return `<article class="feature-article compact-feature">
-      <div class="article-head">
-        <div>
-          <p class="eyebrow">ภาพรวม</p>
-          ${entry.kicker ? '<div class="article-kicker">' + esc(entry.kicker) + '</div>' : ''}
-          <h2>${esc(entry.title)}</h2>
-        </div>
-        ${authorMode ? '<button class="button secondary" data-edit-entry="' + esc(entry.id) + '" type="button">แก้ไข</button>' : ''}
-      </div>
-      <p class="article-summary">${esc(entry.summary || "")}</p>
-      <details class="reader-details article-details">
-        <summary><span>อ่านรายละเอียดเต็ม</span><span class="details-hint">เปิดอ่าน</span></summary>
-        <div class="details-body">
-          <div class="prose">${esc(entry.details || "—")}</div>
-          ${entry.publicKnowledge ? '<div class="public-knowledge"><h3>สิ่งที่คนในโลกรับรู้</h3><p>' + esc(entry.publicKnowledge) + '</p></div>' : ''}
-          ${authorMode ? authorContextHtml(entry) : ''}
-        </div>
-      </details>
-    </article>`;
+    return '<section class="section-overview-link" data-entry-card="' + esc(entry.id) + '"><div><span class="section-overview-label">ภาพรวม</span><h2>' + esc(entry.title) + '</h2><p>' + esc(entry.summary || "") + '</p></div><span class="section-overview-arrow">อ่านต่อ →</span></section>';
   }
 
   function badgesHtml(entry) {
@@ -510,54 +535,41 @@
     const entry = entryById(entryId);
     if (!entry || !isVisible(entry)) return navigate("home");
     const section = sectionById(entry.sectionId);
-    const asset = assetFor(section);
     const related = (entry.links || []).map(findRelationTarget).filter(Boolean);
-    const backlinks = visibleEntries().filter(e => e.id !== entry.id && (e.links || []).some(x => normalizeName(x) === normalizeName(entry.title)));
 
     content.innerHTML = `
-      <div class="breadcrumbs">${breadcrumbsHtml(entry.sectionId)}<span class="sep">/</span><span>${esc(entry.title)}</span></div>
+      <div class="breadcrumbs article-breadcrumbs">${breadcrumbsHtml(entry.sectionId)}<span class="sep">/</span><span>${esc(entry.title)}</span></div>
       ${authorStripHtml(entry.sectionId)}
-      <section class="article-layout">
-        <article class="article-main">
-          <div class="article-cover" style="${styleBg(asset.url)}">${photoCreditHtml(asset)}</div>
-          <p class="eyebrow">${esc(section?.readerLabel || section?.name || "WORLD ENTRY")}</p>
-          ${entry.kicker ? '<div class="article-kicker">' + esc(entry.kicker) + '</div>' : ''}
-          <h1 class="article-title">${esc(entry.title)}</h1>
-          ${badgesHtml(entry)}
-          <p class="article-lead">${esc(entry.summary || "")}</p>
-          <div class="article-body prose">${esc(entry.details || "—")}</div>
-          ${entry.publicKnowledge ? '<div class="public-knowledge"><h3>สิ่งที่คนในโลกรับรู้</h3><p>' + esc(entry.publicKnowledge) + '</p></div>' : ''}
-          ${authorMode ? authorContextHtml(entry) : ''}
-        </article>
 
-        <aside class="article-side">
-          <section class="side-card">
-            <h3>สถานะข้อมูล</h3>
-            <p>${statusLabel(entry.status)} · ${entry.visibility === "author-only" ? "Author Only" : "Public"}</p>
-          </section>
-          ${related.length ? '<section class="side-card"><h3>ข้อมูลที่เชื่อมโยง</h3><div class="side-list">' + related.map(relationButtonHtml).join("") + '</div></section>' : ''}
-          ${backlinks.length ? '<section class="side-card"><h3>กล่าวถึงหัวข้อนี้</h3><div class="side-list">' + backlinks.slice(0,8).map(x => relationButtonHtml({type:"entry",id:x.id,label:x.title})).join("") + '</div></section>' : ''}
-          <section class="side-card">
-            <h3>แชร์หน้านี้</h3>
-            <button class="relation-link" data-copy-link type="button"><span>คัดลอกลิงก์</span><span>↗</span></button>
-          </section>
-          ${authorMode ? '<section class="side-card"><h3>สำหรับผู้แต่ง</h3><div class="side-list"><button class="relation-link" data-edit-current type="button"><span>แก้ไขข้อมูล</span><span>✎</span></button></div></section>' : ''}
-        </aside>
-      </section>
+      <article class="reader-article">
+        <header class="reader-article-head">
+          <p class="reader-category">${esc(section?.readerLabel || section?.name || "CaeLum")}</p>
+          ${entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : ''}
+          <h1>${esc(entry.title)}</h1>
+          ${readerMetaHtml(entry)}
+          <p class="reader-lead">${esc(entry.summary || "")}</p>
+        </header>
+
+        <section class="reader-body">
+          ${proseHtml(entry.details || "—")}
+        </section>
+
+        ${entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge) + '</div></section>' : ''}
+
+        ${authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse) + '</div></section>' : ''}
+        ${authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes) + '</div></section>' : ''}
+        ${authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions) + '</div></section>' : ''}
+
+        ${related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(relationButtonHtml).join("") + '</div></section>' : ''}
+
+        ${authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-current type="button">แก้ไขข้อมูลนี้</button></div>' : ''}
+      </article>
     `;
 
     bindBreadcrumbs();
     bindAuthorStrip();
     bindRelationButtons();
     content.querySelector("[data-edit-current]")?.addEventListener("click", () => openEntryEditor(entry.id));
-    content.querySelector("[data-copy-link]")?.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(location.href);
-        toast("คัดลอกลิงก์แล้ว", "success");
-      } catch {
-        toast("คัดลอกลิงก์ไม่สำเร็จ", "error");
-      }
-    });
     updateTopbar(entry.title);
   }
 
@@ -1017,7 +1029,8 @@
     btn.addEventListener("click", () => $(btn.dataset.close)?.close());
   });
 
-  $("menuButton").addEventListener("click", () => document.body.classList.toggle("nav-open"));
+  $("menuButton").addEventListener("click", () => document.body.classList.add("nav-open"));
+  $("sidebarCloseButton")?.addEventListener("click", () => document.body.classList.remove("nav-open"));
   $("mobileBackdrop").addEventListener("click", () => document.body.classList.remove("nav-open"));
   searchInput.addEventListener("input", e => onSearch(e.target.value));
   sidebarSearch.addEventListener("input", e => onSearch(e.target.value));
