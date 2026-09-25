@@ -53,7 +53,9 @@
   }
 
   function proseHtml(value = "") {
-    return String(value || "")
+    const normalized = String(value || "")
+      .replace(/\\r\\n|\\n|\\r/g, "\n");
+    return normalized
       .split(/\n\s*\n/)
       .map(block => block.trim())
       .filter(Boolean)
