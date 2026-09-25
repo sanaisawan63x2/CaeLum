@@ -24,6 +24,7 @@
   let editingEntryId = null;
   let editingSectionId = null;
   let searchQuery = "";
+  let lastNavRouteKey = "";
   let expandedNav = new Set();
   try {
     expandedNav = new Set(JSON.parse(localStorage.getItem("caelum_nav_open") || "[]"));
@@ -244,10 +245,12 @@
     const r = route();
     const activeSection = r.type === "section" ? r.id : r.type === "entry" ? entryById(r.id)?.sectionId : null;
 
-    if (activeSection) {
+    const routeKey = r.type + ":" + (r.id || "");
+    if (routeKey !== lastNavRouteKey && activeSection) {
       for (const section of ancestorChain(activeSection)) expandedNav.add(section.id);
       saveExpandedNav();
     }
+    lastNavRouteKey = routeKey;
 
     const roots = childrenOf(null);
     let html = '<div class="nav-tree">';
