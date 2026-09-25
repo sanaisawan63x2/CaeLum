@@ -2007,3 +2007,61 @@ button,input,textarea,select{font-family:var(--sans)}
     background:#17303d;
   }
 }
+
+
+/* ========== Reader navigation + glossary ========== */
+.reader-back-row{
+  max-width:900px;
+  margin:0 auto 12px;
+}
+.section-hero + .reader-back-row{margin-top:12px}
+.reader-back{
+  min-height:38px;
+  padding:0 12px;
+  border:1px solid #d5d8da;
+  border-radius:10px;
+  background:#fff;
+  color:#495760;
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.reader-back:hover{
+  background:#f3f5f5;
+  border-color:#bfc7ca;
+  color:#26343d;
+}
+.reader-back:focus-visible,
+.glossary-term:focus-visible{
+  outline:3px solid rgba(47,111,120,.18);
+  outline-offset:2px;
+}
+.glossary-term{
+  display:inline;
+  margin:0;
+  padding:0 2px;
+  border:0;
+  border-bottom:1px dotted #5f858a;
+  background:transparent;
+  color:#2f6f78;
+  font:inherit;
+  font-weight:650;
+  line-height:inherit;
+  cursor:pointer;
+  vertical-align:baseline;
+}
+.glossary-term:hover{
+  color:#214f56;
+  border-bottom-style:solid;
+  background:rgba(47,111,120,.07);
+  border-radius:3px;
+}
+
+@media(max-width:760px){
+  .reader-back-row{margin-bottom:10px}
+  .reader-back{
+    min-height:42px;
+    font-size:15px;
+  }
+}
