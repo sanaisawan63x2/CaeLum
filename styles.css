@@ -1935,3 +1935,75 @@ button,input,textarea,select{font-family:var(--sans)}
   .nav-btn{height:46px}
   .nav-label{font-size:15px}
 }
+
+
+/* Reader contrast fix: text and artwork never fight each other */
+.hero-cover,
+.simple-section-hero{
+  background:#17303d;
+  overflow:hidden;
+}
+.hero-cover .cover-image,
+.simple-section-hero .section-hero-bg{
+  left:auto;
+  right:0;
+  width:44%;
+  opacity:1;
+  filter:saturate(.82) contrast(1.03);
+}
+.hero-cover::after,
+.simple-section-hero::after{
+  display:none;
+}
+.hero-cover-content,
+.simple-section-hero .section-hero-content{
+  width:58%;
+  max-width:none;
+  position:relative;
+  z-index:2;
+  background:#17303d;
+}
+.hero-cover h1,
+.hero-cover .lead,
+.simple-section-hero h1,
+.simple-section-hero p{
+  color:#fff;
+  text-shadow:none;
+}
+.simple-section-hero .breadcrumbs,
+.simple-section-hero .breadcrumbs button{
+  color:#dbe8ed;
+}
+.simple-section-hero .breadcrumbs .sep{color:#78909c}
+
+.section-note h2{
+  font-size:23px;
+  color:#17303d;
+}
+.section-note p{
+  font-size:17px;
+  line-height:1.85;
+  color:#42515b;
+}
+
+@media(max-width:720px){
+  .hero-cover,
+  .simple-section-hero{
+    padding-top:150px;
+    background:#17303d;
+  }
+  .hero-cover .cover-image,
+  .simple-section-hero .section-hero-bg{
+    top:0;
+    left:0;
+    right:0;
+    width:100%;
+    height:150px;
+  }
+  .hero-cover-content,
+  .simple-section-hero .section-hero-content{
+    width:100%;
+    min-height:0;
+    background:#17303d;
+  }
+}
