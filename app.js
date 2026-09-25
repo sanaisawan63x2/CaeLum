@@ -217,25 +217,14 @@
     const r = route();
     const activeSection = r.type === "section" ? r.id : r.type === "entry" ? entryById(r.id)?.sectionId : null;
     const roots = childrenOf(null);
+
     let html = '<div class="nav-tree">';
-    html += navSimple("home", "⌂", "ภาพรวม", r.type === "home");
-    html += navSimple("all", "▦", "สารบัญทั้งหมด", r.type === "all");
+    html += navSimple("home", "⌂", "หน้าหลัก", r.type === "home");
+    html += navSimple("all", "☰", "สารบัญทั้งหมด", r.type === "all");
+    html += '<div class="nav-main-label">หมวดหลัก</div>';
 
-    const used = new Set();
-    for (const group of NAV_GROUPS) {
-      const items = roots.filter(s => (s.group || "other") === group.id);
-      if (!items.length) continue;
-      html += '<div class="nav-group-title">' + esc(group.label) + '</div>';
-      for (const root of items) {
-        used.add(root.id);
-        html += navSectionNode(root, activeSection, 0);
-      }
-    }
-
-    const rest = roots.filter(s => !used.has(s.id));
-    if (rest.length) {
-      html += '<div class="nav-group-title">อื่น ๆ</div>';
-      for (const root of rest) html += navSectionNode(root, activeSection, 0);
+    for (const root of roots) {
+      html += navSectionNode(root, activeSection, 0);
     }
 
     html += "</div>";
@@ -262,8 +251,7 @@
     let html = '<div class="nav-node">';
     html += '<div class="nav-node-row"><button class="nav-toggle ' + (children.length ? "" : "placeholder") + '" tabindex="-1">' + (children.length ? (inPath ? "⌄" : "›") : "›") + '</button>';
     html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? " active" : "") + '" data-go="section:' + esc(section.id) + '">' +
-      '<span class="nav-icon">' + esc(section.icon || "•") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span>' +
-      '<span class="nav-count">' + countUnder(section.id) + '</span></button></div>';
+      '<span class="nav-icon">' + esc(section.icon || "•") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span></button></div>';
     if (children.length && inPath) {
       for (const child of children) html += navSectionNode(child, activeSection, depth + 1);
     }
@@ -314,45 +302,35 @@
   function renderHome() {
     const heroAsset = db.project.assets?.bangkokNight || {};
     const roots = childrenOf(null);
-    const starts = ["overview","magic","caelum","bangkok"].map(sectionById).filter(Boolean).filter(isVisible);
+    const starts = ["overview","locations","magic","caelum"].map(sectionById).filter(Boolean).filter(isVisible);
 
     content.innerHTML = `
-      <section class="hero-cover">
+      <section class="hero-cover compact-hero">
         <div class="cover-image" style="${styleBg(heroAsset.url)}"></div>
         <div class="hero-cover-content">
-          <p class="eyebrow">WORLD ARCHIVE / BANGKOK</p>
+          <p class="eyebrow">CAE LUM WORLD BIBLE</p>
           <h1>CaeLum</h1>
           <p class="lead">${esc(db.project.readerIntro || "คลังข้อมูลของโลก CaeLum")}</p>
-          <div class="hero-meta">
-            <span>Urban Fantasy</span>
-            <span>Bangkok</span>
-            <span>40 years after the Overlap</span>
-            <span>Magic is public</span>
-          </div>
         </div>
         ${photoCreditHtml(heroAsset)}
       </section>
 
       ${authorStripHtml()}
 
-      <section class="quick-facts">
-        <article class="fact-card"><small>จุดเปลี่ยนของโลก</small><strong>≈ 40 ปี</strong><p>นับจากเหตุการณ์โลกสองใบซ้อนทับกันจนถึงช่วงเวลาของเรื่อง</p></article>
-        <article class="fact-card"><small>ศูนย์กลางของเรื่อง</small><strong>Bangkok</strong><p>เมืองสมัยใหม่ที่ใช้ชีวิตร่วมกับเวทมนตร์จนมันกลายเป็นส่วนหนึ่งของความปกติ</p></article>
-        <article class="fact-card"><small>สถาบันสำคัญ</small><strong>CaeLum</strong><p>มหาวิทยาลัยเวทมนตร์นานาชาติที่ชื่อเสียงด้านการศึกษาพอ ๆ กับระบบความปลอดภัย</p></article>
-        <article class="fact-card"><small>แกนของความลึกลับ</small><strong>What should be impossible</strong><p>เรื่องเริ่มสั่นคลอนเมื่อสิ่งที่ไม่ควรผ่านเข้ามาได้ ปรากฏขึ้นในสถานที่ที่ปลอดภัยที่สุดแห่งหนึ่ง</p></article>
-      </section>
-
       <div class="section-heading">
-        <div><h2>เริ่มอ่านจากตรงนี้</h2><p>สี่ทางเข้าเพื่อทำความเข้าใจโลกโดยไม่ต้องไล่เปิดทุกหน้า</p></div>
+        <div><h2>เริ่มจากตรงนี้</h2><p>เลือกหัวข้อที่ต้องการ ไม่จำเป็นต้องไล่อ่านตามลำดับ</p></div>
       </div>
       <section class="path-grid">${starts.map(sectionCardHtml).join("")}</section>
 
-      ${renderGroupedHome(roots)}
+      <div class="section-heading">
+        <div><h2>หมวดหลัก</h2><p>โครงสร้างใหญ่ของ World Bible</p></div>
+      </div>
+      <section class="topic-grid root-topic-grid">${roots.map(sectionCardHtml).join("")}</section>
     `;
 
     bindSectionCards();
     bindAuthorStrip();
-    updateTopbar("ภาพรวมโลก");
+    updateTopbar("หน้าหลัก");
   }
 
   function renderGroupedHome(roots) {
@@ -392,7 +370,7 @@
     const asset = assetFor(section);
     return `<article class="topic-card" data-section-card="${esc(section.id)}">
       <div class="topic-card-bg" style="${styleBg(asset.url)}"></div>
-      <span class="count">${countUnder(section.id)} entries</span>
+      <span class="count">${countUnder(section.id)} หัวข้อ</span>
       <div class="topic-card-content">
         <span class="icon">${esc(section.icon || "•")}</span>
         <h3>${esc(section.readerLabel || section.name)}</h3>
@@ -449,6 +427,7 @@
   function renderSection(sectionId) {
     const section = sectionById(sectionId);
     if (!section || !isVisible(section)) return navigate("home");
+
     const asset = assetFor(section);
     const children = childrenOf(sectionId);
     const entries = entriesIn(sectionId, false).sort((a,b) => a.title.localeCompare(b.title,"th"));
@@ -456,7 +435,7 @@
     const rest = featured ? entries.filter(e => e.id !== featured.id) : entries;
 
     content.innerHTML = `
-      <section class="section-hero">
+      <section class="section-hero compact-section-hero">
         <div class="section-hero-bg" style="${styleBg(asset.url)}"></div>
         <div class="section-hero-content">
           <div class="breadcrumbs">${breadcrumbsHtml(sectionId)}</div>
@@ -470,13 +449,13 @@
 
       ${authorStripHtml(sectionId)}
 
-      ${section.importance ? '<section class="importance-card"><p class="eyebrow">WHY IT MATTERS</p><h2>ทำไมเรื่องนี้สำคัญต่อ CaeLum</h2><p>' + esc(section.importance) + '</p></section>' : ''}
+      ${children.length ? '<div class="section-heading first-heading"><div><h2>เลือกหัวข้อ</h2><p>เข้าเฉพาะส่วนที่ต้องการอ่าน</p></div></div><section class="topic-grid child-topic-grid">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
 
       ${featured ? featuredArticleHtml(featured) : ''}
 
-      ${children.length ? '<div class="section-heading"><div><h2>หัวข้อย่อย</h2><p>เปิดเฉพาะส่วนที่ต้องการลงรายละเอียดเพิ่ม</p></div></div><section class="topic-grid">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
+      ${section.importance ? '<details class="reader-details importance-details"><summary><span>ทำไมหมวดนี้สำคัญต่อ CaeLum</span><span class="details-hint">เปิดอ่าน</span></summary><div class="details-body"><p>' + esc(section.importance) + '</p></div></details>' : ''}
 
-      ${rest.length ? '<div class="section-heading"><div><h2>อ่านต่อ</h2><p>ข้อมูลที่เกี่ยวข้องในหมวดนี้</p></div></div><section class="topic-grid">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
+      ${rest.length ? '<div class="section-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>เลือกอ่านเป็นเรื่อง ๆ</p></div></div><section class="topic-grid">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
 
       ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีบทความ' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
     `;
@@ -491,20 +470,24 @@
   }
 
   function featuredArticleHtml(entry) {
-    return `<article class="feature-article">
+    return `<article class="feature-article compact-feature">
       <div class="article-head">
         <div>
-          <p class="eyebrow">CORE ARTICLE</p>
+          <p class="eyebrow">ภาพรวม</p>
           ${entry.kicker ? '<div class="article-kicker">' + esc(entry.kicker) + '</div>' : ''}
           <h2>${esc(entry.title)}</h2>
-          ${badgesHtml(entry)}
         </div>
         ${authorMode ? '<button class="button secondary" data-edit-entry="' + esc(entry.id) + '" type="button">แก้ไข</button>' : ''}
       </div>
       <p class="article-summary">${esc(entry.summary || "")}</p>
-      <div class="prose">${esc(entry.details || "—")}</div>
-      ${entry.publicKnowledge ? '<div class="public-knowledge"><h3>สิ่งที่คนในโลกรับรู้</h3><p>' + esc(entry.publicKnowledge) + '</p></div>' : ''}
-      ${authorMode ? authorContextHtml(entry) : ''}
+      <details class="reader-details article-details">
+        <summary><span>อ่านรายละเอียดเต็ม</span><span class="details-hint">เปิดอ่าน</span></summary>
+        <div class="details-body">
+          <div class="prose">${esc(entry.details || "—")}</div>
+          ${entry.publicKnowledge ? '<div class="public-knowledge"><h3>สิ่งที่คนในโลกรับรู้</h3><p>' + esc(entry.publicKnowledge) + '</p></div>' : ''}
+          ${authorMode ? authorContextHtml(entry) : ''}
+        </div>
+      </details>
     </article>`;
   }
 
