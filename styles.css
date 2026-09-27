@@ -2420,34 +2420,87 @@ body{overflow-x:hidden}
 .novel-glossary-popover{
   position:fixed;
   z-index:1000;
-  padding:17px 18px 15px;
-  border:1px solid #d9d2c3;
-  border-radius:14px;
-  background:#fffdf8;
-  color:#292721;
-  box-shadow:0 18px 55px rgba(0,0,0,.25);
+  padding:24px 26px 22px;
+  border:1px solid rgba(132,106,55,.26);
+  border-radius:20px;
+  background:
+    linear-gradient(180deg,rgba(132,106,55,.055),transparent 42%),
+    #fffdf8;
+  color:#27251f;
+  box-shadow:0 24px 70px rgba(0,0,0,.24),0 2px 10px rgba(72,56,25,.08);
   font-family:var(--sans);
+}
+.novel-glossary-popover::before{
+  content:"";
+  position:absolute;
+  left:24px;right:24px;top:0;
+  height:2px;
+  border-radius:0 0 999px 999px;
+  background:linear-gradient(90deg,transparent,#b9954b 18%,#b9954b 82%,transparent);
+  opacity:.7;
 }
 .novel-glossary-popover .popover-close{
   position:absolute;
-  top:7px;right:8px;
-  width:28px;height:28px;
-  border:0;border-radius:8px;
-  background:transparent;color:#7a756a;
+  top:12px;right:12px;
+  width:34px;height:34px;
+  display:grid;place-items:center;
+  border:1px solid transparent;
+  border-radius:10px;
+  background:transparent;
+  color:#81796c;
+  font-size:20px;
+  line-height:1;
+}
+.novel-glossary-popover .popover-close:hover{
+  border-color:#e3ddd1;
+  background:#f7f2e8;
+  color:#3c382f;
 }
 .novel-glossary-popover .popover-label{
   display:block;
-  padding-right:25px;
-  color:#9a814a;
-  font-size:8px;
+  padding-right:38px;
+  color:#967638;
+  font-size:10px;
   font-weight:800;
-  letter-spacing:.13em;
+  letter-spacing:.14em;
   text-transform:uppercase;
 }
-.novel-glossary-popover strong{display:block;margin-top:4px;font-family:var(--novel-serif);font-size:18px}
-.novel-glossary-popover p{margin:6px 0 11px;color:#676157;font-size:11px;line-height:1.65}
+.novel-glossary-popover strong{
+  display:block;
+  margin-top:7px;
+  padding-right:40px;
+  font-family:var(--novel-serif);
+  font-size:24px;
+  font-weight:600;
+  line-height:1.35;
+  color:#26231d;
+}
+.novel-glossary-popover p{
+  margin:12px 0 18px;
+  color:#5f594f;
+  font-size:14px;
+  line-height:1.82;
+  text-wrap:pretty;
+}
 .popover-wiki-link{
-  border:0;padding:0;background:transparent;color:#80652f;font-size:10px;font-weight:700;
+  width:100%;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:1px solid #ddd3bf;
+  border-radius:11px;
+  padding:0 13px;
+  background:#faf6ed;
+  color:#745a29;
+  font-size:12px;
+  font-weight:700;
+  text-align:left;
+}
+.popover-wiki-link:hover{
+  border-color:#cbb78e;
+  background:#f5eddc;
 }
 .chapter-bottom-nav{
   max-width:900px;
@@ -2563,9 +2616,18 @@ body{overflow-x:hidden}
     font-size:11px;
   }
   .novel-glossary-popover{
-    left:12px!important;right:12px!important;width:auto!important;
+    left:12px!important;
+    right:12px!important;
+    width:auto!important;
     top:auto!important;
-    bottom:max(72px,calc(env(safe-area-inset-bottom) + 68px));
+    bottom:max(74px,calc(env(safe-area-inset-bottom) + 70px));
+    padding:22px 22px 20px;
+    border-radius:18px;
+    max-height:min(56vh,460px);
+    overflow:auto;
   }
+  .novel-glossary-popover strong{font-size:22px}
+  .novel-glossary-popover p{font-size:14.5px;line-height:1.8}
+  .popover-wiki-link{font-size:12.5px;min-height:44px}
   .novel-heading{align-items:center}
 }
