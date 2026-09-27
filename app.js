@@ -9,44 +9,23 @@
     rawDataUrl: "https://raw.githubusercontent.com/sanaisawan63x2/CaeLum/main/data/world.json"
   };
 
-  const NAV_GROUPS = [
-    { id: "core", label: "แกนของโลก" },
-    { id: "institutions", label: "สถาบันและผู้คน" },
-    { id: "lived", label: "โลกที่ใช้ชีวิต" },
-    { id: "danger", label: "ภัยและเนื้อเรื่อง" },
-    { id: "other", label: "อื่น ๆ" }
-  ];
-
-  let db = { schemaVersion: 3, version: 1, project: {}, sections: [], entries: [] };
+  let db = { schemaVersion:4, version:1, project:{}, novel:{chapters:[]}, sections:[], entries:[] };
   let authorMode = false;
   let adminToken = sessionStorage.getItem("caelum_admin_token") || "";
   let remoteSha = "";
   let editingEntryId = null;
   let editingSectionId = null;
+  let editingChapterId = null;
   let searchQuery = "";
-  let lastNavRouteKey = "";
+  let readingScrollHandler = null;
+  let glossaryPopover = null;
   let expandedNav = new Set();
-  let readerHistory = [];
-  try {
-    readerHistory = JSON.parse(sessionStorage.getItem("caelum_reader_history") || "[]");
-    if (!Array.isArray(readerHistory)) readerHistory = [];
-  } catch {
-    readerHistory = [];
-  }
+
   try {
     expandedNav = new Set(JSON.parse(localStorage.getItem("caelum_nav_open") || "[]"));
   } catch {
     expandedNav = new Set();
   }
-
-  function saveExpandedNav() {
-    localStorage.setItem("caelum_nav_open", JSON.stringify([...expandedNav]));
-  }
-
-  function saveReaderHistory() {
-    sessionStorage.setItem("caelum_reader_history", JSON.stringify(readerHistory.slice(-40)));
-  }
-
 
   const $ = id => document.getElementById(id);
   const content = $("content");
@@ -57,145 +36,45 @@
   const editorModal = $("editorModal");
   const sectionModal = $("sectionModal");
 
-  function esc(value = "") {
-    return String(value).replace(/[&<>"']/g, ch => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
     })[ch]);
-  }
-
-  function glossaryEntries() {
-    return visibleEntries().filter(entry => entry.sectionId === "glossary");
-  }
-
-  function glossaryLinkedHtml(value = "", currentEntryId = "") {
-    const raw = String(value || "");
-    const lower = raw.toLocaleLowerCase("en");
-    const candidates = [];
-
-    for (const entry of glossaryEntries()) {
-      if (entry.id === currentEntryId) continue;
-      const aliases = Array.isArray(entry.glossaryTerms) && entry.glossaryTerms.length
-        ? entry.glossaryTerms
-        : [entry.title];
-      let best = null;
-      for (const aliasValue of aliases) {
-        const alias = String(aliasValue || "").trim();
-        if (!alias) continue;
-        const index = lower.indexOf(alias.toLocaleLowerCase("en"));
-        if (index < 0) continue;
-        if (!best || index < best.index || (index === best.index && alias.length > best.length)) {
-          best = { index, length: alias.length, entryId: entry.id };
-        }
-      }
-      if (best) candidates.push(best);
-    }
-
-    candidates.sort((a,b) => a.index - b.index || b.length - a.length);
-    const chosen = [];
-    let end = -1;
-    for (const match of candidates) {
-      if (match.index < end) continue;
-      chosen.push(match);
-      end = match.index + match.length;
-    }
-
-    if (!chosen.length) return esc(raw).replace(/\n/g, "<br>");
-
-    let html = "";
-    let cursor = 0;
-    for (const match of chosen) {
-      html += esc(raw.slice(cursor, match.index)).replace(/\n/g, "<br>");
-      const label = raw.slice(match.index, match.index + match.length);
-      html += '<button class="glossary-term" data-glossary-entry="' + esc(match.entryId) + '" type="button" title="ดูความหมาย">' + esc(label) + '</button>';
-      cursor = match.index + match.length;
-    }
-    html += esc(raw.slice(cursor)).replace(/\n/g, "<br>");
-    return html;
-  }
-
-  function proseHtml(value = "", currentEntryId = "") {
-    const normalized = String(value || "")
-      .replace(/\\r\\n|\\n|\\r/g, "\n");
-    return normalized
-      .split(/\n\s*\n/)
-      .map(block => block.trim())
-      .filter(Boolean)
-      .map(block => '<p>' + glossaryLinkedHtml(block, currentEntryId) + '</p>')
-      .join("");
-  }
-
-  function bindGlossaryTerms() {
-    content.querySelectorAll("[data-glossary-entry]").forEach(btn => {
-      btn.addEventListener("click", () => navigate("entry", btn.dataset.glossaryEntry));
-    });
-  }
-
-  function readerMetaHtml(entry) {
-    if (!authorMode) return "";
-    return '<div class="reader-meta">' +
-      '<span>' + esc(statusLabel(entry.status)) + '</span>' +
-      (entry.visibility === "author-only" ? '<span>Author Only</span>' : '<span>Public</span>') +
-      '</div>';
   }
 
   function uid(prefix) {
     return prefix + "-" + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2));
   }
 
-  function toast(message, type = "") {
-    const node = document.createElement("div");
-    node.className = "toast " + type;
-    node.textContent = message;
-    $("toastStack").appendChild(node);
-    setTimeout(() => node.remove(), 3600);
-  }
-
-  function setBusy(button, busy, label = "กำลังทำงาน…") {
-    if (!button) return;
-    if (busy) {
-      button.dataset.label = button.textContent;
-      button.textContent = label;
-      button.disabled = true;
-    } else {
-      button.textContent = button.dataset.label || button.textContent;
-      button.disabled = false;
-    }
-  }
-
   function normalizeDb(value) {
     const safe = value && typeof value === "object" ? value : {};
     safe.project = safe.project || {};
     safe.project.assets = safe.project.assets || {};
+    safe.novel = safe.novel && typeof safe.novel === "object" ? safe.novel : {};
+    safe.novel.chapters = Array.isArray(safe.novel.chapters) ? safe.novel.chapters : [];
     safe.sections = Array.isArray(safe.sections) ? safe.sections : [];
     safe.entries = Array.isArray(safe.entries) ? safe.entries : [];
-    safe.schemaVersion = safe.schemaVersion || 3;
+    safe.schemaVersion = safe.schemaVersion || 4;
+    safe.version = Number(safe.version || 1);
     return safe;
   }
 
-  function sectionById(id) {
-    return db.sections.find(s => s.id === id) || null;
-  }
-
-  function entryById(id) {
-    return db.entries.find(e => e.id === id) || null;
-  }
-
-  function isVisible(item) {
-    return authorMode || item.visibility !== "author-only";
-  }
-
-  function visibleSections() {
-    return db.sections.filter(isVisible);
-  }
-
-  function visibleEntries() {
-    return db.entries.filter(isVisible);
+  function sectionById(id) { return db.sections.find(x => x.id === id) || null; }
+  function entryById(id) { return db.entries.find(x => x.id === id) || null; }
+  function chapterById(id) { return (db.novel.chapters || []).find(x => x.id === id) || null; }
+  function isVisible(item) { return authorMode || item.visibility !== "author-only"; }
+  function visibleSections() { return db.sections.filter(isVisible); }
+  function visibleEntries() { return db.entries.filter(isVisible); }
+  function visibleChapters() {
+    return (db.novel.chapters || [])
+      .filter(ch => authorMode || (ch.visibility !== "author-only" && ch.status === "published"))
+      .sort((a,b) => (Number(a.number)||0) - (Number(b.number)||0));
   }
 
   function childrenOf(parentId) {
     return visibleSections()
       .filter(s => (s.parentId || null) === (parentId || null))
-      .sort((a,b) => (Number(a.sort)||0) - (Number(b.sort)||0) || a.name.localeCompare(b.name, "th"));
+      .sort((a,b) => (Number(a.sort)||0) - (Number(b.sort)||0) || String(a.name).localeCompare(String(b.name),"th"));
   }
 
   function rootOf(sectionId) {
@@ -206,10 +85,6 @@
       current = sectionById(current.parentId);
     }
     return current;
-  }
-
-  function sectionGroupId(sectionId) {
-    return rootOf(sectionId)?.group || "other";
   }
 
   function descendantSectionIds(sectionId) {
@@ -227,14 +102,12 @@
     return ids;
   }
 
-  function entriesIn(sectionId, deep = false) {
+  function entriesIn(sectionId, deep) {
     const ids = deep ? descendantSectionIds(sectionId) : new Set([sectionId]);
     return visibleEntries().filter(e => ids.has(e.sectionId));
   }
 
-  function countUnder(sectionId) {
-    return entriesIn(sectionId, true).length;
-  }
+  function countUnder(sectionId) { return entriesIn(sectionId,true).length; }
 
   function ancestorChain(sectionId) {
     const chain = [];
@@ -249,104 +122,563 @@
   }
 
   function assetFor(sectionOrKey) {
-    const key = typeof sectionOrKey === "string"
-      ? (sectionById(sectionOrKey)?.imageKey || sectionOrKey)
-      : sectionOrKey?.imageKey;
-    return db.project.assets?.[key] || db.project.assets?.bangkokNight || {};
+    let key = "";
+    if (typeof sectionOrKey === "string") {
+      const section = sectionById(sectionOrKey);
+      key = section ? section.imageKey : sectionOrKey;
+    } else if (sectionOrKey) key = sectionOrKey.imageKey;
+    return db.project.assets[key] || db.project.assets.bangkokNight || {};
   }
 
   function styleBg(url) {
-    return url ? "background-image:url('" + esc(url) + "')" : "";
+    return url ? "background-image:url('" + String(url).replace(/'/g,"%27") + "')" : "";
   }
 
-  function statusLabel(status) {
-    return status === "canon" ? "Canon" : status === "idea" ? "Idea" : "Draft";
+  function toast(message,type) {
+    const node = document.createElement("div");
+    node.className = "toast " + (type || "");
+    node.textContent = message;
+    $("toastStack").appendChild(node);
+    setTimeout(() => node.remove(),3600);
   }
 
-  function route() {
-    const raw = location.hash.replace(/^#/, "");
-    if (!raw || raw === "home") return { type: "home" };
-    if (raw === "all") return { type: "all" };
-    const [type, ...rest] = raw.split("/");
-    const id = decodeURIComponent(rest.join("/"));
-    if (type === "section" && sectionById(id)) return { type, id };
-    if (type === "entry" && entryById(id)) return { type, id };
-    return { type: "home" };
-  }
-
-  function navigate(type, id = "") {
-    const next = type === "home" ? "#home" :
-      type === "all" ? "#all" :
-      "#" + type + "/" + encodeURIComponent(id);
-    const current = location.hash || "#home";
-    if (current !== next) {
-      if (readerHistory[readerHistory.length - 1] !== current) {
-        readerHistory.push(current);
-        saveReaderHistory();
-      }
-      location.hash = next;
+  function setBusy(button,busy,label) {
+    if (!button) return;
+    if (busy) {
+      button.dataset.oldLabel = button.textContent;
+      button.textContent = label || "กำลังทำงาน…";
+      button.disabled = true;
     } else {
-      renderAll();
+      button.textContent = button.dataset.oldLabel || button.textContent;
+      button.disabled = false;
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function readerBackHtml(fallback = "home") {
-    return '<div class="reader-back-row"><button class="reader-back" data-reader-back="' + esc(fallback) + '" type="button">← ย้อนกลับ</button></div>';
-  }
-
-  function goReaderBack(fallback = "home") {
-    const current = location.hash || "#home";
-    let target = "";
-    while (readerHistory.length) {
-      const candidate = readerHistory.pop();
-      if (candidate && candidate !== current) {
-        target = candidate;
-        break;
-      }
-    }
-    saveReaderHistory();
-
-    if (!target) {
-      if (fallback === "home") target = "#home";
-      else {
-        const split = fallback.indexOf(":");
-        const type = split >= 0 ? fallback.slice(0, split) : "home";
-        const id = split >= 0 ? fallback.slice(split + 1) : "";
-        target = type === "home" ? "#home" : "#" + type + "/" + encodeURIComponent(id);
-      }
-    }
-
-    if (location.hash === target) renderAll();
-    else location.hash = target;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function bindReaderBack() {
-    content.querySelectorAll("[data-reader-back]").forEach(btn => {
-      btn.addEventListener("click", () => goReaderBack(btn.dataset.readerBack || "home"));
-    });
-  }
-
-  async function loadPublicData() {
-    const response = await fetch(CONFIG.rawDataUrl + "?v=" + Date.now(), { cache: "no-store" });
-    if (!response.ok) throw new Error("โหลดข้อมูล CaeLum ไม่สำเร็จ");
-    db = normalizeDb(await response.json());
-    updateVersion();
   }
 
   function updateVersion() {
     $("versionLabel").textContent = "Archive v" + (db.version || 1);
   }
 
-  async function reloadData() {
-    try {
-      if (authorMode && adminToken) await loadLatestFromGitHub();
-      else await loadPublicData();
-      renderAll();
-    } catch (error) {
-      toast(error.message || "โหลดข้อมูลไม่สำเร็จ", "error");
+  function updateTopbar(label) {
+    $("topbarContext").textContent = label || "Reader";
+  }
+
+  function route() {
+    const raw = location.hash.replace(/^#/,"");
+    if (!raw || raw === "home") return {type:"home"};
+    if (raw === "novel") return {type:"novel"};
+    if (raw === "all") return {type:"all"};
+    const parts = raw.split("/");
+    const type = parts.shift();
+    const id = decodeURIComponent(parts.join("/"));
+    if (type === "chapter" && chapterById(id)) return {type:type,id:id};
+    if (type === "section" && sectionById(id)) return {type:type,id:id};
+    if (type === "entry" && entryById(id)) return {type:type,id:id};
+    return {type:"home"};
+  }
+
+  function navigate(type,id) {
+    closeGlossaryPopover();
+    if (readingScrollHandler) {
+      window.removeEventListener("scroll",readingScrollHandler);
+      readingScrollHandler = null;
     }
+    let next = "#home";
+    if (type === "novel") next = "#novel";
+    else if (type === "all") next = "#all";
+    else if (id) next = "#" + type + "/" + encodeURIComponent(id);
+    if (location.hash === next) renderAll();
+    else location.hash = next;
+    document.body.classList.remove("nav-open");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function navSimple(type,icon,label,active) {
+    return '<div class="nav-node-row"><button class="nav-toggle placeholder" tabindex="-1">+</button>' +
+      '<button class="nav-btn' + (active ? ' active' : '') + '" data-nav-go="' + esc(type) + '">' +
+      '<span class="nav-icon">' + esc(icon) + '</span><span class="nav-label">' + esc(label) + '</span></button></div>';
+  }
+
+  function navSectionNode(section,activeSection,depth) {
+    const kids = childrenOf(section.id);
+    const active = activeSection === section.id;
+    const open = expandedNav.has(section.id);
+    let html = '<div class="nav-node"><div class="nav-node-row">';
+    if (kids.length) html += '<button class="nav-toggle' + (open ? ' open' : '') + '" data-nav-toggle="' + esc(section.id) + '" type="button">' + (open ? '−' : '+') + '</button>';
+    else html += '<button class="nav-toggle placeholder" tabindex="-1">+</button>';
+    html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? ' active' : '') + '" data-section-go="' + esc(section.id) + '">' +
+      '<span class="nav-icon">' + esc(section.icon || "·") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span><span class="nav-count">' + countUnder(section.id) + '</span></button></div>';
+    if (kids.length && open) html += '<div class="nav-children">' + kids.map(k => navSectionNode(k,activeSection,depth+1)).join("") + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderNav() {
+    const r = route();
+    const activeSection = r.type === "section" ? r.id : r.type === "entry" ? (entryById(r.id) || {}).sectionId : null;
+    if (activeSection) ancestorChain(activeSection).forEach(s => expandedNav.add(s.id));
+    localStorage.setItem("caelum_nav_open",JSON.stringify(Array.from(expandedNav)));
+
+    let html = '<div class="nav-tree">';
+    html += navSimple("home","⌂","หน้าหลัก",r.type === "home");
+    html += navSimple("novel","◫","อ่านนิยาย",r.type === "novel" || r.type === "chapter");
+
+    if (r.type === "novel" || r.type === "chapter") {
+      const chapterRows = visibleChapters().map(ch =>
+        '<button class="nav-chapter-link' + (r.type === "chapter" && r.id === ch.id ? ' active' : '') + '" data-chapter-go="' + esc(ch.id) + '">' +
+        '<span>ตอน ' + esc(ch.number) + '</span><b>' + esc(ch.title) + '</b></button>'
+      ).join("");
+      if (chapterRows) html += '<div class="nav-novel-chapters">' + chapterRows + '</div>';
+    }
+
+    html += navSimple("all","☰","สารบัญวิกิ",r.type === "all");
+    html += '<div class="nav-main-label">WORLD ARCHIVE</div>';
+    childrenOf(null).forEach(root => { html += navSectionNode(root,activeSection,0); });
+    html += '</div>';
+    categoryNav.innerHTML = html;
+
+    categoryNav.querySelectorAll("[data-nav-go]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.navGo)));
+    categoryNav.querySelectorAll("[data-chapter-go]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterGo)));
+    categoryNav.querySelectorAll("[data-section-go]").forEach(btn => btn.addEventListener("click",() => navigate("section",btn.dataset.sectionGo)));
+    categoryNav.querySelectorAll("[data-nav-toggle]").forEach(btn => btn.addEventListener("click",e => {
+      e.stopPropagation();
+      const id = btn.dataset.navToggle;
+      if (expandedNav.has(id)) expandedNav.delete(id); else expandedNav.add(id);
+      localStorage.setItem("caelum_nav_open",JSON.stringify(Array.from(expandedNav)));
+      renderNav();
+    }));
+  }
+
+  function authorStripHtml(sectionId) {
+    if (!authorMode) return "";
+    return '<div class="author-strip"><div class="author-strip-copy"><strong>Author Mode</strong><span>แก้ไขได้เฉพาะบัญชีเจ้าของ CaeLum และบันทึกลง GitHub โดยตรง</span></div>' +
+      '<div class="author-tools"><button class="button secondary" data-author-action="chapter" type="button">+ ตอนนิยาย</button>' +
+      '<button class="button secondary" data-author-action="section" data-section="' + esc(sectionId || "") + '" type="button">+ หมวด</button>' +
+      '<button class="button primary" data-author-action="entry" data-section="' + esc(sectionId || "") + '" type="button">+ ข้อมูล</button>' +
+      '<button class="button ghost" data-author-action="export" type="button">Export JSON</button><button class="button ghost" data-author-action="logout" type="button">ออกจากโหมด</button></div></div>';
+  }
+
+  function bindAuthorStrip() {
+    content.querySelectorAll("[data-author-action]").forEach(btn => btn.addEventListener("click",() => {
+      const action = btn.dataset.authorAction;
+      if (action === "chapter") openChapterEditor(null);
+      if (action === "section") openSectionEditor(null,btn.dataset.section || null);
+      if (action === "entry") openEntryEditor(null,btn.dataset.section || null);
+      if (action === "export") exportBackup();
+      if (action === "logout") logoutAuthor();
+    }));
+  }
+
+  function novelHomeSpotlightHtml() {
+    const chapters = visibleChapters();
+    if (!chapters.length) return "";
+    const lastId = localStorage.getItem("caelum_last_chapter");
+    const last = chapters.find(ch => ch.id === lastId) || chapters[0];
+    const p = readProgressMap()[last.id] || 0;
+    const buttonLabel = p > .05 && p < .96 ? "อ่านต่อ " + Math.round(p*100) + "%" : "เริ่มอ่านนิยาย";
+    return '<section class="novel-spotlight"><div class="novel-spotlight-copy"><span class="novel-label">CAE LUM NOVEL</span><h2>' + esc(db.novel.title || "CaeLum") + '</h2>' +
+      '<p>' + esc(db.novel.description || "") + '</p><div class="novel-spotlight-actions"><button class="button novel-primary" data-home-chapter="' + esc(last.id) + '" type="button">' + esc(buttonLabel) + '</button>' +
+      '<button class="button novel-secondary" data-home-novel type="button">ดูสารบัญนิยาย</button></div></div>' +
+      '<div class="novel-spotlight-meta"><span>ตอนที่เปิดอ่าน</span><strong>' + chapters.length + '</strong><small>ตอนล่าสุด · ' + esc(chapters[chapters.length-1].title) + '</small></div></section>';
+  }
+
+  function bindHomeNovelSpotlight() {
+    const a = content.querySelector("[data-home-chapter]");
+    const b = content.querySelector("[data-home-novel]");
+    if (a) a.addEventListener("click",() => navigate("chapter",a.dataset.homeChapter));
+    if (b) b.addEventListener("click",() => navigate("novel"));
+  }
+
+  function sectionCardHtml(section) {
+    const asset = assetFor(section);
+    return '<article class="topic-card" data-section-card="' + esc(section.id) + '"><div class="topic-card-image" style="' + styleBg(asset.url) + '"></div><div class="topic-card-copy"><span>' + esc(section.icon || "·") + '</span><h3>' + esc(section.readerLabel || section.name) + '</h3><p>' + esc(section.description || "") + '</p><small>' + countUnder(section.id) + ' รายการ</small></div></article>';
+  }
+
+  function entryCardHtml(entry) {
+    return '<article class="entry-card" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(entry.title) + '</h3><p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
+  }
+
+  function renderHome() {
+    const hero = db.project.assets.bangkokNight || {};
+    const starts = ["overview","locations","magic","caelum"].map(sectionById).filter(Boolean).filter(isVisible);
+    content.innerHTML =
+      '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · NOVEL & WORLD ARCHIVE</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
+      authorStripHtml() + novelHomeSpotlightHtml() +
+      '<div class="section-heading"><div><h2>World Archive</h2><p>เปิดดูข้อมูลของโลกตามหัวข้อที่สนใจ โดยไม่ต้องอ่านตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">สารบัญทั้งหมด</button></div>' +
+      '<section class="path-grid">' + starts.map(sectionCardHtml).join("") + '</section>';
+    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    const all = content.querySelector("[data-open-wiki]");
+    if (all) all.addEventListener("click",() => navigate("all"));
+    bindAuthorStrip();
+    bindHomeNovelSpotlight();
+    updateTopbar("หน้าหลัก");
+  }
+
+  function readProgressMap() {
+    try {
+      const obj = JSON.parse(localStorage.getItem("caelum_chapter_progress") || "{}");
+      return obj && typeof obj === "object" ? obj : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeChapterProgress(id,ratio) {
+    const map = readProgressMap();
+    map[id] = Math.max(0,Math.min(1,Number(ratio)||0));
+    localStorage.setItem("caelum_chapter_progress",JSON.stringify(map));
+    localStorage.setItem("caelum_last_chapter",id);
+  }
+
+  function getReadingPrefs() {
+    try {
+      const x = JSON.parse(localStorage.getItem("caelum_reading_prefs") || "{}");
+      return {
+        size:Math.max(16,Math.min(25,Number(x.size)||19)),
+        line:[1.72,1.86,2].includes(Number(x.line)) ? Number(x.line) : 1.86,
+        theme:["paper","sepia","night"].includes(x.theme) ? x.theme : "paper",
+        width:x.width === "wide" ? "wide" : "normal"
+      };
+    } catch {
+      return {size:19,line:1.86,theme:"paper",width:"normal"};
+    }
+  }
+
+  function setReadingPrefs(p) {
+    localStorage.setItem("caelum_reading_prefs",JSON.stringify(p));
+    const reader = content.querySelector(".novel-reader");
+    if (!reader) return;
+    reader.style.setProperty("--novel-font-size",p.size + "px");
+    reader.style.setProperty("--novel-line-height",p.line);
+    reader.dataset.theme = p.theme;
+    reader.classList.toggle("novel-wide",p.width === "wide");
+    const t = reader.querySelector("[data-reader-theme]");
+    if (t) t.textContent = p.theme === "paper" ? "กระดาษ" : p.theme === "sepia" ? "ซีเปีย" : "กลางคืน";
+    const w = reader.querySelector("[data-reader-width]");
+    if (w) w.textContent = p.width === "wide" ? "แคบ" : "กว้าง";
+  }
+
+  function estimateReadMinutes(body) {
+    return Math.max(1,Math.ceil(String(body || "").replace(/\s+/g,"").length/650));
+  }
+
+  function glossaryEntries() {
+    return visibleEntries().filter(e => e.sectionId === "glossary");
+  }
+
+  function glossaryLinkedNovelText(raw,used) {
+    const source = String(raw || "");
+    const lower = source.toLocaleLowerCase("en");
+    const candidates = [];
+    glossaryEntries().forEach(entry => {
+      if (used.has(entry.id)) return;
+      const aliases = Array.isArray(entry.glossaryTerms) && entry.glossaryTerms.length ? entry.glossaryTerms : [entry.title];
+      let best = null;
+      aliases.forEach(v => {
+        const alias = String(v || "").trim();
+        if (!alias) return;
+        const index = lower.indexOf(alias.toLocaleLowerCase("en"));
+        if (index < 0) return;
+        if (!best || index < best.index || (index === best.index && alias.length > best.length)) best = {index:index,length:alias.length,entryId:entry.id};
+      });
+      if (best) candidates.push(best);
+    });
+    candidates.sort((a,b) => a.index-b.index || b.length-a.length);
+    const chosen = [];
+    let end = -1;
+    candidates.forEach(m => {
+      if (m.index < end) return;
+      chosen.push(m);
+      end = m.index + m.length;
+      used.add(m.entryId);
+    });
+    if (!chosen.length) return esc(source);
+    let out = "", cursor = 0;
+    chosen.forEach(m => {
+      out += esc(source.slice(cursor,m.index));
+      const label = source.slice(m.index,m.index+m.length);
+      out += '<button class="novel-glossary-term" data-novel-glossary="' + esc(m.entryId) + '" type="button">' + esc(label) + '</button>';
+      cursor = m.index + m.length;
+    });
+    out += esc(source.slice(cursor));
+    return out;
+  }
+
+  function novelProseHtml(body) {
+    const used = new Set();
+    return String(body || "").replace(/\r\n|\r/g,"\n").split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(block => {
+      if (block === "---") return '<div class="novel-scene-break" aria-hidden="true">◆</div>';
+      return '<p>' + glossaryLinkedNovelText(block,used).replace(/\n/g,"<br>") + '</p>';
+    }).join("");
+  }
+
+  function closeGlossaryPopover() {
+    if (glossaryPopover) glossaryPopover.remove();
+    glossaryPopover = null;
+  }
+
+  function showGlossaryPopover(button,entry) {
+    closeGlossaryPopover();
+    const pop = document.createElement("div");
+    pop.className = "novel-glossary-popover";
+    pop.innerHTML = '<button class="popover-close" type="button">×</button><span class="popover-label">คำศัพท์จาก World Archive</span><strong>' + esc(entry.title) + '</strong><p>' + esc(entry.summary || entry.details || "") + '</p><button class="popover-wiki-link" type="button">อ่านรายละเอียดในวิกิ →</button>';
+    document.body.appendChild(pop);
+    glossaryPopover = pop;
+    const rect = button.getBoundingClientRect();
+    const width = Math.min(330,window.innerWidth-24);
+    pop.style.width = width + "px";
+    pop.style.left = Math.min(window.innerWidth-width-12,Math.max(12,rect.left+rect.width/2-width/2)) + "px";
+    let top = rect.bottom + 10;
+    if (top + 230 > window.innerHeight) top = Math.max(12,rect.top-230);
+    pop.style.top = top + "px";
+    pop.querySelector(".popover-close").addEventListener("click",closeGlossaryPopover);
+    pop.querySelector(".popover-wiki-link").addEventListener("click",() => { closeGlossaryPopover(); navigate("entry",entry.id); });
+  }
+
+  function bindNovelGlossary() {
+    content.querySelectorAll("[data-novel-glossary]").forEach(btn => btn.addEventListener("click",e => {
+      e.stopPropagation();
+      const entry = entryById(btn.dataset.novelGlossary);
+      if (entry) showGlossaryPopover(btn,entry);
+    }));
+  }
+
+  function renderNovelHome() {
+    const chapters = visibleChapters();
+    const cover = db.project.assets[db.novel.coverAssetKey] || db.project.assets.gothicCampus || {};
+    const lastId = localStorage.getItem("caelum_last_chapter");
+    const progress = readProgressMap();
+    content.innerHTML =
+      '<section class="novel-library-hero"><div class="novel-library-cover" style="' + styleBg(cover.url) + '"></div><div class="novel-library-hero-copy"><span class="novel-label">NOVEL</span><h1>' + esc(db.novel.title || "CaeLum") + '</h1><p>' + esc(db.novel.description || "") + '</p>' +
+      (chapters.length ? '<button class="button novel-primary" data-open-first type="button">' + (lastId && chapterById(lastId) ? 'อ่านต่อ' : 'เริ่มอ่าน') + '</button>' : '') + '</div></section>' +
+      authorStripHtml() +
+      '<div class="reader-heading novel-heading"><div><h2>สารบัญนิยาย</h2><p>' + chapters.length + ' ตอนที่เปิดให้อ่าน</p></div>' + (authorMode ? '<button class="button primary" data-add-chapter type="button">+ เพิ่มตอน</button>' : '') + '</div>' +
+      '<section class="chapter-list">' + (chapters.length ? chapters.map(ch => {
+        const p = progress[ch.id] || 0;
+        return '<article class="chapter-card" data-open-chapter="' + esc(ch.id) + '"><div class="chapter-no">ตอน ' + esc(ch.number) + '</div><div class="chapter-card-copy"><h3>' + esc(ch.title) + '</h3>' +
+          (ch.subtitle ? '<span>' + esc(ch.subtitle) + '</span>' : '') + '<p>' + esc(ch.summary || "") + '</p><div class="chapter-card-meta"><span>≈ ' + estimateReadMinutes(ch.body) + ' นาที</span>' +
+          (p > .02 ? '<span>อ่านแล้ว ' + Math.round(p*100) + '%</span>' : '') + (authorMode ? '<span>' + esc(ch.status || "draft") + '</span>' : '') + '</div></div><span class="chapter-arrow">→</span></article>';
+      }).join("") : '<div class="empty-state">ยังไม่มีตอนที่เผยแพร่</div>') + '</section>';
+
+    const first = content.querySelector("[data-open-first]");
+    if (first) first.addEventListener("click",() => {
+      const target = chapters.find(ch => ch.id === lastId) || chapters[0];
+      if (target) navigate("chapter",target.id);
+    });
+    content.querySelectorAll("[data-open-chapter]").forEach(card => card.addEventListener("click",() => navigate("chapter",card.dataset.openChapter)));
+    const add = content.querySelector("[data-add-chapter]");
+    if (add) add.addEventListener("click",() => openChapterEditor(null));
+    bindAuthorStrip();
+    updateTopbar("นิยาย");
+  }
+
+  function chapterBottomNav(chapter,chapters) {
+    const i = chapters.findIndex(ch => ch.id === chapter.id);
+    const prev = i > 0 ? chapters[i-1] : null;
+    const next = i >= 0 && i < chapters.length-1 ? chapters[i+1] : null;
+    return '<nav class="chapter-bottom-nav">' +
+      (prev ? '<button class="chapter-nav-side prev" data-chapter-nav="' + esc(prev.id) + '" type="button"><small>← ตอนก่อนหน้า</small><b>' + esc(prev.title) + '</b></button>' : '<span></span>') +
+      '<button class="chapter-nav-toc" data-back-toc type="button">สารบัญ</button>' +
+      (next ? '<button class="chapter-nav-side next" data-chapter-nav="' + esc(next.id) + '" type="button"><small>ตอนถัดไป →</small><b>' + esc(next.title) + '</b></button>' : '<span></span>') + '</nav>';
+  }
+
+  function renderChapter(id) {
+    const chapter = chapterById(id);
+    if (!chapter || !(authorMode || (chapter.visibility !== "author-only" && chapter.status === "published"))) return navigate("novel");
+    const chapters = visibleChapters();
+    const prefs = getReadingPrefs();
+    const saved = readProgressMap()[id] || 0;
+    const index = chapters.findIndex(ch => ch.id === id);
+    const prev = index > 0 ? chapters[index-1] : null;
+    const next = index >= 0 && index < chapters.length-1 ? chapters[index+1] : null;
+    localStorage.setItem("caelum_last_chapter",id);
+
+    content.innerHTML =
+      '<div class="reading-progress-track"><span id="readingProgressBar"></span></div>' +
+      '<article class="novel-reader' + (prefs.width === "wide" ? ' novel-wide' : '') + '" data-theme="' + esc(prefs.theme) + '" style="--novel-font-size:' + prefs.size + 'px;--novel-line-height:' + prefs.line + '">' +
+      '<div class="novel-reader-toolbar"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
+      '<label class="chapter-select-wrap"><span>ตอน</span><select data-chapter-select>' + chapters.map(ch => '<option value="' + esc(ch.id) + '"' + (ch.id===id ? ' selected' : '') + '>' + esc(ch.number) + ' · ' + esc(ch.title) + '</option>').join("") + '</select></label>' +
+      '<div class="reader-tools-right"><button class="reader-tool compact" data-font-down type="button">A−</button><button class="reader-tool compact" data-font-up type="button">A+</button><button class="reader-tool" data-reader-line type="button">ระยะบรรทัด</button><button class="reader-tool" data-reader-width type="button">' + (prefs.width === "wide" ? 'แคบ' : 'กว้าง') + '</button><button class="reader-tool" data-reader-theme type="button">' + (prefs.theme === "paper" ? 'กระดาษ' : prefs.theme === "sepia" ? 'ซีเปีย' : 'กลางคืน') + '</button><button class="reader-tool" data-share-chapter type="button">แชร์</button></div></div>' +
+      '<header class="novel-chapter-head"><span class="novel-label">CAE LUM · CHAPTER ' + esc(chapter.number) + '</span><h1>' + esc(chapter.title) + '</h1>' +
+      (chapter.subtitle ? '<p class="chapter-subtitle">' + esc(chapter.subtitle) + '</p>' : '') + '<div class="chapter-reading-meta"><span>ประมาณ ' + estimateReadMinutes(chapter.body) + ' นาที</span><span>ตอน ' + (index+1) + ' จาก ' + chapters.length + '</span>' + (authorMode ? '<span>' + esc(chapter.status) + '</span>' : '') + '</div>' +
+      (saved > .06 && saved < .94 ? '<button class="resume-reading" data-resume-reading type="button">อ่านต่อจาก ' + Math.round(saved*100) + '% ↓</button>' : '') + '</header>' +
+      '<section class="novel-prose" id="novelProse">' + novelProseHtml(chapter.body) + '</section>' +
+      (authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-chapter type="button">แก้ไขตอนนี้</button></div>' : '') + chapterBottomNav(chapter,chapters) + '</article>' +
+      '<div class="mobile-chapter-nav">' + (prev ? '<button data-chapter-nav="' + esc(prev.id) + '" type="button">←</button>' : '<span></span>') + '<button data-back-toc type="button">ตอน ' + esc(chapter.number) + '</button>' + (next ? '<button data-chapter-nav="' + esc(next.id) + '" type="button">→</button>' : '<span></span>') + '</div>';
+
+    bindNovelGlossary();
+    content.querySelectorAll("[data-back-toc]").forEach(btn => btn.addEventListener("click",() => navigate("novel")));
+    content.querySelectorAll("[data-chapter-nav]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterNav)));
+    const chooser = content.querySelector("[data-chapter-select]");
+    if (chooser) chooser.addEventListener("change",e => navigate("chapter",e.target.value));
+    const edit = content.querySelector("[data-edit-chapter]");
+    if (edit) edit.addEventListener("click",() => openChapterEditor(id));
+
+    function changePrefs(fn) {
+      const p = getReadingPrefs();
+      fn(p);
+      setReadingPrefs(p);
+    }
+    content.querySelector("[data-font-down]").addEventListener("click",() => changePrefs(p => p.size=Math.max(16,p.size-1)));
+    content.querySelector("[data-font-up]").addEventListener("click",() => changePrefs(p => p.size=Math.min(25,p.size+1)));
+    content.querySelector("[data-reader-line]").addEventListener("click",() => changePrefs(p => p.line=p.line===1.72?1.86:p.line===1.86?2:1.72));
+    content.querySelector("[data-reader-width]").addEventListener("click",() => changePrefs(p => p.width=p.width==="wide"?"normal":"wide"));
+    content.querySelector("[data-reader-theme]").addEventListener("click",() => changePrefs(p => p.theme=p.theme==="paper"?"sepia":p.theme==="sepia"?"night":"paper"));
+    content.querySelector("[data-share-chapter]").addEventListener("click",async () => {
+      try {
+        const data={title:(db.novel.title||"CaeLum")+" — ตอน "+chapter.number,text:chapter.title,url:location.href};
+        if (navigator.share) await navigator.share(data);
+        else { await navigator.clipboard.writeText(location.href); toast("คัดลอกลิงก์ตอนแล้ว","success"); }
+      } catch {}
+    });
+
+    const prose = $("novelProse");
+    const resume = content.querySelector("[data-resume-reading]");
+    if (resume) resume.addEventListener("click",() => {
+      const max=Math.max(1,prose.offsetHeight-window.innerHeight*.55);
+      window.scrollTo({top:prose.offsetTop+saved*max,behavior:"smooth"});
+    });
+
+    const updateProgress = () => {
+      const start=prose.offsetTop-90;
+      const max=Math.max(1,prose.offsetHeight-window.innerHeight*.55);
+      const ratio=Math.max(0,Math.min(1,(window.scrollY-start)/max));
+      const bar=$("readingProgressBar");
+      if (bar) bar.style.width=(ratio*100).toFixed(1)+"%";
+      writeChapterProgress(id,ratio);
+    };
+    readingScrollHandler=updateProgress;
+    window.addEventListener("scroll",readingScrollHandler,{passive:true});
+    requestAnimationFrame(updateProgress);
+    updateTopbar("ตอน " + chapter.number + " · " + chapter.title);
+  }
+
+  function breadcrumbsHtml(sectionId) {
+    let html='<button data-crumb-home type="button">World Archive</button>';
+    ancestorChain(sectionId).forEach(s => {
+      html+='<span class="sep">/</span><button data-crumb-section="' + esc(s.id) + '" type="button">' + esc(s.readerLabel || s.name) + '</button>';
+    });
+    return html;
+  }
+
+  function bindBreadcrumbs() {
+    content.querySelectorAll("[data-crumb-home]").forEach(btn => btn.addEventListener("click",() => navigate("all")));
+    content.querySelectorAll("[data-crumb-section]").forEach(btn => btn.addEventListener("click",() => navigate("section",btn.dataset.crumbSection)));
+  }
+
+  function proseHtml(value,currentEntryId) {
+    const raw=String(value || "").replace(/\\r\\n|\\n|\\r/g,"\n");
+    return raw.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean).map(block => '<p>' + wikiGlossaryHtml(block,currentEntryId) + '</p>').join("");
+  }
+
+  function wikiGlossaryHtml(raw,currentEntryId) {
+    const lower=String(raw).toLocaleLowerCase("en");
+    let best=null;
+    glossaryEntries().forEach(entry => {
+      if (entry.id===currentEntryId) return;
+      const aliases=entry.glossaryTerms && entry.glossaryTerms.length ? entry.glossaryTerms : [entry.title];
+      aliases.forEach(v => {
+        const alias=String(v || "").trim();
+        const i=lower.indexOf(alias.toLocaleLowerCase("en"));
+        if (i>=0 && (!best || i<best.index || (i===best.index && alias.length>best.length))) best={index:i,length:alias.length,id:entry.id};
+      });
+    });
+    if (!best) return esc(raw).replace(/\n/g,"<br>");
+    return esc(raw.slice(0,best.index)) + '<button class="glossary-term" data-wiki-glossary="' + esc(best.id) + '" type="button">' + esc(raw.slice(best.index,best.index+best.length)) + '</button>' + esc(raw.slice(best.index+best.length)).replace(/\n/g,"<br>");
+  }
+
+  function renderSection(id) {
+    const section=sectionById(id);
+    if (!section || !isVisible(section)) return navigate("all");
+    const asset=assetFor(section);
+    const kids=childrenOf(id);
+    const entries=entriesIn(id,false).sort((a,b)=>String(a.title).localeCompare(String(b.title),"th"));
+    content.innerHTML =
+      '<section class="section-hero simple-section-hero"><div class="section-hero-bg" style="' + styleBg(asset.url) + '"></div><div class="section-hero-content"><div class="breadcrumbs">' + breadcrumbsHtml(id) + '</div><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p>' +
+      (authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') + '</div></section>' +
+      authorStripHtml(id) +
+      (kids.length ? '<div class="reader-heading"><div><h2>หัวข้อย่อย</h2><p>เลือกส่วนที่ต้องการอ่าน</p></div></div><section class="library-list">' + kids.map(sectionCardHtml).join("") + '</section>' : '') +
+      (entries.length ? '<div class="reader-heading"><div><h2>บทความในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
+      (!kids.length && !entries.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล</div>' : '');
+    bindBreadcrumbs();
+    bindAuthorStrip();
+    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
+    const edit=content.querySelector("[data-edit-section]");
+    if(edit) edit.addEventListener("click",() => openSectionEditor(id));
+    updateTopbar(section.readerLabel || section.name);
+  }
+
+  function relationTarget(value) {
+    return entryById(value) || visibleEntries().find(e => e.title===value) || sectionById(value) || visibleSections().find(s => s.name===value || s.readerLabel===value);
+  }
+
+  function renderEntry(id) {
+    const entry=entryById(id);
+    if(!entry || !isVisible(entry)) return navigate("all");
+    const section=sectionById(entry.sectionId);
+    const related=(entry.links || []).map(relationTarget).filter(Boolean);
+    content.innerHTML =
+      '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div>' + authorStripHtml(entry.sectionId) +
+      '<article class="reader-article"><header class="reader-article-head"><p class="reader-category">' + esc(section ? section.readerLabel || section.name : "CaeLum") + '</p>' +
+      (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
+      '<section class="reader-body">' + proseHtml(entry.details || "—",entry.id) + '</section>' +
+      (entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
+      (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
+      (authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes,entry.id) + '</div></section>' : '') +
+      (authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions,entry.id) + '</div></section>' : '') +
+      (related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(x => '<button data-related="' + esc(x.id) + '" data-related-type="' + (x.sectionId ? 'entry':'section') + '" type="button">' + esc(x.title || x.readerLabel || x.name) + '</button>').join("") + '</div></section>' : '') +
+      (authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-entry type="button">แก้ไขข้อมูลนี้</button></div>' : '') + '</article>';
+    bindBreadcrumbs();
+    bindAuthorStrip();
+    content.querySelectorAll("[data-wiki-glossary]").forEach(btn => btn.addEventListener("click",() => navigate("entry",btn.dataset.wikiGlossary)));
+    content.querySelectorAll("[data-related]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.relatedType,btn.dataset.related)));
+    const edit=content.querySelector("[data-edit-entry]");
+    if(edit) edit.addEventListener("click",() => openEntryEditor(id));
+    updateTopbar(entry.title);
+  }
+
+  function renderAllTopics() {
+    const sections=visibleSections();
+    const entries=visibleEntries();
+    content.innerHTML =
+      '<div class="search-head"><p class="eyebrow">WORLD ARCHIVE</p><h1>สารบัญวิกิทั้งหมด</h1><p>ค้นโลก CaeLum จากหมวดหลักไปจนถึงรายละเอียดเฉพาะเรื่อง</p></div>' +
+      authorStripHtml() + '<section class="topic-grid">' + sections.filter(s => !s.parentId).map(sectionCardHtml).join("") + '</section>' +
+      '<div class="reader-heading"><div><h2>บทความทั้งหมด</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>';
+    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
+    bindAuthorStrip();
+    updateTopbar("สารบัญวิกิ");
+  }
+
+  function renderSearch(query) {
+    const q=String(query).toLowerCase();
+    const chapters=visibleChapters().filter(ch => [ch.title,ch.subtitle,ch.summary,ch.body].join(" ").toLowerCase().includes(q));
+    const sections=visibleSections().filter(s => [s.name,s.readerLabel,s.description,s.importance].join(" ").toLowerCase().includes(q));
+    const entries=visibleEntries().filter(e => [e.title,e.kicker,e.summary,e.details,e.publicKnowledge].concat(authorMode?[e.storyUse,e.continuityNotes,e.openQuestions]:[]).concat(e.tags||[]).join(" ").toLowerCase().includes(q));
+    const items=[];
+    chapters.forEach(ch => items.push({type:"chapter",id:ch.id,title:"ตอน "+ch.number+" — "+ch.title,text:ch.summary}));
+    sections.forEach(s => items.push({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description}));
+    entries.forEach(e => items.push({type:"entry",id:e.id,title:e.title,text:e.summary}));
+    content.innerHTML='<div class="search-head"><p class="eyebrow">SEARCH</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและ World Archive</p></div><section class="search-results">' +
+      (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"บทความ") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
+    content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
+      searchQuery="";
+      syncSearchInputs("");
+      navigate(row.dataset.searchType,row.dataset.searchId);
+    }));
+    updateTopbar("ค้นหา");
+  }
+
+  function renderPage() {
+    if(searchQuery.trim()) return renderSearch(searchQuery.trim());
+    const r=route();
+    if(r.type==="home") return renderHome();
+    if(r.type==="novel") return renderNovelHome();
+    if(r.type==="chapter") return renderChapter(r.id);
+    if(r.type==="all") return renderAllTopics();
+    if(r.type==="section") return renderSection(r.id);
+    if(r.type==="entry") return renderEntry(r.id);
+    renderHome();
   }
 
   function renderAll() {
@@ -355,848 +687,343 @@
     setModeUi();
   }
 
-  function renderNav() {
-    const r = route();
-    const activeSection = r.type === "section" ? r.id : r.type === "entry" ? entryById(r.id)?.sectionId : null;
-
-    const routeKey = r.type + ":" + (r.id || "");
-    if (routeKey !== lastNavRouteKey && activeSection) {
-      for (const section of ancestorChain(activeSection)) expandedNav.add(section.id);
-      saveExpandedNav();
-    }
-    lastNavRouteKey = routeKey;
-
-    const roots = childrenOf(null);
-    let html = '<div class="nav-tree">';
-    html += navSimple("home", "⌂", "หน้าหลัก", r.type === "home");
-    html += navSimple("all", "☰", "สารบัญทั้งหมด", r.type === "all");
-    html += '<div class="nav-main-label">หมวดหลัก</div>';
-
-    for (const root of roots) html += navSectionNode(root, activeSection, 0);
-
-    html += "</div>";
-    categoryNav.innerHTML = html;
-
-    categoryNav.querySelectorAll("[data-go]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const [type, id] = btn.dataset.go.split(":");
-        navigate(type, id || "");
-      });
-    });
-
-    categoryNav.querySelectorAll("[data-nav-toggle]").forEach(btn => {
-      btn.addEventListener("click", event => {
-        event.stopPropagation();
-        const id = btn.dataset.navToggle;
-        if (expandedNav.has(id)) expandedNav.delete(id);
-        else expandedNav.add(id);
-        saveExpandedNav();
-        renderNav();
-      });
-    });
-  }
-
-  function navSimple(type, icon, label, active) {
-    return '<div class="nav-node-row"><button class="nav-toggle placeholder" tabindex="-1">›</button>' +
-      '<button class="nav-btn' + (active ? " active" : "") + '" data-go="' + type + ':">' +
-      '<span class="nav-icon">' + icon + '</span><span class="nav-label">' + esc(label) + '</span></button></div>';
-  }
-
-  function navSectionNode(section, activeSection, depth) {
-    const children = childrenOf(section.id);
-    const active = section.id === activeSection;
-    const open = expandedNav.has(section.id);
-    let html = '<div class="nav-node">';
-    html += '<div class="nav-node-row">';
-    if (children.length) {
-      html += '<button class="nav-toggle' + (open ? " open" : "") + '" data-nav-toggle="' + esc(section.id) + '" type="button" aria-label="' + (open ? "ย่อหมวด" : "ขยายหมวด") + '">' + (open ? "−" : "+") + '</button>';
-    } else {
-      html += '<button class="nav-toggle placeholder" tabindex="-1">+</button>';
-    }
-    html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? " active" : "") + '" data-go="section:' + esc(section.id) + '">' +
-      '<span class="nav-icon">' + esc(section.icon || "•") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span></button></div>';
-
-    if (children.length && open) {
-      html += '<div class="nav-children">';
-      for (const child of children) html += navSectionNode(child, activeSection, depth + 1);
-      html += '</div>';
-    }
-
-    html += "</div>";
-    return html;
-  }
-
-  function renderPage() {
-    if (searchQuery.trim()) return renderSearch(searchQuery.trim());
-    const r = route();
-    if (r.type === "home") return renderHome();
-    if (r.type === "all") return renderAllTopics();
-    if (r.type === "section") return renderSection(r.id);
-    if (r.type === "entry") return renderEntry(r.id);
-    return renderHome();
-  }
-
-  function authorStripHtml(sectionId = null) {
-    if (!authorMode) return "";
-    return '<div class="author-strip">' +
-      '<div class="author-strip-copy"><strong>Author Mode</strong><span>ข้อมูลหลังบ้านถูกเปิดแล้ว — การบันทึกจะ Commit ไปที่ GitHub</span></div>' +
-      '<div class="author-tools">' +
-        '<button class="button secondary" data-author-action="new-section" data-section="' + esc(sectionId || "") + '" type="button">+ หมวด</button>' +
-        '<button class="button primary" data-author-action="new-entry" data-section="' + esc(sectionId || "") + '" type="button">+ ข้อมูล</button>' +
-        '<button class="button ghost" data-author-action="export" type="button">Export JSON</button>' +
-        '<button class="button ghost" data-author-action="logout" type="button">ออกจากโหมด</button>' +
-      '</div></div>';
-  }
-
-  function bindAuthorStrip() {
-    content.querySelectorAll("[data-author-action]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const action = btn.dataset.authorAction;
-        const sectionId = btn.dataset.section || null;
-        if (action === "new-section") openSectionEditor(null, sectionId);
-        if (action === "new-entry") openEntryEditor(null, sectionId);
-        if (action === "export") exportBackup();
-        if (action === "logout") logoutAuthor();
-      });
-    });
-  }
-
-  function photoCreditHtml(asset) {
-    if (!asset?.credit) return "";
-    return '<span class="photo-credit">ภาพประกอบ: <a href="' + esc(asset.source || "#") + '" target="_blank" rel="noreferrer">' + esc(asset.credit) + '</a></span>';
-  }
-
-  function renderHome() {
-    const heroAsset = db.project.assets?.bangkokNight || {};
-    const roots = childrenOf(null);
-    const starts = ["overview","locations","magic","caelum"].map(sectionById).filter(Boolean).filter(isVisible);
-
-    content.innerHTML = `
-      <section class="hero-cover compact-hero">
-        <div class="cover-image" style="${styleBg(heroAsset.url)}"></div>
-        <div class="hero-cover-content">
-          <p class="eyebrow">CAE LUM WORLD BIBLE</p>
-          <h1>CaeLum</h1>
-          <p class="lead">${esc(db.project.readerIntro || "คลังข้อมูลของโลก CaeLum")}</p>
-        </div>
-        ${photoCreditHtml(heroAsset)}
-      </section>
-
-      ${authorStripHtml()}
-
-      <div class="section-heading">
-        <div><h2>เริ่มจากตรงนี้</h2><p>เลือกหัวข้อที่ต้องการ ไม่จำเป็นต้องไล่อ่านตามลำดับ</p></div>
-      </div>
-      <section class="path-grid">${starts.map(sectionCardHtml).join("")}</section>
-
-      <div class="section-heading">
-        <div><h2>หมวดหลัก</h2><p>โครงสร้างใหญ่ของ World Bible</p></div>
-      </div>
-      <section class="topic-grid root-topic-grid">${roots.map(sectionCardHtml).join("")}</section>
-    `;
-
-    bindSectionCards();
-    bindAuthorStrip();
-    updateTopbar("หน้าหลัก");
-  }
-
-  function renderGroupedHome(roots) {
-    let html = "";
-    for (const group of NAV_GROUPS) {
-      const items = roots.filter(s => (s.group || "other") === group.id);
-      if (!items.length) continue;
-      html += '<section class="group-block"><div class="group-block-header"><h2>' + esc(group.label) + '</h2><span>' + items.length + ' หมวด</span></div><div class="topic-grid">' +
-        items.map(sectionCardHtml).join("") + '</div></section>';
-    }
-    return html;
-  }
-
-  function renderAllTopics() {
-    const sections = visibleSections();
-    const entries = visibleEntries();
-
-    content.innerHTML = `
-      <div class="search-head">
-        <p class="eyebrow">INDEX</p>
-        <h1>สารบัญทั้งหมด</h1>
-        <p>รวมหมวดและบทความที่ผู้อ่านสามารถเข้าถึงได้ในตอนนี้</p>
-      </div>
-      ${authorStripHtml()}
-      <section class="topic-grid">${sections.map(sectionCardHtml).join("")}</section>
-      <div class="section-heading"><div><h2>บทความ</h2><p>${entries.length} รายการ</p></div></div>
-      <section class="topic-grid">${entries.map(entryCardHtml).join("")}</section>
-    `;
-
-    bindSectionCards();
-    bindEntryCards();
-    bindAuthorStrip();
-    updateTopbar("สารบัญทั้งหมด");
-  }
-
-  function sectionCardHtml(section) {
-    return `<article class="library-item section-item" data-section-card="${esc(section.id)}">
-      <div class="library-item-icon">${esc(section.icon || "•")}</div>
-      <div class="library-item-copy">
-        <h3>${esc(section.readerLabel || section.name)}</h3>
-        <p>${esc(section.description || "หมวดข้อมูลของโลก CaeLum")}</p>
-      </div>
-      <span class="library-arrow">→</span>
-    </article>`;
-  }
-
-  function entryCardHtml(entry) {
-    const section = sectionById(entry.sectionId);
-    return `<article class="library-item entry-item" data-entry-card="${esc(entry.id)}">
-      <div class="library-item-icon">${esc(section?.icon || "•")}</div>
-      <div class="library-item-copy">
-        <h3>${esc(entry.title)}</h3>
-        <p>${esc(entry.summary || "ยังไม่มีสรุป")}</p>
-      </div>
-      <span class="library-arrow">→</span>
-    </article>`;
-  }
-
-  function bindSectionCards() {
-    content.querySelectorAll("[data-section-card]").forEach(card => {
-      card.addEventListener("click", () => navigate("section", card.dataset.sectionCard));
-    });
-  }
-
-  function bindEntryCards() {
-    content.querySelectorAll("[data-entry-card]").forEach(card => {
-      card.addEventListener("click", () => navigate("entry", card.dataset.entryCard));
-    });
-  }
-
-  function breadcrumbsHtml(sectionId) {
-    let html = '<button data-crumb="home">World Archive</button>';
-    for (const s of ancestorChain(sectionId)) {
-      html += '<span class="sep">/</span><button data-crumb="section:' + esc(s.id) + '">' + esc(s.readerLabel || s.name) + '</button>';
-    }
-    return html;
-  }
-
-  function bindBreadcrumbs() {
-    content.querySelectorAll("[data-crumb]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const value = btn.dataset.crumb;
-        if (value === "home") return navigate("home");
-        const [type,id] = value.split(":");
-        navigate(type,id);
-      });
-    });
-  }
-
-  function renderSection(sectionId) {
-    const section = sectionById(sectionId);
-    if (!section || !isVisible(section)) return navigate("home");
-
-    const asset = assetFor(section);
-    const children = childrenOf(sectionId);
-    const entries = entriesIn(sectionId, false).sort((a,b) => a.title.localeCompare(b.title,"th"));
-    const featured = entries.find(e => e.featured) || null;
-    const rest = featured ? entries.filter(e => e.id !== featured.id) : entries;
-
-    const backFallback = section.parentId ? "section:" + section.parentId : "home";
-    content.innerHTML = `
-      ${readerBackHtml(backFallback)}
-      <section class="section-hero simple-section-hero">
-        <div class="section-hero-bg" style="${styleBg(asset.url)}"></div>
-        <div class="section-hero-content">
-          <div class="breadcrumbs">${breadcrumbsHtml(sectionId)}</div>
-          <h1>${esc(section.readerLabel || section.name)}</h1>
-          <p>${esc(section.description || "")}</p>
-          ${authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section="' + esc(section.id) + '" type="button">แก้หมวดนี้</button></div>' : ''}
-        </div>
-      </section>
-
-      ${authorStripHtml(sectionId)}
-
-      ${featured ? '<section class="section-overview-link" data-entry-card="' + esc(featured.id) + '"><div><span class="section-overview-label">ภาพรวม</span><h2>' + esc(featured.title) + '</h2><p>' + esc(featured.summary || "") + '</p></div><span class="section-overview-arrow">อ่านต่อ →</span></section>' : ''}
-
-      ${children.length ? '<div class="reader-heading"><h2>หัวข้อย่อย</h2><p>เลือกส่วนที่ต้องการอ่านได้เลย</p></div><section class="library-list">' + children.map(sectionCardHtml).join("") + '</section>' : ''}
-
-      ${rest.length ? '<div class="reader-heading"><h2>' + (section.id === "caelum" ? "พื้นที่และข้อมูลของ CaeLum" : "ข้อมูลในหมวดนี้") + '</h2><p>แต่ละเรื่องเปิดอ่านแยกกัน ไม่ต้องไล่อ่านทั้งหน้า</p></div><section class="library-list">' + rest.map(entryCardHtml).join("") + '</section>' : ''}
-
-      ${section.importance ? '<section class="section-note"><h2>อ่านส่วนนี้แล้วจะเข้าใจอะไร</h2><p>' + esc(section.importance) + '</p></section>' : ''}
-
-      ${!featured && !children.length && !rest.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล' + (authorMode ? ' — ใช้ปุ่ม “+ ข้อมูล” เพื่อเริ่มเขียน' : '') + '</div>' : ''}
-    `;
-
-    bindReaderBack();
-    bindBreadcrumbs();
-    bindSectionCards();
-    bindEntryCards();
-    bindAuthorStrip();
-    content.querySelector("[data-edit-section]")?.addEventListener("click", () => openSectionEditor(sectionId));
-    updateTopbar(section.readerLabel || section.name);
-  }
-
-  function featuredArticleHtml(entry) {
-    return '<section class="section-overview-link" data-entry-card="' + esc(entry.id) + '"><div><span class="section-overview-label">ภาพรวม</span><h2>' + esc(entry.title) + '</h2><p>' + esc(entry.summary || "") + '</p></div><span class="section-overview-arrow">อ่านต่อ →</span></section>';
-  }
-
-  function badgesHtml(entry) {
-    const tags = (entry.tags || []).slice(0,5).map(t => '<span class="badge">' + esc(t) + '</span>').join("");
-    return '<div class="meta-badges"><span class="badge ' + esc(entry.status || "draft") + '">' + statusLabel(entry.status) + '</span>' +
-      (entry.visibility === "author-only" ? '<span class="badge author">Author Only</span>' : '') + tags + '</div>';
-  }
-
-  function authorContextHtml(entry) {
-    const blocks = [];
-    if (entry.storyUse) blocks.push('<div class="author-note"><span class="label">Story Role</span><div>' + esc(entry.storyUse) + '</div></div>');
-    if (entry.continuityNotes) blocks.push('<div class="author-note"><span class="label">Continuity</span><div>' + esc(entry.continuityNotes) + '</div></div>');
-    if (entry.openQuestions) blocks.push('<div class="author-note full"><span class="label">Open Questions</span><div>' + esc(entry.openQuestions) + '</div></div>');
-    if (!blocks.length) return "";
-    return '<section class="author-context">' + blocks.join("") + '</section>';
-  }
-
-  function renderEntry(entryId) {
-    const entry = entryById(entryId);
-    if (!entry || !isVisible(entry)) return navigate("home");
-    const section = sectionById(entry.sectionId);
-    const related = (entry.links || []).map(findRelationTarget).filter(Boolean);
-
-    content.innerHTML = `
-      ${readerBackHtml("section:" + entry.sectionId)}
-      <div class="breadcrumbs article-breadcrumbs">${breadcrumbsHtml(entry.sectionId)}<span class="sep">/</span><span>${esc(entry.title)}</span></div>
-      ${authorStripHtml(entry.sectionId)}
-
-      <article class="reader-article">
-        <header class="reader-article-head">
-          <p class="reader-category">${esc(section?.readerLabel || section?.name || "CaeLum")}</p>
-          ${entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : ''}
-          <h1>${esc(entry.title)}</h1>
-          ${readerMetaHtml(entry)}
-          <p class="reader-lead">${esc(entry.summary || "")}</p>
-        </header>
-
-        <section class="reader-body">
-          ${proseHtml(entry.details || "—", entry.id)}
-        </section>
-
-        ${entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge, entry.id) + '</div></section>' : ''}
-
-        ${authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse, entry.id) + '</div></section>' : ''}
-        ${authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes, entry.id) + '</div></section>' : ''}
-        ${authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions, entry.id) + '</div></section>' : ''}
-
-        ${related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(relationButtonHtml).join("") + '</div></section>' : ''}
-
-        ${authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-current type="button">แก้ไขข้อมูลนี้</button></div>' : ''}
-      </article>
-    `;
-
-    bindReaderBack();
-    bindBreadcrumbs();
-    bindGlossaryTerms();
-    bindAuthorStrip();
-    bindRelationButtons();
-    content.querySelector("[data-edit-current]")?.addEventListener("click", () => openEntryEditor(entry.id));
-    updateTopbar(entry.title);
-  }
-
-  function normalizeName(value) {
-    return String(value || "").trim().toLowerCase();
-  }
-
-  function findRelationTarget(label) {
-    const name = normalizeName(label);
-    const entry = visibleEntries().find(e => normalizeName(e.title) === name || normalizeName(e.id) === name);
-    if (entry) return { type:"entry", id:entry.id, label:entry.title };
-    const section = visibleSections().find(s => normalizeName(s.name) === name || normalizeName(s.readerLabel) === name || normalizeName(s.id) === name);
-    if (section) return { type:"section", id:section.id, label:section.readerLabel || section.name };
-    return null;
-  }
-
-  function relationButtonHtml(target) {
-    return '<button class="relation-link" data-relation="' + esc(target.type) + ':' + esc(target.id) + '" type="button"><span>' + esc(target.label) + '</span><span>→</span></button>';
-  }
-
-  function bindRelationButtons() {
-    content.querySelectorAll("[data-relation]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const [type,id] = btn.dataset.relation.split(":");
-        navigate(type,id);
-      });
-    });
-  }
-
-  function renderSearch(query) {
-    const q = query.toLowerCase();
-    const sectionResults = visibleSections().filter(s =>
-      [s.name,s.readerLabel,s.description,s.importance].join(" ").toLowerCase().includes(q)
-    );
-    const entryResults = visibleEntries().filter(e => {
-      const section = sectionById(e.sectionId);
-      const fields = authorMode
-        ? [e.title,e.kicker,e.summary,e.details,e.publicKnowledge,e.storyUse,e.continuityNotes,e.openQuestions,section?.name,...(e.tags||[]),...(e.links||[])]
-        : [e.title,e.kicker,e.summary,e.details,e.publicKnowledge,section?.name,...(e.tags||[]),...(e.links||[])];
-      return fields.join(" ").toLowerCase().includes(q);
-    });
-
-    const items = [
-      ...sectionResults.map(s => ({ type:"section", id:s.id, title:s.readerLabel||s.name, text:s.description, section:s })),
-      ...entryResults.map(e => ({ type:"entry", id:e.id, title:e.title, text:e.summary, section:sectionById(e.sectionId) }))
-    ];
-
-    content.innerHTML = `
-      <div class="search-head">
-        <p class="eyebrow">SEARCH</p>
-        <h1>ผลการค้นหา “${esc(query)}”</h1>
-        <p>พบ ${items.length} รายการจากหมวด บทความ และบันทึกที่คุณมีสิทธิ์มองเห็น</p>
-      </div>
-      <section class="search-results">
-        ${items.length ? items.map(searchResultHtml).join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>'}
-      </section>
-    `;
-
-    content.querySelectorAll("[data-search-result]").forEach(row => {
-      row.addEventListener("click", () => {
-        const [type,id] = row.dataset.searchResult.split(":");
-        searchQuery = "";
-        syncSearchInputs("");
-        navigate(type,id);
-      });
-    });
-    updateTopbar("ค้นหา");
-  }
-
-  function searchResultHtml(item) {
-    const asset = assetFor(item.section);
-    return `<article class="search-result" data-search-result="${esc(item.type)}:${esc(item.id)}">
-      <div class="search-thumb" style="${styleBg(asset.url)}"></div>
-      <div class="search-copy"><h3>${esc(item.title)}</h3><p>${esc(item.text || "")}</p></div>
-      <span class="search-type">${item.type === "section" ? "หมวด" : "บทความ"}</span>
-    </article>`;
-  }
-
-  function updateTopbar(label) {
-    $("topbarContext").textContent = label || (authorMode ? "Author" : "Reader");
+  async function loadPublicData() {
+    const response=await fetch(CONFIG.rawDataUrl+"?v="+Date.now(),{cache:"no-store"});
+    if(!response.ok) throw new Error("โหลดข้อมูล CaeLum ไม่สำเร็จ");
+    db=normalizeDb(await response.json());
+    updateVersion();
   }
 
   async function verifyToken(token) {
-    const response = await fetch("https://api.github.com/user", {
-      headers: {
-        "Accept":"application/vnd.github+json",
-        "Authorization":"Bearer " + token,
-        "X-GitHub-Api-Version":"2022-11-28"
-      }
-    });
-    if (!response.ok) throw new Error("Token ใช้งานไม่ได้หรือหมดอายุ");
-    const user = await response.json();
-    if (user.login !== CONFIG.owner) throw new Error("Author Mode อนุญาตเฉพาะเจ้าของ CaeLum");
+    const response=await fetch("https://api.github.com/user",{headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"}});
+    if(!response.ok) throw new Error("Token ใช้งานไม่ได้หรือหมดอายุ");
+    const user=await response.json();
+    if(user.login!==CONFIG.owner) throw new Error("Author Mode อนุญาตเฉพาะเจ้าของ CaeLum");
     return user;
   }
 
-  async function githubFile() {
-    const response = await fetch("https://api.github.com/repos/" + CONFIG.owner + "/" + CONFIG.repo + "/contents/" + CONFIG.dataPath + "?ref=" + encodeURIComponent(CONFIG.branch) + "&t=" + Date.now(), {
-      cache:"no-store",
-      headers:{
-        "Accept":"application/vnd.github+json",
-        "Authorization":"Bearer " + adminToken,
-        "X-GitHub-Api-Version":"2022-11-28"
-      }
-    });
-    if (!response.ok) throw new Error("อ่านข้อมูลล่าสุดจาก GitHub ไม่สำเร็จ");
-    return response.json();
-  }
-
   function utf8ToBase64(text) {
-    const bytes = new TextEncoder().encode(text);
-    let binary = "";
-    for (let i=0;i<bytes.length;i+=0x8000) binary += String.fromCharCode(...bytes.subarray(i,i+0x8000));
+    const bytes=new TextEncoder().encode(text);
+    let binary="";
+    for(let i=0;i<bytes.length;i+=0x8000) binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
     return btoa(binary);
   }
 
   function base64ToUtf8(value) {
-    const binary = atob(value);
-    return new TextDecoder().decode(Uint8Array.from(binary, ch => ch.charCodeAt(0)));
+    const binary=atob(value);
+    return new TextDecoder().decode(Uint8Array.from(binary,ch=>ch.charCodeAt(0)));
+  }
+
+  async function githubFile() {
+    const response=await fetch("https://api.github.com/repos/"+CONFIG.owner+"/"+CONFIG.repo+"/contents/"+CONFIG.dataPath+"?ref="+encodeURIComponent(CONFIG.branch)+"&t="+Date.now(),{cache:"no-store",headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+adminToken,"X-GitHub-Api-Version":"2022-11-28"}});
+    if(!response.ok) throw new Error("อ่านข้อมูลล่าสุดจาก GitHub ไม่สำเร็จ");
+    return response.json();
   }
 
   async function loadLatestFromGitHub() {
-    const file = await githubFile();
-    remoteSha = file.sha;
-    db = normalizeDb(JSON.parse(base64ToUtf8(file.content.replace(/\n/g,""))));
+    const file=await githubFile();
+    remoteSha=file.sha;
+    db=normalizeDb(JSON.parse(base64ToUtf8(file.content.replace(/\n/g,""))));
     updateVersion();
   }
 
   async function saveDatabase(message) {
-    if (!authorMode || !adminToken) throw new Error("ต้องเข้า Author Mode ก่อน");
-    const remote = await githubFile();
-    const remoteDb = normalizeDb(JSON.parse(base64ToUtf8(remote.content.replace(/\n/g,""))));
-    if (Number(remoteDb.version || 0) > Number(db.version || 0)) {
-      throw new Error("ข้อมูลบน GitHub มีเวอร์ชันใหม่กว่า กรุณากดรีเฟรชก่อนบันทึกเพื่อป้องกันข้อมูลทับกัน");
+    if(!authorMode || !adminToken) throw new Error("ต้องเข้า Author Mode ก่อน");
+    const remote=await githubFile();
+    const remoteDb=normalizeDb(JSON.parse(base64ToUtf8(remote.content.replace(/\n/g,""))));
+    if(Number(remoteDb.version||0)>Number(db.version||0)) throw new Error("ข้อมูลบน GitHub ใหม่กว่า กรุณารีเฟรชก่อนบันทึก");
+    remoteSha=remote.sha;
+    db.version=(Number(db.version)||1)+1;
+    db.project.updatedAt=new Date().toISOString();
+    if(db.novel) db.novel.updatedAt=new Date().toISOString();
+    const response=await fetch("https://api.github.com/repos/"+CONFIG.owner+"/"+CONFIG.repo+"/contents/"+CONFIG.dataPath,{method:"PUT",headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+adminToken,"X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"},body:JSON.stringify({message:message||"Update CaeLum",content:utf8ToBase64(JSON.stringify(db,null,2)),sha:remoteSha,branch:CONFIG.branch})});
+    if(!response.ok) {
+      let detail="";
+      try{detail=(await response.json()).message||"";}catch{}
+      throw new Error("GitHub บันทึกไม่สำเร็จ"+(detail?": "+detail:""));
     }
-
-    remoteSha = remote.sha;
-    db.version = (Number(db.version)||1) + 1;
-    db.project.updatedAt = new Date().toISOString();
-
-    const response = await fetch("https://api.github.com/repos/" + CONFIG.owner + "/" + CONFIG.repo + "/contents/" + CONFIG.dataPath, {
-      method:"PUT",
-      headers:{
-        "Accept":"application/vnd.github+json",
-        "Authorization":"Bearer " + adminToken,
-        "X-GitHub-Api-Version":"2022-11-28",
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        message: message || "Update CaeLum World Archive",
-        content:utf8ToBase64(JSON.stringify(db,null,2)),
-        sha:remoteSha,
-        branch:CONFIG.branch
-      })
-    });
-
-    if (!response.ok) {
-      let detail = "";
-      try { detail = (await response.json()).message || ""; } catch {}
-      throw new Error("GitHub บันทึกไม่สำเร็จ" + (detail ? ": " + detail : ""));
-    }
-    const result = await response.json();
-    remoteSha = result.content?.sha || "";
+    const result=await response.json();
+    remoteSha=result.content && result.content.sha ? result.content.sha : "";
     updateVersion();
   }
 
   async function enterAuthorMode() {
-    const token = $("tokenInput").value.trim();
-    if (!token) return toast("ใส่ GitHub Token ก่อน", "error");
-    const btn = $("loginButton");
+    const token=$("tokenInput").value.trim();
+    if(!token) return toast("ใส่ GitHub Token ก่อน","error");
+    const btn=$("loginButton");
     setBusy(btn,true,"กำลังตรวจสอบ…");
-    try {
+    try{
       await verifyToken(token);
-      adminToken = token;
+      adminToken=token;
       sessionStorage.setItem("caelum_admin_token",token);
-      authorMode = true;
+      authorMode=true;
       await loadLatestFromGitHub();
       adminModal.close();
-      $("tokenInput").value = "";
+      $("tokenInput").value="";
       renderAll();
-      toast("Author Mode พร้อมใช้งาน", "success");
-    } catch (error) {
-      toast(error.message || "เข้าสู่ระบบไม่สำเร็จ","error");
-    } finally {
-      setBusy(btn,false);
+      toast("Author Mode พร้อมใช้งาน","success");
+    }catch(error){toast(error.message||"เข้าสู่ระบบไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
+  }
+
+  async function restoreSession() {
+    if(!adminToken) return;
+    try{
+      await verifyToken(adminToken);
+      authorMode=true;
+      await loadLatestFromGitHub();
+      renderAll();
+    }catch{
+      authorMode=false; adminToken=""; sessionStorage.removeItem("caelum_admin_token"); setModeUi();
     }
   }
 
   function logoutAuthor() {
-    authorMode = false;
-    adminToken = "";
-    remoteSha = "";
+    authorMode=false; adminToken=""; remoteSha="";
     sessionStorage.removeItem("caelum_admin_token");
-    reloadData();
+    loadPublicData().then(renderAll);
     toast("กลับสู่ Reader Mode");
   }
 
   function setModeUi() {
-    $("modeBadge").textContent = authorMode ? "Author" : "Reader";
+    $("modeBadge").textContent=authorMode?"Author":"Reader";
     $("modeBadge").classList.toggle("author",authorMode);
     $("adminButton").classList.toggle("active",authorMode);
-    $("adminButton").querySelector("strong").textContent = authorMode ? "Author Mode ✓" : "Author Mode";
+    $("adminButton").querySelector("strong").textContent=authorMode?"Author Mode ✓":"Author Mode";
   }
 
-  function sectionOptions(selectedId = "", excludeId = null, includeRoot = false) {
-    let html = includeRoot ? '<option value="">— หมวดหลัก —</option>' : "";
-    function walk(parentId,depth) {
-      for (const s of db.sections.filter(x => (x.parentId||null)===(parentId||null)).sort((a,b)=>(a.sort||0)-(b.sort||0))) {
-        if (s.id === excludeId) continue;
-        html += '<option value="' + esc(s.id) + '"' + (s.id===selectedId ? " selected" : "") + '>' + "— ".repeat(depth) + esc(s.name) + '</option>';
+  function sectionOptions(selectedId,excludeId,includeRoot) {
+    let html=includeRoot?'<option value="">— หมวดหลัก —</option>':"";
+    function walk(parent,depth){
+      db.sections.filter(s=>(s.parentId||null)===(parent||null)).sort((a,b)=>(a.sort||0)-(b.sort||0)).forEach(s=>{
+        if(s.id===excludeId) return;
+        html+='<option value="'+esc(s.id)+'"'+(s.id===selectedId?' selected':'')+'>'+("— ".repeat(depth))+esc(s.name)+'</option>';
         walk(s.id,depth+1);
-      }
+      });
     }
     walk(null,0);
     return html;
   }
 
-  function firstPublicSectionId() {
-    return db.sections.find(s => s.visibility !== "author-only")?.id || "";
-  }
-
-  function openEntryEditor(id = null, defaultSectionId = null) {
-    if (!authorMode) return;
-    editingEntryId = id;
-    const entry = id ? entryById(id) : null;
-    $("editorHeading").textContent = entry ? "แก้ไขข้อมูล" : "เพิ่มข้อมูล";
-    $("entryTitle").value = entry?.title || "";
-    $("entrySection").innerHTML = sectionOptions(entry?.sectionId || defaultSectionId || firstPublicSectionId());
-    $("entryStatus").value = entry?.status || "draft";
-    $("entryVisibility").value = entry?.visibility || "public";
-    $("entryTags").value = (entry?.tags || []).join(", ");
-    $("entryFeatured").checked = Boolean(entry?.featured);
-    $("entryKicker").value = entry?.kicker || "";
-    $("entrySummary").value = entry?.summary || "";
-    $("entryDetails").value = entry?.details || "";
-    $("entryPublicKnowledge").value = entry?.publicKnowledge || "";
-    $("entryStoryUse").value = entry?.storyUse || "";
-    $("entryContinuity").value = entry?.continuityNotes || "";
-    $("entryLinks").value = (entry?.links || []).join(", ");
-    $("entryQuestions").value = entry?.openQuestions || "";
-    $("deleteEntryButton").style.visibility = entry ? "visible" : "hidden";
+  function openEntryEditor(id,defaultSectionId) {
+    if(!authorMode) return;
+    editingEntryId=id||null;
+    const entry=id?entryById(id):null;
+    $("editorHeading").textContent=entry?"แก้ไขข้อมูล":"เพิ่มข้อมูล";
+    $("entryTitle").value=entry?entry.title:"";
+    $("entrySection").innerHTML=sectionOptions(entry?entry.sectionId:(defaultSectionId||((db.sections[0]||{}).id||"")),null,false);
+    $("entryStatus").value=entry?entry.status:"draft";
+    $("entryVisibility").value=entry?entry.visibility:"public";
+    $("entryTags").value=entry?(entry.tags||[]).join(", "):"";
+    $("entryFeatured").checked=Boolean(entry&&entry.featured);
+    $("entryKicker").value=entry?entry.kicker||"":"";
+    $("entrySummary").value=entry?entry.summary||"":"";
+    $("entryDetails").value=entry?entry.details||"":"";
+    $("entryPublicKnowledge").value=entry?entry.publicKnowledge||"":"";
+    $("entryStoryUse").value=entry?entry.storyUse||"":"";
+    $("entryContinuity").value=entry?entry.continuityNotes||"":"";
+    $("entryLinks").value=entry?(entry.links||[]).join(", "):"";
+    $("entryQuestions").value=entry?entry.openQuestions||"":"";
+    $("deleteEntryButton").style.visibility=entry?"visible":"hidden";
     editorModal.showModal();
   }
 
   async function saveEntry() {
-    const title = $("entryTitle").value.trim();
-    const sectionId = $("entrySection").value;
-    if (!title) return toast("ใส่ชื่อหัวข้อก่อน","error");
-    if (!sectionId) return toast("เลือกหมวดก่อน","error");
-
-    const existingEntry = editingEntryId ? entryById(editingEntryId) : null;
-    const next = {
-      ...(existingEntry || {}),
-      id: editingEntryId || uid("entry"),
-      sectionId,
-      title,
-      visibility:$("entryVisibility").value,
-      status:$("entryStatus").value,
-      tags:$("entryTags").value.split(",").map(x=>x.trim()).filter(Boolean),
-      featured:$("entryFeatured").checked,
-      kicker:$("entryKicker").value.trim(),
-      summary:$("entrySummary").value.trim(),
-      details:$("entryDetails").value.trim(),
-      publicKnowledge:$("entryPublicKnowledge").value.trim(),
-      storyUse:$("entryStoryUse").value.trim(),
-      continuityNotes:$("entryContinuity").value.trim(),
-      links:$("entryLinks").value.split(",").map(x=>x.trim()).filter(Boolean),
-      openQuestions:$("entryQuestions").value.trim(),
-      updatedAt:new Date().toISOString()
-    };
-
-    const backup = JSON.parse(JSON.stringify(db));
-    if (next.featured) {
-      for (const e of db.entries) if (e.sectionId === sectionId && e.id !== next.id) e.featured = false;
-    }
-
-    if (editingEntryId) {
-      const index = db.entries.findIndex(e => e.id === editingEntryId);
-      if (index >= 0) db.entries[index] = next;
-    } else db.entries.push(next);
-
-    const btn = $("saveEntryButton");
-    setBusy(btn,true,"กำลังบันทึก…");
-    try {
-      await saveDatabase((editingEntryId ? "Update entry: " : "Add entry: ") + title);
-      editorModal.close();
-      editingEntryId = null;
-      navigate("entry",next.id);
-      renderAll();
-      toast("บันทึกแล้ว — รีเฟรชหน้าเว็บจะเห็นข้อมูลล่าสุดทันที","success");
-    } catch (error) {
-      db = backup;
-      toast(error.message || "บันทึกไม่สำเร็จ","error");
-    } finally {
-      setBusy(btn,false);
-    }
+    const title=$("entryTitle").value.trim(), sectionId=$("entrySection").value;
+    if(!title) return toast("ใส่ชื่อหัวข้อก่อน","error");
+    if(!sectionId) return toast("เลือกหมวดก่อน","error");
+    const existing=editingEntryId?entryById(editingEntryId):null;
+    const next=Object.assign({},existing||{},{
+      id:editingEntryId||uid("entry"),sectionId:sectionId,title:title,visibility:$("entryVisibility").value,status:$("entryStatus").value,
+      tags:$("entryTags").value.split(",").map(x=>x.trim()).filter(Boolean),featured:$("entryFeatured").checked,kicker:$("entryKicker").value.trim(),
+      summary:$("entrySummary").value.trim(),details:$("entryDetails").value.trim(),publicKnowledge:$("entryPublicKnowledge").value.trim(),
+      storyUse:$("entryStoryUse").value.trim(),continuityNotes:$("entryContinuity").value.trim(),links:$("entryLinks").value.split(",").map(x=>x.trim()).filter(Boolean),
+      openQuestions:$("entryQuestions").value.trim(),updatedAt:new Date().toISOString()
+    });
+    const backup=JSON.parse(JSON.stringify(db));
+    if(next.featured) db.entries.forEach(e=>{if(e.sectionId===sectionId&&e.id!==next.id)e.featured=false;});
+    const i=db.entries.findIndex(e=>e.id===next.id);
+    if(i>=0) db.entries[i]=next; else db.entries.push(next);
+    const btn=$("saveEntryButton"); setBusy(btn,true,"กำลังบันทึก…");
+    try{await saveDatabase((existing?"Update entry: ":"Add entry: ")+title);editorModal.close();editingEntryId=null;navigate("entry",next.id);renderAll();toast("บันทึกแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"บันทึกไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
   }
 
   async function deleteEntry() {
-    const entry = entryById(editingEntryId);
-    if (!entry || !confirm('ลบ "' + entry.title + '" ?')) return;
-    const backup = JSON.parse(JSON.stringify(db));
-    db.entries = db.entries.filter(e => e.id !== entry.id);
-    const btn = $("deleteEntryButton");
-    setBusy(btn,true,"กำลังลบ…");
-    try {
-      await saveDatabase("Delete entry: " + entry.title);
-      editorModal.close();
-      editingEntryId = null;
-      navigate("section",entry.sectionId);
-      renderAll();
-      toast("ลบข้อมูลแล้ว","success");
-    } catch (error) {
-      db = backup;
-      toast(error.message || "ลบไม่สำเร็จ","error");
-    } finally {
-      setBusy(btn,false);
-    }
+    const entry=entryById(editingEntryId);
+    if(!entry||!confirm('ลบ "'+entry.title+'" ?')) return;
+    const backup=JSON.parse(JSON.stringify(db));
+    db.entries=db.entries.filter(e=>e.id!==entry.id);
+    const btn=$("deleteEntryButton");setBusy(btn,true,"กำลังลบ…");
+    try{await saveDatabase("Delete entry: "+entry.title);editorModal.close();editingEntryId=null;navigate("section",entry.sectionId);toast("ลบข้อมูลแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"ลบไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
   }
 
-  function openSectionEditor(id = null, defaultParentId = null) {
-    if (!authorMode) return;
-    editingSectionId = id;
-    const section = id ? sectionById(id) : null;
-    $("sectionHeading").textContent = section ? "แก้ไขหมวด" : "เพิ่มหมวด";
-    $("sectionName").value = section?.name || "";
-    $("sectionParent").innerHTML = sectionOptions(section?.parentId || defaultParentId || "",id,true);
-    $("sectionGroup").value = section?.group || (defaultParentId ? sectionGroupId(defaultParentId) : "other");
-    $("sectionIcon").value = section?.icon || "•";
-    $("sectionVisibility").value = section?.visibility || "public";
-    $("sectionSort").value = Number(section?.sort ?? 100);
-    $("sectionImageKey").value = section?.imageKey || (defaultParentId ? rootOf(defaultParentId)?.imageKey : "bangkokNight") || "bangkokNight";
-    $("sectionDescription").value = section?.description || "";
-    $("sectionImportance").value = section?.importance || "";
-    $("deleteSectionButton").style.visibility = section ? "visible" : "hidden";
+  function openSectionEditor(id,parentId) {
+    if(!authorMode) return;
+    editingSectionId=id||null;
+    const s=id?sectionById(id):null;
+    $("sectionHeading").textContent=s?"แก้ไขหมวด":"เพิ่มหมวด";
+    $("sectionName").value=s?s.name:"";
+    $("sectionParent").innerHTML=sectionOptions(s?s.parentId:(parentId||""),id||null,true);
+    $("sectionGroup").value=s?s.group||"other":"other";
+    $("sectionIcon").value=s?s.icon||"":"";
+    $("sectionVisibility").value=s?s.visibility||"public":"public";
+    $("sectionSort").value=s?Number(s.sort||100):100;
+    $("sectionImageKey").value=s?s.imageKey||"bangkokNight":"bangkokNight";
+    $("sectionDescription").value=s?s.description||"":"";
+    $("sectionImportance").value=s?s.importance||"":"";
+    $("deleteSectionButton").style.visibility=s?"visible":"hidden";
     sectionModal.showModal();
   }
 
-  function wouldCreateCycle(sectionId,parentId) {
-    if (!sectionId || !parentId) return false;
-    if (sectionId === parentId) return true;
-    let current = sectionById(parentId);
-    const seen = new Set();
-    while (current && !seen.has(current.id)) {
-      if (current.id === sectionId) return true;
-      seen.add(current.id);
-      current = current.parentId ? sectionById(current.parentId) : null;
-    }
-    return false;
-  }
-
   async function saveSection() {
-    const name = $("sectionName").value.trim();
-    const parentId = $("sectionParent").value || null;
-    if (!name) return toast("ใส่ชื่อหมวดก่อน","error");
-    if (wouldCreateCycle(editingSectionId,parentId)) return toast("ย้ายหมวดเข้าไปอยู่ในหมวดย่อยของตัวเองไม่ได้","error");
-
-    const previous = sectionById(editingSectionId);
-    const next = {
-      id: editingSectionId || uid("section"),
-      name,
-      readerLabel: previous?.readerLabel || name,
-      icon:$("sectionIcon").value.trim() || "•",
-      parentId,
-      group: parentId ? sectionGroupId(parentId) : $("sectionGroup").value,
-      visibility:$("sectionVisibility").value,
-      sort:Number($("sectionSort").value)||100,
-      imageKey:$("sectionImageKey").value,
-      description:$("sectionDescription").value.trim(),
-      importance:$("sectionImportance").value.trim()
-    };
-
-    const backup = JSON.parse(JSON.stringify(db));
-    if (editingSectionId) {
-      const index = db.sections.findIndex(s => s.id === editingSectionId);
-      if (index >= 0) db.sections[index] = next;
-    } else db.sections.push(next);
-
-    const btn = $("saveSectionButton");
-    setBusy(btn,true,"กำลังบันทึก…");
-    try {
-      await saveDatabase((editingSectionId ? "Update section: " : "Add section: ") + name);
-      sectionModal.close();
-      editingSectionId = null;
-      navigate("section",next.id);
-      renderAll();
-      toast("บันทึกหมวดแล้ว","success");
-    } catch (error) {
-      db = backup;
-      toast(error.message || "บันทึกหมวดไม่สำเร็จ","error");
-    } finally {
-      setBusy(btn,false);
-    }
+    const name=$("sectionName").value.trim();
+    if(!name) return toast("ใส่ชื่อหมวดก่อน","error");
+    const existing=editingSectionId?sectionById(editingSectionId):null;
+    const next=Object.assign({},existing||{},{
+      id:editingSectionId||uid("section"),name:name,parentId:$("sectionParent").value||null,group:$("sectionGroup").value,icon:$("sectionIcon").value.trim()||"·",
+      visibility:$("sectionVisibility").value,sort:Number($("sectionSort").value)||100,imageKey:$("sectionImageKey").value,description:$("sectionDescription").value.trim(),
+      importance:$("sectionImportance").value.trim(),updatedAt:new Date().toISOString()
+    });
+    const backup=JSON.parse(JSON.stringify(db));
+    const i=db.sections.findIndex(s=>s.id===next.id);
+    if(i>=0) db.sections[i]=next; else db.sections.push(next);
+    const btn=$("saveSectionButton");setBusy(btn,true,"กำลังบันทึก…");
+    try{await saveDatabase((existing?"Update section: ":"Add section: ")+name);sectionModal.close();editingSectionId=null;navigate("section",next.id);renderAll();toast("บันทึกหมวดแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"บันทึกหมวดไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
   }
 
   async function deleteSection() {
-    const section = sectionById(editingSectionId);
-    if (!section) return;
-    const children = db.sections.filter(s => s.parentId === section.id);
-    const entries = db.entries.filter(e => e.sectionId === section.id);
-    if (children.length || entries.length) return toast("ลบไม่ได้: ต้องย้ายหรือลบหัวข้อย่อยและข้อมูลในหมวดนี้ก่อน","error");
-    if (!confirm('ลบหมวด "' + section.name + '" ?')) return;
+    const s=sectionById(editingSectionId);
+    if(!s) return;
+    if(db.sections.some(x=>x.parentId===s.id)||db.entries.some(e=>e.sectionId===s.id)) return toast("ย้ายหรือลบข้อมูลภายในหมวดก่อน","error");
+    if(!confirm('ลบหมวด "'+s.name+'" ?')) return;
+    const backup=JSON.parse(JSON.stringify(db));
+    db.sections=db.sections.filter(x=>x.id!==s.id);
+    const btn=$("deleteSectionButton");setBusy(btn,true,"กำลังลบ…");
+    try{await saveDatabase("Delete section: "+s.name);sectionModal.close();editingSectionId=null;navigate("all");toast("ลบหมวดแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"ลบหมวดไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
+  }
 
-    const backup = JSON.parse(JSON.stringify(db));
-    db.sections = db.sections.filter(s => s.id !== section.id);
-    const btn = $("deleteSectionButton");
-    setBusy(btn,true,"กำลังลบ…");
-    try {
-      await saveDatabase("Delete section: " + section.name);
-      sectionModal.close();
-      editingSectionId = null;
-      if (section.parentId) navigate("section",section.parentId); else navigate("home");
-      renderAll();
-      toast("ลบหมวดแล้ว","success");
-    } catch (error) {
-      db = backup;
-      toast(error.message || "ลบหมวดไม่สำเร็จ","error");
-    } finally {
-      setBusy(btn,false);
-    }
+  function ensureChapterEditor() {
+    let dialog=$("chapterEditorModal");
+    if(dialog) return dialog;
+    dialog=document.createElement("dialog");
+    dialog.id="chapterEditorModal";
+    dialog.className="modal wide chapter-editor-modal";
+    dialog.innerHTML='<form method="dialog" class="modal-card" onsubmit="return false;"><header class="modal-header"><div><span class="modal-kicker">NOVEL CHAPTER</span><h2 id="chapterEditorHeading">แก้ไขตอน</h2></div><button class="icon-button" data-chapter-close type="button">×</button></header><div class="modal-body form-grid"><label class="field"><span>ตอนที่</span><input id="chapterNumber" type="number" min="1"></label><label class="field"><span>สถานะ</span><select id="chapterStatus"><option value="published">Published — เปิดอ่าน</option><option value="draft">Draft — หลังบ้าน</option></select></label><label class="field span-2"><span>ชื่อตอน</span><input id="chapterTitle"></label><label class="field span-2"><span>คำโปรยใต้ชื่อตอน</span><input id="chapterSubtitle"></label><label class="field span-2"><span>สรุปตอน</span><textarea id="chapterSummary" rows="3"></textarea></label><label class="field span-2"><span>เนื้อหานิยาย</span><textarea id="chapterBody" rows="24" class="chapter-body-editor"></textarea><small>เว้นบรรทัดเพื่อขึ้นย่อหน้าใหม่ และใช้ --- เป็นจุดแบ่งฉาก</small></label></div><footer class="modal-footer split"><button class="button danger" id="deleteChapterButton" type="button">ลบตอน</button><div class="button-row"><button class="button secondary" data-chapter-close type="button">ยกเลิก</button><button class="button primary" id="saveChapterButton" type="button">บันทึกลง GitHub</button></div></footer></form>';
+    document.body.appendChild(dialog);
+    dialog.querySelectorAll("[data-chapter-close]").forEach(btn=>btn.addEventListener("click",()=>dialog.close()));
+    $("saveChapterButton").addEventListener("click",saveChapter);
+    $("deleteChapterButton").addEventListener("click",deleteChapter);
+    return dialog;
+  }
+
+  function openChapterEditor(id) {
+    if(!authorMode) return;
+    editingChapterId=id||null;
+    const ch=id?chapterById(id):null;
+    const dialog=ensureChapterEditor();
+    $("chapterEditorHeading").textContent=ch?"แก้ไขตอนนิยาย":"เพิ่มตอนนิยาย";
+    $("chapterNumber").value=ch?ch.number:(db.novel.chapters.length+1);
+    $("chapterStatus").value=ch?ch.status:"draft";
+    $("chapterTitle").value=ch?ch.title:"";
+    $("chapterSubtitle").value=ch?ch.subtitle||"":"";
+    $("chapterSummary").value=ch?ch.summary||"":"";
+    $("chapterBody").value=ch?ch.body||"":"";
+    $("deleteChapterButton").style.visibility=ch?"visible":"hidden";
+    dialog.showModal();
+  }
+
+  async function saveChapter() {
+    const title=$("chapterTitle").value.trim(), body=$("chapterBody").value.trim();
+    if(!title) return toast("ใส่ชื่อตอนก่อน","error");
+    if(!body) return toast("ใส่เนื้อหาตอนก่อน","error");
+    const existing=editingChapterId?chapterById(editingChapterId):null;
+    const number=Math.max(1,Number($("chapterNumber").value)||1);
+    const status=$("chapterStatus").value;
+    const next=Object.assign({},existing||{},{
+      id:editingChapterId||("chapter-"+number+"-"+Date.now()),number:number,title:title,subtitle:$("chapterSubtitle").value.trim(),status:status,
+      visibility:status==="published"?"public":"author-only",summary:$("chapterSummary").value.trim(),body:body,
+      publishedAt:(existing&&existing.publishedAt)||(status==="published"?new Date().toISOString():""),updatedAt:new Date().toISOString()
+    });
+    const backup=JSON.parse(JSON.stringify(db));
+    const i=db.novel.chapters.findIndex(ch=>ch.id===next.id);
+    if(i>=0) db.novel.chapters[i]=next; else db.novel.chapters.push(next);
+    const btn=$("saveChapterButton");setBusy(btn,true,"กำลังบันทึก…");
+    try{await saveDatabase((existing?"Update novel chapter: ":"Add novel chapter: ")+title);$("chapterEditorModal").close();editingChapterId=null;navigate("chapter",next.id);renderAll();toast("บันทึกตอนนิยายแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"บันทึกตอนนิยายไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
+  }
+
+  async function deleteChapter() {
+    const ch=chapterById(editingChapterId);
+    if(!ch||!confirm('ลบตอน "'+ch.title+'" ?')) return;
+    const backup=JSON.parse(JSON.stringify(db));
+    db.novel.chapters=db.novel.chapters.filter(x=>x.id!==ch.id);
+    const btn=$("deleteChapterButton");setBusy(btn,true,"กำลังลบ…");
+    try{await saveDatabase("Delete novel chapter: "+ch.title);$("chapterEditorModal").close();editingChapterId=null;navigate("novel");toast("ลบตอนแล้ว","success");}
+    catch(error){db=backup;toast(error.message||"ลบตอนไม่สำเร็จ","error");}
+    finally{setBusy(btn,false);}
   }
 
   function exportBackup() {
-    const blob = new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "CaeLum-world-backup.json";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url),1000);
-    toast("สร้างไฟล์ Backup แล้ว","success");
-  }
-
-  async function restoreSession() {
-    if (!adminToken) return;
-    try {
-      await verifyToken(adminToken);
-      authorMode = true;
-      await loadLatestFromGitHub();
-      renderAll();
-    } catch {
-      authorMode = false;
-      adminToken = "";
-      sessionStorage.removeItem("caelum_admin_token");
-      setModeUi();
-    }
+    const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download="caelum-world-v"+db.version+".json";a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
   function syncSearchInputs(value) {
-    searchInput.value = value;
-    sidebarSearch.value = value;
+    searchInput.value=value;
+    sidebarSearch.value=value;
   }
 
   function onSearch(value) {
-    searchQuery = value;
+    searchQuery=value;
     syncSearchInputs(value);
     renderPage();
   }
 
-  document.querySelectorAll("[data-close]").forEach(btn => {
-    btn.addEventListener("click", () => $(btn.dataset.close)?.close());
+  document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).close()));
+  $("menuButton").addEventListener("click",()=>document.body.classList.add("nav-open"));
+  $("sidebarCloseButton").addEventListener("click",()=>document.body.classList.remove("nav-open"));
+  $("mobileBackdrop").addEventListener("click",()=>document.body.classList.remove("nav-open"));
+  searchInput.addEventListener("input",e=>onSearch(e.target.value));
+  sidebarSearch.addEventListener("input",e=>onSearch(e.target.value));
+  $("refreshButton").addEventListener("click",async()=>{try{if(authorMode)await loadLatestFromGitHub();else await loadPublicData();renderAll();toast("โหลดข้อมูลล่าสุดแล้ว","success");}catch(error){toast(error.message,"error");}});
+  $("adminButton").addEventListener("click",()=>{if(authorMode)return toast("Author Mode เปิดอยู่แล้ว");adminModal.showModal();setTimeout(()=>$("tokenInput").focus(),30);});
+  $("loginButton").addEventListener("click",enterAuthorMode);
+  $("tokenInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();enterAuthorMode();}});
+  $("saveEntryButton").addEventListener("click",saveEntry);
+  $("deleteEntryButton").addEventListener("click",deleteEntry);
+  $("saveSectionButton").addEventListener("click",saveSection);
+  $("deleteSectionButton").addEventListener("click",deleteSection);
+
+  document.addEventListener("click",e=>{
+    if(glossaryPopover && !glossaryPopover.contains(e.target) && !(e.target.closest && e.target.closest("[data-novel-glossary]"))) closeGlossaryPopover();
   });
 
-  $("menuButton").addEventListener("click", () => document.body.classList.add("nav-open"));
-  $("sidebarCloseButton")?.addEventListener("click", () => document.body.classList.remove("nav-open"));
-  $("mobileBackdrop").addEventListener("click", () => document.body.classList.remove("nav-open"));
-  searchInput.addEventListener("input", e => onSearch(e.target.value));
-  sidebarSearch.addEventListener("input", e => onSearch(e.target.value));
-
-  $("refreshButton").addEventListener("click", async () => {
-    await reloadData();
-    toast("โหลดข้อมูลล่าสุดแล้ว","success");
+  window.addEventListener("hashchange",()=>{
+    closeGlossaryPopover();
+    if(readingScrollHandler){window.removeEventListener("scroll",readingScrollHandler);readingScrollHandler=null;}
+    searchQuery="";syncSearchInputs("");renderAll();
   });
 
-  $("adminButton").addEventListener("click", () => {
-    if (authorMode) return toast("Author Mode เปิดอยู่แล้ว");
-    adminModal.showModal();
-    setTimeout(() => $("tokenInput").focus(),30);
-  });
-
-  $("loginButton").addEventListener("click", enterAuthorMode);
-  $("tokenInput").addEventListener("keydown", e => {
-    if (e.key === "Enter") { e.preventDefault(); enterAuthorMode(); }
-  });
-
-  $("saveEntryButton").addEventListener("click", saveEntry);
-  $("deleteEntryButton").addEventListener("click", deleteEntry);
-  $("saveSectionButton").addEventListener("click", saveSection);
-  $("deleteSectionButton").addEventListener("click", deleteSection);
-
-  window.addEventListener("hashchange", () => {
-    searchQuery = "";
-    syncSearchInputs("");
-    renderAll();
-  });
-
-  (async () => {
-    try {
+  (async()=>{
+    try{
       await loadPublicData();
       renderAll();
       await restoreSession();
-    } catch (error) {
-      content.innerHTML = '<div class="empty-state">ไม่สามารถโหลด World Archive ได้</div>';
-      toast(error.message || "เริ่มต้นเว็บไม่สำเร็จ","error");
+    }catch(error){
+      content.innerHTML='<div class="empty-state">ไม่สามารถโหลด CaeLum ได้</div>';
+      toast(error.message||"เริ่มต้นเว็บไม่สำเร็จ","error");
     }
   })();
 })();
