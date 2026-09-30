@@ -635,10 +635,12 @@
     if(!entry || !isVisible(entry)) return navigate("all");
     const section=sectionById(entry.sectionId);
     const related=(entry.links || []).map(relationTarget).filter(Boolean);
+    const mapFigure=entry.id==="caelum-bang-bua-map" ? '<figure class="location-map"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตั้งต้น แสดง CaeLum ถนนหน้าเมือง รางรถไฟฟ้ายกระดับ สถานีบางบัว บันไดลง และทางข้ามเข้าสู่ประตูหลัก"><figcaption>จุดยืนยันของผัง: สถานีบางบัว → บันไดลง → ทางเท้า → ทางข้ามถนน → ประตูหลัก</figcaption></figure>' : "";
     content.innerHTML =
       '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div>' + authorStripHtml(entry.sectionId) +
       '<article class="reader-article"><header class="reader-article-head"><p class="reader-category">' + esc(section ? section.readerLabel || section.name : "CaeLum") + '</p>' +
       (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
+      mapFigure +
       '<section class="reader-body">' + proseHtml(entry.details || "—",entry.id) + '</section>' +
       (entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
       (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
