@@ -497,9 +497,9 @@
     content.innerHTML =
       '<div class="reading-progress-track"><span id="readingProgressBar"></span></div>' +
       '<article class="novel-reader' + (prefs.width === "wide" ? ' novel-wide' : '') + '" data-theme="' + esc(prefs.theme) + '" style="--novel-font-size:' + prefs.size + 'px;--novel-line-height:' + prefs.line + '">' +
-      '<div class="novel-reader-toolbar"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
+      '<div class="novel-reader-toolbar"><button class="reader-menu-toggle" data-reader-menu-toggle type="button" aria-expanded="false">☰ การอ่าน</button><div class="reader-tools-panel" id="readerToolsPanel"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
       '<label class="chapter-select-wrap"><span>ตอน</span><select data-chapter-select>' + chapters.map(ch => '<option value="' + esc(ch.id) + '"' + (ch.id===id ? ' selected' : '') + '>' + esc(ch.number) + ' · ' + esc(ch.title) + '</option>').join("") + '</select></label>' +
-      '<div class="reader-tools-right"><button class="reader-tool compact" data-font-down type="button">A−</button><button class="reader-tool compact" data-font-up type="button">A+</button><button class="reader-tool" data-reader-line type="button">ระยะบรรทัด</button><button class="reader-tool" data-reader-width type="button">' + (prefs.width === "wide" ? 'แคบ' : 'กว้าง') + '</button><button class="reader-tool" data-reader-theme type="button">' + (prefs.theme === "paper" ? 'กระดาษ' : prefs.theme === "sepia" ? 'ซีเปีย' : 'กลางคืน') + '</button><button class="reader-tool" data-share-chapter type="button">แชร์</button></div></div>' +
+      '<div class="reader-tools-right"><button class="reader-tool compact" data-font-down type="button">A−</button><button class="reader-tool compact" data-font-up type="button">A+</button><button class="reader-tool" data-reader-line type="button">ระยะบรรทัด</button><button class="reader-tool" data-reader-width type="button">' + (prefs.width === "wide" ? 'แคบ' : 'กว้าง') + '</button><button class="reader-tool" data-reader-theme type="button">' + (prefs.theme === "paper" ? 'กระดาษ' : prefs.theme === "sepia" ? 'ซีเปีย' : 'กลางคืน') + '</button><button class="reader-tool" data-share-chapter type="button">แชร์</button></div></div></div>' +
       '<header class="novel-chapter-head"><span class="novel-label">CAE LUM · CHAPTER ' + esc(chapter.number) + '</span><h1>' + esc(chapter.title) + '</h1>' +
       (chapter.subtitle ? '<p class="chapter-subtitle">' + esc(chapter.subtitle) + '</p>' : '') + '<div class="chapter-reading-meta"><span>ประมาณ ' + estimateReadMinutes(chapter.body) + ' นาที</span><span>ตอน ' + (index+1) + ' จาก ' + chapters.length + '</span>' + (authorMode ? '<span>' + esc(chapter.status) + '</span>' : '') + '</div>' +
       (saved > .06 && saved < .94 ? '<button class="resume-reading" data-resume-reading type="button">อ่านต่อจาก ' + Math.round(saved*100) + '% ↓</button>' : '') + '</header>' +
@@ -508,6 +508,21 @@
       '<div class="mobile-chapter-nav">' + (prev ? '<button data-chapter-nav="' + esc(prev.id) + '" type="button">←</button>' : '<span></span>') + '<button data-back-toc type="button">ตอน ' + esc(chapter.number) + '</button>' + (next ? '<button data-chapter-nav="' + esc(next.id) + '" type="button">→</button>' : '<span></span>') + '</div>';
 
     bindNovelGlossary();
+    const menuToggle = content.querySelector("[data-reader-menu-toggle]");
+    const readerToolsPanel = content.querySelector(".reader-tools-panel");
+    let readerMenuOpenedAt = window.scrollY;
+    const closeReaderMenu = () => {
+      if (!menuToggle || !readerToolsPanel) return;
+      menuToggle.setAttribute("aria-expanded","false");
+      readerToolsPanel.classList.remove("is-open");
+    };
+    if (menuToggle && readerToolsPanel) {
+      menuToggle.addEventListener("click",() => {
+        const isOpen = readerToolsPanel.classList.toggle("is-open");
+        menuToggle.setAttribute("aria-expanded",String(isOpen));
+        if (isOpen) readerMenuOpenedAt = window.scrollY;
+      });
+    }
     content.querySelectorAll("[data-back-toc]").forEach(btn => btn.addEventListener("click",() => navigate("novel")));
     content.querySelectorAll("[data-chapter-nav]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterNav)));
     const chooser = content.querySelector("[data-chapter-select]");
@@ -541,6 +556,7 @@
     });
 
     const updateProgress = () => {
+      if (readerToolsPanel?.classList.contains("is-open") && Math.abs(window.scrollY-readerMenuOpenedAt)>36) closeReaderMenu();
       const start=prose.offsetTop-90;
       const max=Math.max(1,prose.offsetHeight-window.innerHeight*.55);
       const ratio=Math.max(0,Math.min(1,(window.scrollY-start)/max));
