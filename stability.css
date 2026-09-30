@@ -1093,3 +1093,80 @@ img{max-width:100%}
   .entry-card,.search-result{padding:15px}
   .search-type{display:none}
 }
+
+
+/* Mobile novel reader: keep controls behind one button and keep navigation in flow. */
+.reader-menu-toggle{display:none}
+.reader-tools-panel{display:contents}
+
+@media(max-width:700px){
+  .novel-reader-toolbar{
+    position:relative;
+    top:auto;
+    z-index:1;
+    display:block;
+    min-height:0;
+    padding:9px 10px;
+  }
+  .reader-menu-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-height:42px;
+    border:1px solid var(--novel-line);
+    border-radius:10px;
+    background:color-mix(in srgb,var(--novel-paper) 92%,#888 8%);
+    color:var(--novel-ink);
+    font:600 12px var(--sans);
+  }
+  .reader-tools-panel{
+    display:none;
+    margin-top:8px;
+    padding:10px;
+    border:1px solid var(--novel-line);
+    border-radius:12px;
+    background:var(--novel-paper);
+  }
+  .reader-tools-panel.is-open{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+  .reader-tools-panel > [data-back-toc]{
+    align-self:flex-start;
+  }
+  .reader-tools-panel .chapter-select-wrap{
+    display:flex;
+    width:100%;
+    min-width:0;
+  }
+  .reader-tools-panel .chapter-select-wrap select{
+    flex:1;
+    min-width:0;
+    max-width:none;
+  }
+  .reader-tools-panel .reader-tools-right{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    gap:6px;
+    margin-left:0;
+  }
+  .reader-tools-panel .reader-tools-right [data-reader-line],
+  .reader-tools-panel .reader-tools-right [data-reader-width],
+  .reader-tools-panel .reader-tools-right [data-share-chapter]{
+    display:inline-flex!important;
+  }
+  .mobile-chapter-nav{
+    position:static;
+    left:auto;
+    right:auto;
+    bottom:auto;
+    z-index:auto;
+    width:min(100%,960px);
+    margin:14px auto 18px;
+  }
+  .novel-prose{padding-bottom:36px}
+}
