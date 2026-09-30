@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
 <title id="title">ผังตั้งต้น CaeLum และสถานีบางบัว</title>
-<desc id="desc">แผนภาพแสดงมหาวิทยาลัย CaeLum อยู่ฝั่งหนึ่งของถนน สถานีรถไฟฟ้าบางบัวอยู่บนรางยกระดับเหนือถนน มีบันไดลงสู่ทางเท้าและทางข้ามไปยังประตูหลัก</desc>
+<desc id="desc">CaeLum อยู่ฝั่งตรงข้ามถนนจากสถานีบางบัว รถไฟฟ้าวิ่งบนรางยกระดับเหนือถนน บันไดลงจากสถานีสู่ทางเท้าและทางข้ามไปยังประตูหลัก</desc>
 <defs>
   <pattern id="road" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="rotate(90)">
     <rect width="42" height="42" fill="#26333b"/>
@@ -16,54 +16,49 @@
 </defs>
 <rect width="1200" height="720" fill="#f5f3ed"/>
 <text x="58" y="53" fill="#25333b" font-family="sans-serif" font-size="25" font-weight="700">ผังตำแหน่งตั้งต้น · CaeLum / Bang Bua</text>
-<text x="58" y="80" fill="#6c7777" font-family="sans-serif" font-size="14">แผนภาพเพื่อกำหนดความสัมพันธ์ของทางเข้าและระบบขนส่ง · ยังไม่กำหนดสเกล</text>
+<text x="58" y="80" fill="#6c7777" font-family="sans-serif" font-size="14">ความสัมพันธ์ของสถานี ถนน และทางเข้ามหาวิทยาลัย · ภาพไม่กำหนดสเกล</text>
 
-<!-- Campus interior: areas beyond the entrance remain open for later mapping -->
-<rect x="58" y="112" width="515" height="290" rx="26" fill="#e5ecdf" stroke="#b9c9b5" stroke-width="2" filter="url(#shadow)"/>
+<rect x="58" y="112" width="560" height="292" rx="26" fill="#e5ecdf" stroke="#b9c9b5" stroke-width="2" filter="url(#shadow)"/>
 <text x="88" y="154" fill="#415748" font-family="sans-serif" font-size="20" font-weight="700">พื้นที่ภายใน CaeLum</text>
-<text x="88" y="180" fill="#68786a" font-family="sans-serif" font-size="13">อาคารและจุดหมายภายในจะเติมรายละเอียดภายหลัง</text>
-<rect x="110" y="218" width="156" height="94" rx="14" fill="#f6f5ef" stroke="#c8d0c2"/>
-<text x="188" y="260" text-anchor="middle" fill="#5d6b60" font-family="sans-serif" font-size="14">กลุ่มอาคาร</text>
-<text x="188" y="282" text-anchor="middle" fill="#879287" font-family="sans-serif" font-size="11">ตำแหน่งร่าง</text>
-<rect x="365" y="218" width="156" height="94" rx="14" fill="#f6f5ef" stroke="#c8d0c2"/>
-<text x="443" y="260" text-anchor="middle" fill="#5d6b60" font-family="sans-serif" font-size="14">พื้นที่ส่วนกลาง</text>
-<text x="443" y="282" text-anchor="middle" fill="#879287" font-family="sans-serif" font-size="11">ตำแหน่งร่าง</text>
-<path d="M76 375H556" stroke="#aabda8" stroke-width="3"/>
-<text x="316" y="366" text-anchor="middle" fill="#718071" font-family="sans-serif" font-size="11">แนวพื้นที่มหาวิทยาลัย</text>
+<text x="88" y="180" fill="#68786a" font-family="sans-serif" font-size="13">ตำแหน่งอาคารอื่นยังปรับได้</text>
+<rect x="105" y="218" width="172" height="88" rx="14" fill="#f6f5ef" stroke="#c8d0c2"/>
+<text x="191" y="256" text-anchor="middle" fill="#5d6b60" font-family="sans-serif" font-size="14">กลุ่มอาคาร</text>
+<text x="191" y="279" text-anchor="middle" fill="#879287" font-family="sans-serif" font-size="11">ตำแหน่งร่าง</text>
+<rect x="330" y="218" width="172" height="88" rx="14" fill="#f6f5ef" stroke="#c8d0c2"/>
+<text x="416" y="256" text-anchor="middle" fill="#5d6b60" font-family="sans-serif" font-size="14">พื้นที่ส่วนกลาง</text>
+<text x="416" y="279" text-anchor="middle" fill="#879287" font-family="sans-serif" font-size="11">ตำแหน่งร่าง</text>
+<path d="M75 374H600" stroke="#aabda8" stroke-width="3"/>
+<text x="342" y="366" text-anchor="middle" fill="#718071" font-family="sans-serif" font-size="11">แนวพื้นที่มหาวิทยาลัย</text>
+<rect x="493" y="348" width="126" height="57" rx="10" fill="#344b41"/>
+<path d="M511 405v-34a45 45 0 0 1 90 0v34" fill="#f5f3ed" stroke="#cfb77a" stroke-width="5"/>
+<text x="556" y="393" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="13" font-weight="700">ประตูหลัก</text>
 
-<!-- Main gate and road crossing -->
-<rect x="493" y="346" width="118" height="57" rx="10" fill="#344b41"/>
-<path d="M511 403v-33a41 41 0 0 1 82 0v33" fill="#f5f3ed" stroke="#cfb77a" stroke-width="5"/>
-<text x="552" y="392" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="13" font-weight="700">ประตูหลัก</text>
-<path d="M552 405v205" fill="none" stroke="#b9954d" stroke-width="4" stroke-dasharray="9 8"/>
-<path d="M540 585l12 18 12-18" fill="#b9954d"/>
-<text x="565" y="474" fill="#8b713c" font-family="sans-serif" font-size="12">ข้ามถนน</text>
+<text x="883" y="139" text-anchor="middle" fill="#526269" font-family="sans-serif" font-size="13" font-weight="700">รางรถไฟฟ้ายกระดับเหนือถนน</text>
+<rect x="628" y="154" width="508" height="45" rx="14" fill="#30444e" filter="url(#shadow)"/>
+<rect x="650" y="166" width="465" height="6" rx="3" fill="#93a4a8"/>
+<rect x="650" y="183" width="465" height="5" rx="2.5" fill="#c6d0ce"/>
+<rect x="713" y="211" width="310" height="89" rx="16" fill="#fffdf8" stroke="#c9cfc8" stroke-width="2" filter="url(#shadow)"/>
+<rect x="713" y="211" width="310" height="27" rx="16" fill="#a98242"/>
+<path d="M713 228h310" stroke="#a98242" stroke-width="22"/>
+<text x="868" y="230" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="12" font-weight="700">สถานีรถไฟฟ้า</text>
+<text x="868" y="270" text-anchor="middle" fill="#293a41" font-family="sans-serif" font-size="22" font-weight="700">บางบัว · Bang Bua</text>
+<text x="868" y="289" text-anchor="middle" fill="#7b8580" font-family="sans-serif" font-size="11">ชานชาลาอยู่เหนือถนน</text>
 
-<!-- Elevated railway and station -->
-<rect x="620" y="154" width="522" height="54" rx="14" fill="#30444e" filter="url(#shadow)"/>
-<rect x="641" y="167" width="480" height="7" rx="3.5" fill="#93a4a8"/>
-<rect x="641" y="187" width="480" height="5" rx="2.5" fill="#c6d0ce"/>
-<text x="875" y="144" text-anchor="middle" fill="#526269" font-family="sans-serif" font-size="13" font-weight="700">รางรถไฟฟ้ายกระดับ</text>
-<rect x="770" y="215" width="286" height="90" rx="16" fill="#fffdf8" stroke="#c9cfc8" stroke-width="2" filter="url(#shadow)"/>
-<rect x="770" y="215" width="286" height="27" rx="16" fill="#a98242"/>
-<path d="M770 232h286" stroke="#a98242" stroke-width="22"/>
-<text x="913" y="234" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="12" font-weight="700">สถานีรถไฟฟ้า</text>
-<text x="913" y="276" text-anchor="middle" fill="#293a41" font-family="sans-serif" font-size="22" font-weight="700">บางบัว · Bang Bua</text>
-<text x="913" y="294" text-anchor="middle" fill="#7b8580" font-family="sans-serif" font-size="11">ชานชาลาอยู่เหนือถนน</text>
-<path d="M1064 302l-72 96-20 21" fill="none" stroke="#66777b" stroke-width="13" stroke-linecap="round"/>
-<path d="M1064 302l-72 96-20 21" fill="none" stroke="#e5e9e4" stroke-width="3" stroke-dasharray="7 8"/>
-<text x="1059" y="360" fill="#53656a" font-family="sans-serif" font-size="12">บันไดลง</text>
-<path d="M964 420h-45" stroke="#b9954d" stroke-width="4" stroke-dasharray="7 6"/>
-<circle cx="916" cy="420" r="7" fill="#b9954d"/>
-<text x="923" y="445" fill="#8b713c" font-family="sans-serif" font-size="12">ทางเท้า</text>
+<path d="M746 299l-100 118-65 35" fill="none" stroke="#66777b" stroke-width="13" stroke-linecap="round"/>
+<path d="M746 299l-100 118-65 35" fill="none" stroke="#e5e9e4" stroke-width="3" stroke-dasharray="7 8"/>
+<text x="692" y="363" fill="#53656a" font-family="sans-serif" font-size="12">บันไดลง</text>
 
-<!-- Road frontage -->
-<rect x="0" y="486" width="1200" height="29" fill="#d5d4cc"/>
-<text x="60" y="505" fill="#56646a" font-family="sans-serif" font-size="12">ทางเท้าหน้ามหาวิทยาลัย</text>
-<rect x="0" y="516" width="1200" height="156" fill="url(#road)"/>
-<text x="63" y="564" fill="#f5f3ed" font-family="sans-serif" font-size="19" font-weight="700">ถนนหน้า CaeLum</text>
-<text x="63" y="590" fill="#c4ccca" font-family="sans-serif" font-size="12">การสัญจรของเมืองอยู่ใต้แนวรางยกระดับ</text>
-<rect x="520" y="516" width="64" height="156" fill="url(#crossing)" opacity=".92"/>
-<rect x="1042" y="516" width="64" height="156" fill="url(#crossing)" opacity=".92"/>
-<text x="580" y="694" fill="#68746e" font-family="sans-serif" font-size="12">ตำแหน่งร้านค้าและพื้นที่ฝั่งตรงข้ามยังไม่ล็อก</text>
+<rect x="0" y="474" width="1200" height="34" fill="#d5d4cc"/>
+<text x="68" y="497" fill="#56646a" font-family="sans-serif" font-size="12">ทางเท้า</text>
+<path d="M581 452H553V466" fill="none" stroke="#b9954d" stroke-width="4" stroke-dasharray="8 7"/>
+<path d="M541 458l12 12 12-12" fill="#b9954d"/>
+<text x="593" y="457" fill="#8b713c" font-family="sans-serif" font-size="12">เดินตามทางเท้าไปทางข้าม</text>
+<rect x="0" y="508" width="1200" height="164" fill="url(#road)"/>
+<rect x="522" y="508" width="64" height="164" fill="url(#crossing)" opacity=".95"/>
+<text x="63" y="557" fill="#f5f3ed" font-family="sans-serif" font-size="19" font-weight="700">ถนนหน้า CaeLum</text>
+<text x="63" y="584" fill="#c4ccca" font-family="sans-serif" font-size="12">รถสัญจรอยู่ใต้แนวรางยกระดับ</text>
+<path d="M554 510V435" stroke="#b9954d" stroke-width="4" stroke-dasharray="8 7"/>
+<path d="M542 447l12-15 12 15" fill="#b9954d"/>
+<text x="573" y="531" fill="#fffdf8" font-family="sans-serif" font-size="12">ทางข้าม</text>
+<text x="756" y="696" fill="#68746e" font-family="sans-serif" font-size="12">ร้านค้าและผังฝั่งตรงข้ามยังไม่ล็อก</text>
 </svg>
