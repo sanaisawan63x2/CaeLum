@@ -1294,3 +1294,233 @@ img{max-width:100%}
     font-size:11px;
   }
 }
+
+
+/* =========================================================
+   Novel story map — gateway before Chapter 1
+   ========================================================= */
+.novel-map-feature{
+  display:grid;
+  grid-template-columns:minmax(280px,.82fr) minmax(420px,1.18fr);
+  overflow:hidden;
+  margin:0 0 18px;
+  border:1px solid #314552;
+  border-radius:19px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(202,173,105,.13),transparent 36%),
+    linear-gradient(135deg,#152833,#11212b 58%,#0f1d26);
+  box-shadow:0 16px 44px rgba(14,25,32,.13);
+}
+.novel-map-copy{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+  padding:30px 30px 28px;
+}
+.novel-map-kicker{
+  color:#d1b66f;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.novel-map-copy h3{
+  margin:7px 0 10px;
+  color:#f2f5f6;
+  font-family:var(--serif);
+  font-size:31px;
+  line-height:1.15;
+}
+.novel-map-copy p{
+  margin:0;
+  max-width:520px;
+  color:#b8c6cd;
+  font-size:13px;
+  line-height:1.8;
+}
+.novel-map-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:17px;
+}
+.novel-map-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:27px;
+  padding:0 9px;
+  border:1px solid rgba(220,230,234,.14);
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+  color:#91a6b0;
+  font-size:9px;
+  letter-spacing:.02em;
+}
+.novel-map-button{
+  align-self:flex-start;
+  margin-top:19px;
+  border-color:#ceb36e!important;
+  background:#d2b66e!important;
+  color:#17242b!important;
+  box-shadow:none!important;
+}
+.novel-map-button span{margin-left:5px}
+.novel-map-preview{
+  position:relative;
+  min-height:328px;
+  overflow:hidden;
+  padding:0;
+  border:0;
+  border-left:1px solid rgba(255,255,255,.09);
+  background:#f5f3ed;
+  cursor:zoom-in;
+}
+.novel-map-preview img{
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:328px;
+  object-fit:cover;
+  object-position:center;
+  transition:transform .25s ease,filter .25s ease;
+}
+.novel-map-preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  box-shadow:inset 24px 0 40px rgba(11,24,31,.14);
+}
+.novel-map-preview:hover img{
+  transform:scale(1.012);
+  filter:saturate(1.03) contrast(1.01);
+}
+.novel-map-zoom{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  min-height:31px;
+  padding:0 11px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;
+  background:rgba(17,31,39,.86);
+  color:#f2f5f6;
+  box-shadow:0 6px 20px rgba(0,0,0,.16);
+  backdrop-filter:blur(8px);
+  font-size:10px;
+  font-weight:700;
+}
+
+.map-dialog{
+  width:min(1180px,calc(100vw - 30px));
+  max-width:none;
+  max-height:calc(100vh - 30px);
+  padding:0;
+  overflow:hidden;
+  border:1px solid #3a4e59;
+  border-radius:20px;
+  background:#13242e;
+  color:#edf2f4;
+  box-shadow:0 34px 100px rgba(0,0,0,.46);
+}
+.map-dialog::backdrop{
+  background:rgba(8,15,19,.76);
+  backdrop-filter:blur(7px);
+}
+.map-dialog-shell{
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 30px);
+}
+.map-dialog-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex:0 0 auto;
+  min-height:66px;
+  padding:12px 16px 12px 20px;
+  border-bottom:1px solid #304550;
+  background:#142832;
+}
+.map-dialog-bar div{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.map-dialog-bar span{
+  color:#bda265;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.map-dialog-bar strong{
+  color:#eef3f5;
+  font-size:15px;
+}
+.map-dialog-close{
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  flex:0 0 38px;
+  border:1px solid #3d525e;
+  border-radius:10px;
+  background:#1a303b;
+  color:#c9d5da;
+  font-size:23px;
+  line-height:1;
+}
+.map-dialog-close:hover{background:#223b47;color:#fff}
+.map-dialog-body{
+  overflow:auto;
+  background:#f5f3ed;
+}
+.map-dialog-body img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:calc(100vh - 98px);
+  object-fit:contain;
+  object-position:center;
+  background:#f5f3ed;
+}
+
+@media(max-width:900px){
+  .novel-map-feature{grid-template-columns:1fr}
+  .novel-map-preview{
+    order:-1;
+    min-height:250px;
+    border-left:0;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+  .novel-map-preview img{min-height:250px}
+}
+@media(max-width:760px){
+  .novel-map-feature{
+    margin:0 0 14px;
+    border-radius:17px;
+  }
+  .novel-map-copy{padding:23px 21px 24px}
+  .novel-map-copy h3{font-size:27px}
+  .novel-map-copy p{font-size:12.5px;line-height:1.75}
+  .novel-map-preview,.novel-map-preview img{min-height:220px}
+  .novel-map-zoom{right:10px;bottom:10px}
+  .map-dialog{
+    width:calc(100vw - 16px);
+    max-height:calc(100vh - 16px);
+    border-radius:15px;
+  }
+  .map-dialog-shell{max-height:calc(100vh - 16px)}
+  .map-dialog-bar{min-height:58px;padding:9px 10px 9px 14px}
+  .map-dialog-body img{max-height:calc(100vh - 75px)}
+}
+@media(max-width:480px){
+  .novel-map-meta{gap:5px}
+  .novel-map-meta span{font-size:8.5px}
+  .novel-map-button{width:100%;justify-content:center}
+  .novel-map-preview,.novel-map-preview img{min-height:190px}
+}

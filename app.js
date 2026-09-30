@@ -444,6 +444,31 @@
     }));
   }
 
+
+  function openNovelMap() {
+    const existing = document.querySelector(".map-dialog");
+    if (existing) existing.remove();
+
+    const dialog = document.createElement("dialog");
+    dialog.className = "map-dialog";
+    dialog.setAttribute("aria-label","แผนที่ CaeLum และสถานีบางบัว");
+    dialog.innerHTML =
+      '<div class="map-dialog-shell">' +
+        '<header class="map-dialog-bar"><div><span>STORY MAP</span><strong>CaeLum × Bang Bua</strong></div><button class="map-dialog-close" type="button" aria-label="ปิดแผนที่">×</button></header>' +
+        '<div class="map-dialog-body"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum สถานีบางบัว ถนน และประตูหลัก"></div>' +
+      '</div>';
+
+    document.body.appendChild(dialog);
+    dialog.querySelector(".map-dialog-close").addEventListener("click",() => dialog.close());
+    dialog.addEventListener("click",event => {
+      const rect = dialog.getBoundingClientRect();
+      const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      if (!inside) dialog.close();
+    });
+    dialog.addEventListener("close",() => dialog.remove(),{once:true});
+    dialog.showModal();
+  }
+
   function renderNovelHome() {
     const chapters = visibleChapters();
     const cover = db.project.assets[db.novel.coverAssetKey] || db.project.assets.gothicCampus || {};
@@ -454,6 +479,10 @@
       (chapters.length ? '<button class="button novel-primary" data-open-first type="button">' + (lastId && chapterById(lastId) ? 'อ่านต่อ' : 'เริ่มอ่าน') + '</button>' : '') + '</div></section>' +
       authorStripHtml() +
       '<div class="reader-heading novel-heading"><div><h2>สารบัญนิยาย</h2><p>' + chapters.length + ' ตอนที่เปิดให้อ่าน</p></div>' + (authorMode ? '<button class="button primary" data-add-chapter type="button">+ เพิ่มตอน</button>' : '') + '</div>' +
+      '<section class="novel-map-feature" aria-label="แผนที่ CaeLum ก่อนเริ่มตอนที่ 1">' +
+        '<div class="novel-map-copy"><span class="novel-map-kicker">STORY MAP · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>Bang Bua Station</span><span>Main Gate</span><span>Not to scale</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
+        '<button class="novel-map-preview" data-open-map type="button" aria-label="เปิดแผนที่ CaeLum แบบเต็มจอ"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum กับสถานีบางบัว" loading="eager"><span class="novel-map-zoom">ดูแผนที่เต็ม</span></button>' +
+      '</section>' +
       '<section class="chapter-list">' + (chapters.length ? chapters.map(ch => {
         const p = progress[ch.id] || 0;
         return '<article class="chapter-card" data-open-chapter="' + esc(ch.id) + '"><div class="chapter-no">ตอน ' + esc(ch.number) + '</div><div class="chapter-card-copy"><h3>' + esc(ch.title) + '</h3>' +
@@ -467,6 +496,7 @@
       if (target) navigate("chapter",target.id);
     });
     content.querySelectorAll("[data-open-chapter]").forEach(card => card.addEventListener("click",() => navigate("chapter",card.dataset.openChapter)));
+    content.querySelectorAll("[data-open-map]").forEach(button => button.addEventListener("click",openNovelMap));
     const add = content.querySelector("[data-add-chapter]");
     if (add) add.addEventListener("click",() => openChapterEditor(null));
     bindAuthorStrip();
