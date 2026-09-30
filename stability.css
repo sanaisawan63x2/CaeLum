@@ -1099,7 +1099,7 @@ img{max-width:100%}
 .reader-menu-toggle{display:none}
 .reader-tools-panel{display:contents}
 
-@media(max-width:700px){
+@media(max-width:900px){
   .novel-reader-toolbar{
     position:relative;
     top:auto;
@@ -1245,12 +1245,12 @@ img{max-width:100%}
   line-height:1.65;
   text-align:center;
 }
-@media(min-width:701px){
+@media(min-width:901px){
   .reader-menu-toggle{display:none}
   .reader-tools-panel{display:contents}
   .reader-tools-panel .reader-tools-right{flex-wrap:wrap}
 }
-@media(max-width:700px){
+@media(max-width:900px){
   .reader-article{
     padding-bottom:18px;
     border-radius:14px;
