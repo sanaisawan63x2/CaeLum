@@ -192,6 +192,21 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
+  function clearExpandedSubtree(sectionId) {
+    descendantSectionIds(sectionId).forEach(id => expandedNav.delete(id));
+  }
+
+  function openNavPath(sectionId) {
+    const chain = ancestorChain(sectionId);
+    const activeRoot = chain.length ? chain[0].id : null;
+    if (activeRoot) {
+      childrenOf(null).forEach(root => {
+        if (root.id !== activeRoot) clearExpandedSubtree(root.id);
+      });
+    }
+    chain.slice(0,-1).forEach(section => expandedNav.add(section.id));
+  }
+
   function navSimple(type,icon,label,active) {
     return '<div class="nav-node-row"><button class="nav-toggle placeholder" tabindex="-1">+</button>' +
       '<button class="nav-btn' + (active ? ' active' : '') + '" data-nav-go="' + esc(type) + '">' +
@@ -203,8 +218,8 @@
     const active = activeSection === section.id;
     const open = expandedNav.has(section.id);
     let html = '<div class="nav-node"><div class="nav-node-row">';
-    if (kids.length) html += '<button class="nav-toggle' + (open ? ' open' : '') + '" data-nav-toggle="' + esc(section.id) + '" type="button">' + (open ? '−' : '+') + '</button>';
-    else html += '<button class="nav-toggle placeholder" tabindex="-1">+</button>';
+    if (kids.length) html += '<button class="nav-toggle' + (open ? ' open' : '') + '" data-nav-toggle="' + esc(section.id) + '" type="button" aria-label="' + (open ? 'ยุบหมวด' : 'ขยายหมวด') + '">' + (open ? '⌄' : '›') + '</button>';
+    else html += '<button class="nav-toggle placeholder" tabindex="-1">›</button>';
     html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? ' active' : '') + '" data-section-go="' + esc(section.id) + '">' +
       '<span class="nav-icon">' + esc(section.icon || "·") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span><span class="nav-count">' + countUnder(section.id) + '</span></button></div>';
     if (kids.length && open) html += '<div class="nav-children">' + kids.map(k => navSectionNode(k,activeSection,depth+1)).join("") + '</div>';
@@ -215,7 +230,7 @@
   function renderNav() {
     const r = route();
     const activeSection = r.type === "section" ? r.id : r.type === "entry" ? (entryById(r.id) || {}).sectionId : null;
-    if (activeSection) ancestorChain(activeSection).forEach(s => expandedNav.add(s.id));
+    if (activeSection) openNavPath(activeSection);
     localStorage.setItem("caelum_nav_open",JSON.stringify(Array.from(expandedNav)));
 
     let html = '<div class="nav-tree">';
@@ -242,7 +257,17 @@
     categoryNav.querySelectorAll("[data-nav-toggle]").forEach(btn => btn.addEventListener("click",e => {
       e.stopPropagation();
       const id = btn.dataset.navToggle;
-      if (expandedNav.has(id)) expandedNav.delete(id); else expandedNav.add(id);
+      const target = sectionById(id);
+      if (!target) return;
+      if (expandedNav.has(id)) {
+        clearExpandedSubtree(id);
+      } else {
+        childrenOf(target.parentId || null).forEach(sibling => {
+          if (sibling.id !== id) clearExpandedSubtree(sibling.id);
+        });
+        ancestorChain(id).slice(0,-1).forEach(section => expandedNav.add(section.id));
+        expandedNav.add(id);
+      }
       localStorage.setItem("caelum_nav_open",JSON.stringify(Array.from(expandedNav)));
       renderNav();
     }));
@@ -527,7 +552,7 @@
     content.innerHTML =
       '<div class="reading-progress-track"><span id="readingProgressBar"></span></div>' +
       '<article class="novel-reader' + (prefs.width === "wide" ? ' novel-wide' : '') + '" data-theme="' + esc(prefs.theme) + '" style="--novel-font-size:' + prefs.size + 'px;--novel-line-height:' + prefs.line + '">' +
-      '<div class="novel-reader-toolbar"><button class="reader-menu-toggle" data-reader-menu-toggle type="button" aria-expanded="false">☰ การอ่าน</button><div class="reader-tools-panel" id="readerToolsPanel"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
+      '<div class="novel-reader-toolbar"><button class="reader-menu-toggle" data-reader-menu-toggle type="button" aria-expanded="false">Aa <span>การอ่าน</span></button><div class="reader-tools-panel" id="readerToolsPanel"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
       '<label class="chapter-select-wrap"><span>ตอน</span><select data-chapter-select>' + chapters.map(ch => '<option value="' + esc(ch.id) + '"' + (ch.id===id ? ' selected' : '') + '>' + esc(ch.number) + ' · ' + esc(ch.title) + '</option>').join("") + '</select></label>' +
       '<div class="reader-tools-right"><button class="reader-tool compact" data-font-down type="button">A−</button><button class="reader-tool compact" data-font-up type="button">A+</button><button class="reader-tool" data-reader-line type="button">ระยะบรรทัด</button><button class="reader-tool" data-reader-width type="button">' + (prefs.width === "wide" ? 'แคบ' : 'กว้าง') + '</button><button class="reader-tool" data-reader-theme type="button">' + (prefs.theme === "paper" ? 'กระดาษ' : prefs.theme === "sepia" ? 'ซีเปีย' : 'กลางคืน') + '</button><button class="reader-tool" data-share-chapter type="button">แชร์</button></div></div></div>' +
       '<header class="novel-chapter-head"><span class="novel-label">CAE LUM · CHAPTER ' + esc(chapter.number) + '</span><h1>' + esc(chapter.title) + '</h1>' +
@@ -838,8 +863,12 @@
   function setModeUi() {
     $("modeBadge").textContent=authorMode?"Author":"Reader";
     $("modeBadge").classList.toggle("author",authorMode);
+    $("modeBadge").hidden=!authorMode;
+    document.body.classList.toggle("author-mode",authorMode);
     $("adminButton").classList.toggle("active",authorMode);
-    $("adminButton").querySelector("strong").textContent=authorMode?"Author Mode ✓":"Author Mode";
+    $("adminButton").querySelector("strong").textContent=authorMode?"Author Mode ✓":"สำหรับผู้ดูแล";
+    const helper=$("adminButton").querySelector("small");
+    if(helper) helper.textContent=authorMode?"กำลังแก้ไขข้อมูลหลังบ้าน":"เข้าสู่โหมดแก้ไข";
   }
 
   function sectionOptions(selectedId,excludeId,includeRoot) {
