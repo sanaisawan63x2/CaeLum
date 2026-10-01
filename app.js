@@ -238,11 +238,22 @@
     html += navSimple("novel","◫","อ่านนิยาย",r.type === "novel" || r.type === "chapter");
 
     if (r.type === "novel" || r.type === "chapter") {
-      const chapterRows = visibleChapters().map(ch =>
+      const chapters = visibleChapters();
+      let navChapters = chapters.slice(0,5);
+      if (r.type === "chapter") {
+        const currentIndex = chapters.findIndex(ch => ch.id === r.id);
+        if (currentIndex >= 0) {
+          const start = Math.max(0,Math.min(currentIndex-2,Math.max(0,chapters.length-5)));
+          navChapters = chapters.slice(start,start+5);
+        }
+      }
+      const chapterRows = navChapters.map(ch =>
         '<button class="nav-chapter-link' + (r.type === "chapter" && r.id === ch.id ? ' active' : '') + '" data-chapter-go="' + esc(ch.id) + '">' +
         '<span>ตอน ' + esc(ch.number) + '</span><b>' + esc(ch.title) + '</b></button>'
       ).join("");
-      if (chapterRows) html += '<div class="nav-novel-chapters">' + chapterRows + '</div>';
+      if (chapterRows) html += '<div class="nav-novel-chapters">' + chapterRows +
+        (chapters.length > navChapters.length ? '<button class="nav-chapter-more" data-nav-go="novel" type="button">ดูสารบัญทั้งหมด · ' + chapters.length + ' ตอน</button>' : '') +
+        '</div>';
     }
 
     html += navSimple("all","☰","สารบัญวิกิ",r.type === "all");
