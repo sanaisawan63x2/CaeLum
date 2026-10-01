@@ -335,7 +335,7 @@
   }
 
   function bindSectionCards() {
-    bindSectionCards();
+    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
     content.querySelectorAll("[data-section-jump]").forEach(btn => btn.addEventListener("click",event => {
       event.stopPropagation();
       navigate("section",btn.dataset.sectionJump);
