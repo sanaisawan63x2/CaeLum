@@ -360,6 +360,17 @@
     }));
   }
 
+  function subsectionChoiceHtml(section,index) {
+    const count=entriesIn(section.id,false).length;
+    const number=String(index+1).padStart(2,"0");
+    return '<button class="section-choice" data-section-jump="' + esc(section.id) + '" type="button">' +
+      '<span class="section-choice-no">' + number + '</span>' +
+      '<span class="section-choice-copy"><strong>' + esc(section.readerLabel || section.name) + '</strong><span>' + esc(section.description || "") + '</span></span>' +
+      '<span class="section-choice-meta">' + count + ' เรื่อง</span>' +
+      '<span class="section-choice-arrow" aria-hidden="true">→</span>' +
+    '</button>';
+  }
+
   function entryCardHtml(entry) {
     return '<article class="entry-card" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(entry.title) + '</h3><p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
   }
@@ -707,16 +718,29 @@
     const asset=assetFor(section);
     const kids=childrenOf(id);
     const entries=entriesIn(id,false).sort((a,b)=>String(a.title).localeCompare(String(b.title),"th"));
-    content.innerHTML =
-      '<section class="section-hero simple-section-hero"><div class="section-hero-bg" style="' + styleBg(asset.url) + '"></div><div class="section-hero-content"><div class="breadcrumbs">' + breadcrumbsHtml(id) + '</div><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p>' +
-      (authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') + '</div></section>' +
-      authorStripHtml(id) +
-      (kids.length ? '<div class="reader-heading"><div><h2>หัวข้อย่อย</h2><p>เลือกส่วนที่ต้องการอ่าน</p></div></div><section class="library-list">' + kids.map(sectionCardHtml).join("") + '</section>' : '') +
-      (entries.length ? '<div class="reader-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
-      (!kids.length && !entries.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล</div>' : '');
+
+    if (kids.length) {
+      content.innerHTML =
+        '<section class="section-landing">' +
+          '<div class="breadcrumbs section-landing-breadcrumbs">' + breadcrumbsHtml(id) + '</div>' +
+          '<div class="section-landing-copy"><p class="eyebrow">หมวดข้อมูล</p><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p></div>' +
+          '<div class="section-choice-head"><div><h2>เลือกหัวข้อ</h2><p>เลือกเรื่องที่ต้องการอ่านต่อจากด้านล่าง</p></div><span>' + kids.length + ' หัวข้อ</span></div>' +
+          '<div class="section-choice-list">' + kids.map(subsectionChoiceHtml).join("") + '</div>' +
+          (entries.length ? '<div class="section-direct"><div class="section-choice-head compact"><div><h2>ข้อมูลทั่วไป</h2><p>ข้อมูลที่อยู่ในหมวดนี้โดยตรง</p></div><span>' + entries.length + ' เรื่อง</span></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section></div>' : '') +
+          (authorMode ? '<div class="section-actions section-landing-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') +
+        '</section>';
+    } else {
+      content.innerHTML =
+        '<section class="section-hero simple-section-hero"><div class="section-hero-bg" style="' + styleBg(asset.url) + '"></div><div class="section-hero-content"><div class="breadcrumbs">' + breadcrumbsHtml(id) + '</div><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p>' +
+        (authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') + '</div></section>' +
+        authorStripHtml(id) +
+        (entries.length ? '<div class="reader-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
+        (!entries.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล</div>' : '');
+    }
+
     bindBreadcrumbs();
     bindAuthorStrip();
-    bindSectionCards();
+    content.querySelectorAll("[data-section-jump]").forEach(btn => btn.addEventListener("click",() => navigate("section",btn.dataset.sectionJump)));
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
     const edit=content.querySelector("[data-edit-section]");
     if(edit) edit.addEventListener("click",() => openSectionEditor(id));
