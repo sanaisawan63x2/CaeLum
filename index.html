@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=31">
-  <link rel="stylesheet" href="stability.css?v=58">
+  <link rel="stylesheet" href="stability.css?v=59">
 </head>
 <body>
   <div class="app">
@@ -91,72 +91,110 @@
     </form>
   </dialog>
 
-  <dialog class="modal wide" id="editorModal">
-    <form method="dialog" class="modal-card" onsubmit="return false;">
-      <header class="modal-header">
+  <dialog class="modal wide entry-editor-modal" id="editorModal">
+    <form method="dialog" class="modal-card entry-editor-card" onsubmit="return false;">
+      <header class="modal-header entry-editor-header">
         <div>
-          <span class="modal-kicker">WORLD ENTRY</span>
+          <span class="modal-kicker">AUTHOR WORKSPACE</span>
           <h2 id="editorHeading">เพิ่มข้อมูล</h2>
+          <p class="entry-editor-subtitle">จัดข้อมูลเป็นหมวด ไม่ต้องไล่เลื่อนหาช่องที่ต้องการ</p>
         </div>
         <button class="icon-button" data-close="editorModal" type="button" aria-label="ปิด">×</button>
       </header>
 
-      <div class="modal-body form-grid">
-        <label class="field span-2">
-          <span>ชื่อหัวข้อ</span>
-          <input id="entryTitle" placeholder="เช่น ระบบเขตแดนของ CaeLum">
-        </label>
+      <nav class="entry-editor-tabs" id="entryEditorTabs" aria-label="หมวดการแก้ไข">
+        <button class="entry-editor-tab active" data-entry-tab="basic" type="button"><span>1</span>ข้อมูลหลัก</button>
+        <button class="entry-editor-tab" data-entry-tab="public" type="button"><span>2</span>หน้า Public</button>
+        <button class="entry-editor-tab" data-entry-tab="character" id="characterTabButton" type="button" hidden><span>3</span>Character Profile</button>
+        <button class="entry-editor-tab" data-entry-tab="author" type="button"><span>4</span>หลังบ้านผู้แต่ง</button>
+      </nav>
 
-        <label class="field">
-          <span>หมวด</span>
-          <select id="entrySection"></select>
-        </label>
+      <div class="entry-editor-body">
+        <section class="entry-editor-pane active" data-entry-pane="basic">
+          <div class="entry-pane-heading">
+            <div><span>ข้อมูลหลัก</span><h3>ข้อมูลที่ใช้จัดรายการนี้ในคลังโลก</h3></div>
+            <p>ชื่อ หมวด สถานะ และการมองเห็น</p>
+          </div>
+          <div class="form-grid entry-pane-grid">
+            <label class="field span-2">
+              <span>ชื่อหัวข้อ / ชื่อตัวละคร</span>
+              <input id="entryTitle" placeholder="เช่น Elias Leyndel">
+            </label>
 
-        <label class="field">
-          <span>สถานะ</span>
-          <select id="entryStatus">
-            <option value="canon">Canon — ยืนยันแล้ว</option>
-            <option value="draft">Draft — ยังเปลี่ยนได้</option>
-            <option value="idea">Idea — ไอเดียรอพัฒนา</option>
-          </select>
-        </label>
+            <label class="field">
+              <span>หมวด</span>
+              <select id="entrySection"></select>
+            </label>
 
-        <label class="field">
-          <span>การมองเห็น</span>
-          <select id="entryVisibility">
-            <option value="public">Public — ผู้อ่านเห็น</option>
-            <option value="author-only">Author Only — หลังบ้าน</option>
-          </select>
-          <small id="entryVisibilityHint">Public จะแสดงได้เมื่อหมวดที่เลือกและหมวดแม่เป็น Public ด้วย</small>
-        </label>
+            <label class="field">
+              <span>สถานะข้อมูล</span>
+              <select id="entryStatus">
+                <option value="canon">Canon — ยืนยันแล้ว</option>
+                <option value="draft">Draft — ยังเปลี่ยนได้</option>
+                <option value="idea">Idea — ไอเดียรอพัฒนา</option>
+              </select>
+            </label>
 
-        <label class="field">
-          <span>Tags</span>
-          <input id="entryTags" placeholder="คั่นด้วย ,">
-        </label>
+            <label class="field">
+              <span>การมองเห็น</span>
+              <select id="entryVisibility">
+                <option value="public">Public — ผู้อ่านเห็น</option>
+                <option value="author-only">Author Only — หลังบ้าน</option>
+              </select>
+              <small id="entryVisibilityHint">Public จะแสดงได้เมื่อหมวดที่เลือกและหมวดแม่เป็น Public ด้วย</small>
+            </label>
 
-        <label class="check-field span-2">
-          <input id="entryFeatured" type="checkbox">
-          <span><b>ใช้เป็นบทความหลักของหมวด</b><small>เนื้อหานี้จะแสดงเต็มทันทีเมื่อเปิดหมวด เหมาะกับข้อมูลแกนกลาง เช่น เวทมนตร์ หรือ CaeLum University</small></span>
-        </label>
+            <label class="field">
+              <span>Tags</span>
+              <input id="entryTags" placeholder="คั่นด้วย ,">
+            </label>
 
-        <label class="field span-2">
-          <span>ประโยคเปิด / น้ำเสียง</span>
-          <input id="entryKicker" placeholder="ประโยคสั้นที่ช่วยบอกอารมณ์หรือแก่นของหัวข้อนี้">
-        </label>
+            <label class="check-field span-2 entry-featured-field">
+              <input id="entryFeatured" type="checkbox">
+              <span><b>ใช้เป็นบทความหลักของหมวด</b><small>เหมาะกับข้อมูลแกนกลางของหมวด ไม่จำเป็นสำหรับตัวละครทั่วไป</small></span>
+            </label>
+          </div>
+        </section>
 
-        <label class="field span-2">
-          <span>สรุปสำหรับผู้อ่าน</span>
-          <textarea id="entrySummary" rows="4" placeholder="สรุปสิ่งสำคัญโดยไม่ทำลายน้ำหนักหรือปริศนาของเรื่อง"></textarea>
-        </label>
+        <section class="entry-editor-pane" data-entry-pane="public" hidden>
+          <div class="entry-pane-heading">
+            <div><span>หน้า Public</span><h3>สิ่งที่ผู้อ่านจะเห็นบนเว็บไซต์</h3></div>
+            <p>เขียนเฉพาะข้อมูลที่เปิดเผยได้ในตอนปัจจุบัน</p>
+          </div>
+          <div class="form-grid entry-pane-grid">
+            <label class="field span-2">
+              <span>ประโยคเปิด / น้ำเสียง</span>
+              <input id="entryKicker" placeholder="ประโยคสั้นที่ช่วยบอกอารมณ์หรือแก่นของหัวข้อนี้">
+            </label>
 
-        <label class="field span-2">
-          <span>รายละเอียดหลัก</span>
-          <textarea id="entryDetails" rows="14" placeholder="รายละเอียดของโลก เหตุและผล สถาบัน ชีวิตประจำวัน และสิ่งที่ต้องสอดคล้องกับ Canon"></textarea>
-        </label>
+            <label class="field span-2">
+              <span>สรุปสั้นสำหรับผู้อ่าน</span>
+              <textarea id="entrySummary" rows="4" placeholder="สรุปว่าเรื่องนี้หรือคนนี้คือใคร โดยไม่สปอยล์"></textarea>
+            </label>
 
-        <section class="character-form span-2" id="characterFields" hidden>
-          <div class="form-divider character-form-title"><span>Character Profile</span><small>ข้อมูลส่วนนี้ใช้จัดหน้าตัวละครสำหรับผู้อ่านทั่วไป</small></div>
+            <label class="field span-2">
+              <span>รายละเอียดหลัก</span>
+              <textarea id="entryDetails" rows="10" placeholder="เนื้อหาหลักที่จะปรากฏในหน้า Public"></textarea>
+            </label>
+
+            <label class="field span-2">
+              <span>ข้อมูลที่เปิดเผยแล้ว / คนในโลกรู้อะไร</span>
+              <textarea id="entryPublicKnowledge" rows="5" placeholder="ข้อมูลที่เปิดเผยต่อผู้อ่านได้แล้วในตอนปัจจุบัน"></textarea>
+            </label>
+
+            <label class="field span-2">
+              <span>เชื่อมโยงกับ</span>
+              <input id="entryLinks" placeholder="ใส่ชื่อหัวข้อ คั่นด้วย ,">
+              <small>จะแสดงเป็นหัวข้อ “อ่านต่อ” ในหน้า Public</small>
+            </label>
+          </div>
+        </section>
+
+        <section class="entry-editor-pane character-form" id="characterFields" data-entry-pane="character" hidden>
+          <div class="entry-pane-heading">
+            <div><span>Character Profile</span><h3>ข้อมูลเฉพาะสำหรับหน้าตัวละคร</h3></div>
+            <p>ช่องที่เว้นว่างจะไม่แสดงบนหน้า Public</p>
+          </div>
 
           <div class="character-form-grid">
             <label class="field">
@@ -177,20 +215,20 @@
             </label>
             <label class="field span-2">
               <span>บทบาทที่ผู้อ่านควรรู้</span>
-              <input id="characterRole" placeholder="เช่น นักศึกษาปีหนึ่งที่เพิ่งเริ่มต้นชีวิตใน CaeLum">
+              <input id="characterRole" placeholder="เช่น นักศึกษาปีหนึ่งของ CaeLum">
             </label>
             <label class="field span-2">
               <span>ภาพตัวละคร</span>
-              <input id="characterPortrait" placeholder="เช่น assets/characters/elias.webp หรือ URL รูป">
-              <small>ปล่อยว่างได้ถ้ายังไม่มีภาพ</small>
+              <input id="characterPortrait" placeholder="assets/characters/elias.webp หรือ URL รูป">
+              <small>ระบบจะแสดงตามสัดส่วนจริงของภาพ ไม่บีบหรือยืดภาพ</small>
             </label>
             <label class="field span-2">
               <span>ลักษณะภายนอก</span>
-              <textarea id="characterAppearance" rows="4" placeholder="เฉพาะสิ่งที่ผู้อ่านมองเห็นได้ เช่น รูปร่าง การแต่งตัว ลักษณะเด่น"></textarea>
+              <textarea id="characterAppearance" rows="4" placeholder="รูปร่าง การแต่งตัว ลักษณะที่คนอื่นมองเห็นได้"></textarea>
             </label>
             <label class="field span-2">
               <span>บุคลิกที่เปิดเผยแล้ว</span>
-              <textarea id="characterPersonality" rows="4" placeholder="เขียนเฉพาะสิ่งที่เรื่องเปิดให้ผู้อ่านเห็นแล้ว ไม่ต้องใส่ความลับหรือแรงจูงใจจริง"></textarea>
+              <textarea id="characterPersonality" rows="4" placeholder="เขียนเฉพาะสิ่งที่คนอ่านรับรู้จากเรื่องแล้ว"></textarea>
             </label>
             <label class="field span-2">
               <span>เวทมนตร์ / ความสามารถที่เปิดเผยแล้ว</span>
@@ -198,7 +236,7 @@
             </label>
             <label class="field span-2">
               <span>ความสัมพันธ์ที่เปิดเผยแล้ว</span>
-              <textarea id="characterRelationships" rows="4" placeholder="ใส่เฉพาะความสัมพันธ์ที่คนอ่านรับรู้แล้ว"></textarea>
+              <textarea id="characterRelationships" rows="4" placeholder="เพื่อน คนรู้จัก อาจารย์ หรือความสัมพันธ์ที่คนอ่านรับรู้แล้ว"></textarea>
             </label>
             <label class="field span-2">
               <span>ปรากฏตัวครั้งแรก</span>
@@ -207,36 +245,33 @@
           </div>
         </section>
 
-        <div class="form-divider span-2"><span>บริบทสำหรับผู้แต่ง</span><small>ส่วนนี้จะแสดงเฉพาะ Author Mode</small></div>
+        <section class="entry-editor-pane" data-entry-pane="author" hidden>
+          <div class="entry-pane-heading author-pane-heading">
+            <div><span>หลังบ้านผู้แต่ง</span><h3>ข้อมูลที่ผู้อ่านทั่วไปจะไม่เห็น</h3></div>
+            <p>ใช้เก็บเป้าหมายจริง ความลับ Continuity และสิ่งที่ยังไม่ล็อก</p>
+          </div>
+          <div class="form-grid entry-pane-grid">
+            <label class="field span-2">
+              <span>บทบาทต่อเนื้อเรื่อง</span>
+              <textarea id="entryStoryUse" rows="5" placeholder="หัวข้อนี้สร้างผลต่อพล็อต ตัวละคร หรือธีมอย่างไร"></textarea>
+            </label>
 
-        <label class="field span-2">
-          <span>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</span>
-          <textarea id="entryPublicKnowledge" rows="4" placeholder="แยกความจริงของผู้เขียนออกจากความรู้สาธารณะ"></textarea>
-        </label>
+            <label class="field span-2">
+              <span>Continuity Notes</span>
+              <textarea id="entryContinuity" rows="5" placeholder="กฎที่ห้ามหลุด ข้อควรระวัง หรือสิ่งที่ต้องเช็กเวลาเขียนตอนใหม่"></textarea>
+            </label>
 
-        <label class="field span-2">
-          <span>บทบาทต่อเนื้อเรื่อง</span>
-          <textarea id="entryStoryUse" rows="4" placeholder="หัวข้อนี้สร้างแรงกดดัน ปริศนา ธีม หรือผลต่อการตัดสินใจของตัวละครอย่างไร"></textarea>
-        </label>
-
-        <label class="field span-2">
-          <span>Continuity Notes</span>
-          <textarea id="entryContinuity" rows="4" placeholder="กฎที่ห้ามหลุด ข้อควรระวัง หรือสิ่งที่ต้องเช็กเวลาเขียนตอนใหม่"></textarea>
-        </label>
-
-        <label class="field span-2">
-          <span>เชื่อมโยงกับ</span>
-          <input id="entryLinks" placeholder="ใส่ชื่อหัวข้อ คั่นด้วย ,">
-        </label>
-
-        <label class="field span-2">
-          <span>คำถามที่ยังไม่ล็อก</span>
-          <textarea id="entryQuestions" rows="4" placeholder="สิ่งที่ยังตั้งใจเว้นไว้ ไม่ควรเผลอเขียนให้กลายเป็น Canon"></textarea>
-        </label>
+            <label class="field span-2">
+              <span>คำถามที่ยังไม่ล็อก</span>
+              <textarea id="entryQuestions" rows="5" placeholder="สิ่งที่ยังตั้งใจเว้นไว้ ไม่ควรเผลอเขียนให้กลายเป็น Canon"></textarea>
+            </label>
+          </div>
+        </section>
       </div>
 
-      <footer class="modal-footer split">
+      <footer class="modal-footer split entry-editor-footer">
         <button class="button danger" id="deleteEntryButton" type="button">ลบข้อมูล</button>
+        <div class="entry-editor-save-state" id="entryEditorSaveState">เลือกหมวดด้านบนเพื่อเริ่มแก้ไข</div>
         <div class="button-row">
           <button class="button secondary" data-close="editorModal" type="button">ยกเลิก</button>
           <button class="button primary" id="saveEntryButton" type="button">บันทึกลง GitHub</button>
@@ -326,6 +361,6 @@
     </form>
   </dialog>
 
-  <script src="app.js?v=58"></script>
+  <script src="app.js?v=59"></script>
 </body>
 </html>
