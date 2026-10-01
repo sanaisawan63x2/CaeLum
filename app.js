@@ -155,7 +155,7 @@
   }
 
   function updateVersion() {
-    $("versionLabel").textContent = "Archive v" + (db.version || 1);
+    $("versionLabel").textContent = "ข้อมูลเวอร์ชัน " + (db.version || 1);
   }
 
   function updateTopbar(label) {
@@ -235,7 +235,7 @@
 
     let html = '<div class="nav-tree">';
     html += navSimple("home","⌂","หน้าหลัก",r.type === "home");
-    html += navSimple("novel","◫","อ่านนิยาย",r.type === "novel" || r.type === "chapter");
+    html += navSimple("novel","◫","นิยาย",r.type === "novel" || r.type === "chapter");
 
     if (r.type === "novel" || r.type === "chapter") {
       const chapters = visibleChapters();
@@ -256,8 +256,8 @@
         '</div>';
     }
 
-    html += navSimple("all","☰","สารบัญวิกิ",r.type === "all");
-    html += '<div class="nav-main-label">WORLD ARCHIVE</div>';
+    html += navSimple("all","☰","คลังโลก",r.type === "all");
+    html += '<div class="nav-main-label">ข้อมูลของโลก</div>';
     childrenOf(null).forEach(root => { html += navSectionNode(root,activeSection,0); });
     html += '</div>';
     categoryNav.innerHTML = html;
@@ -348,11 +348,11 @@
 
   function renderHome() {
     const hero = db.project.assets.bangkokNight || {};
-    const starts = ["overview","locations","magic","caelum"].map(sectionById).filter(Boolean).filter(isVisible);
+    const starts = ["overview","magic","caelum","law","society","technology"].map(sectionById).filter(Boolean).filter(isVisible);
     content.innerHTML =
-      '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · NOVEL & WORLD ARCHIVE</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
+      '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · นิยายและคลังโลก</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
       authorStripHtml() + novelHomeSpotlightHtml() +
-      '<div class="section-heading"><div><h2>World Archive</h2><p>เปิดดูข้อมูลของโลกตามหัวข้อที่สนใจ โดยไม่ต้องอ่านตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">สารบัญทั้งหมด</button></div>' +
+      '<div class="section-heading"><div><h2>สำรวจโลก CaeLum</h2><p>เลือกอ่านเฉพาะเรื่องที่สนใจได้ทันที ไม่จำเป็นต้องไล่ตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">ดูคลังทั้งหมด</button></div>' +
       '<section class="path-grid">' + starts.map(sectionCardHtml).join("") + '</section>';
     bindSectionCards();
     const all = content.querySelector("[data-open-wiki]");
@@ -694,7 +694,7 @@
       (authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') + '</div></section>' +
       authorStripHtml(id) +
       (kids.length ? '<div class="reader-heading"><div><h2>หัวข้อย่อย</h2><p>เลือกส่วนที่ต้องการอ่าน</p></div></div><section class="library-list">' + kids.map(sectionCardHtml).join("") + '</section>' : '') +
-      (entries.length ? '<div class="reader-heading"><div><h2>บทความในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
+      (entries.length ? '<div class="reader-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
       (!kids.length && !entries.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล</div>' : '');
     bindBreadcrumbs();
     bindAuthorStrip();
@@ -721,7 +721,7 @@
       (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
       mapFigure +
       '<section class="reader-body">' + proseHtml(entry.details || "—",entry.id) + '</section>' +
-      (entry.publicKnowledge ? '<section class="reader-section"><h2>คนในโลกรู้อะไรเกี่ยวกับเรื่องนี้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
+      (entry.publicKnowledge ? '<section class="reader-section"><h2>สิ่งที่คนในโลกรับรู้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
       (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
       (authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes,entry.id) + '</div></section>' : '') +
       (authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions,entry.id) + '</div></section>' : '') +
@@ -739,14 +739,16 @@
   function renderAllTopics() {
     const sections=visibleSections();
     const entries=visibleEntries();
+    const roots=sections.filter(s => !s.parentId);
     content.innerHTML =
-      '<div class="search-head"><p class="eyebrow">WORLD ARCHIVE</p><h1>สารบัญวิกิทั้งหมด</h1><p>ค้นโลก CaeLum จากหมวดหลักไปจนถึงรายละเอียดเฉพาะเรื่อง</p></div>' +
-      authorStripHtml() + '<section class="topic-grid">' + sections.filter(s => !s.parentId).map(sectionCardHtml).join("") + '</section>' +
-      '<div class="reader-heading"><div><h2>บทความทั้งหมด</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>';
+      '<div class="search-head archive-index-head"><p class="eyebrow">คลังโลก CaeLum</p><h1>เลือกหัวข้อที่ต้องการสำรวจ</h1><p>ข้อมูลถูกแยกตามเรื่องเพื่อให้ค้นง่ายขึ้น แต่ละหมวดจะแสดงหัวข้อย่อยที่มีอยู่ก่อนกดเข้าไป</p></div>' +
+      authorStripHtml() +
+      '<section class="topic-grid archive-root-grid">' + roots.map(sectionCardHtml).join("") + '</section>' +
+      (authorMode ? '<div class="reader-heading"><div><h2>ข้อมูลทั้งหมดสำหรับผู้แต่ง</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '');
     bindSectionCards();
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
     bindAuthorStrip();
-    updateTopbar("สารบัญวิกิ");
+    updateTopbar("คลังโลก");
   }
 
   function renderSearch(query) {
@@ -759,7 +761,7 @@
     sections.forEach(s => items.push({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description}));
     entries.forEach(e => items.push({type:"entry",id:e.id,title:e.title,text:e.summary}));
     content.innerHTML='<div class="search-head"><p class="eyebrow">SEARCH</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและ World Archive</p></div><section class="search-results">' +
-      (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"บทความ") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
+      (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"ข้อมูล") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
     content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
       searchQuery="";
       syncSearchInputs("");
