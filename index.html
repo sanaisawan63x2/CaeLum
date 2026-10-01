@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=31">
-  <link rel="stylesheet" href="stability.css?v=54">
+  <link rel="stylesheet" href="stability.css?v=56">
 </head>
 <body>
   <div class="app">
@@ -154,6 +154,58 @@
           <textarea id="entryDetails" rows="14" placeholder="รายละเอียดของโลก เหตุและผล สถาบัน ชีวิตประจำวัน และสิ่งที่ต้องสอดคล้องกับ Canon"></textarea>
         </label>
 
+        <section class="character-form span-2" id="characterFields" hidden>
+          <div class="form-divider character-form-title"><span>Character Profile</span><small>ข้อมูลส่วนนี้ใช้จัดหน้าตัวละครสำหรับผู้อ่านทั่วไป</small></div>
+
+          <div class="character-form-grid">
+            <label class="field">
+              <span>เพศ</span>
+              <input id="characterGender" placeholder="เช่น ชาย">
+            </label>
+            <label class="field">
+              <span>อายุ</span>
+              <input id="characterAge" placeholder="เช่น 19">
+            </label>
+            <label class="field">
+              <span>สัญชาติ / พื้นเพกว้าง ๆ</span>
+              <input id="characterNationality" placeholder="เช่น เยอรมัน">
+            </label>
+            <label class="field">
+              <span>สังกัด / สถานะ</span>
+              <input id="characterAffiliation" placeholder="เช่น นักศึกษาปี 1 · CaeLum University">
+            </label>
+            <label class="field span-2">
+              <span>บทบาทที่ผู้อ่านควรรู้</span>
+              <input id="characterRole" placeholder="เช่น นักศึกษาปีหนึ่งที่เพิ่งเริ่มต้นชีวิตใน CaeLum">
+            </label>
+            <label class="field span-2">
+              <span>ภาพตัวละคร</span>
+              <input id="characterPortrait" placeholder="เช่น assets/characters/elias.webp หรือ URL รูป">
+              <small>ปล่อยว่างได้ถ้ายังไม่มีภาพ</small>
+            </label>
+            <label class="field span-2">
+              <span>ลักษณะภายนอก</span>
+              <textarea id="characterAppearance" rows="4" placeholder="เฉพาะสิ่งที่ผู้อ่านมองเห็นได้ เช่น รูปร่าง การแต่งตัว ลักษณะเด่น"></textarea>
+            </label>
+            <label class="field span-2">
+              <span>บุคลิกที่เปิดเผยแล้ว</span>
+              <textarea id="characterPersonality" rows="4" placeholder="เขียนเฉพาะสิ่งที่เรื่องเปิดให้ผู้อ่านเห็นแล้ว ไม่ต้องใส่ความลับหรือแรงจูงใจจริง"></textarea>
+            </label>
+            <label class="field span-2">
+              <span>เวทมนตร์ / ความสามารถที่เปิดเผยแล้ว</span>
+              <textarea id="characterAbilities" rows="4" placeholder="เวท ความถนัด หรือทักษะที่ปรากฏในเรื่องแล้ว"></textarea>
+            </label>
+            <label class="field span-2">
+              <span>ความสัมพันธ์ที่เปิดเผยแล้ว</span>
+              <textarea id="characterRelationships" rows="4" placeholder="ใส่เฉพาะความสัมพันธ์ที่คนอ่านรับรู้แล้ว"></textarea>
+            </label>
+            <label class="field span-2">
+              <span>ปรากฏตัวครั้งแรก</span>
+              <input id="characterFirstAppearance" placeholder="เช่น ตอนที่ 1 — ชื่อตอน">
+            </label>
+          </div>
+        </section>
+
         <div class="form-divider span-2"><span>บริบทสำหรับผู้แต่ง</span><small>ส่วนนี้จะแสดงเฉพาะ Author Mode</small></div>
 
         <label class="field span-2">
@@ -273,6 +325,6 @@
     </form>
   </dialog>
 
-  <script src="app.js?v=55"></script>
+  <script src="app.js?v=56"></script>
 </body>
 </html>
