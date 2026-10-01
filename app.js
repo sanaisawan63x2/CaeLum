@@ -159,7 +159,7 @@
   }
 
   function updateTopbar(label) {
-    $("topbarContext").textContent = label || "Reader";
+    $("topbarContext").textContent = label || "หน้าหลัก";
   }
 
   function route() {
@@ -521,7 +521,7 @@
     dialog.setAttribute("aria-label","แผนที่ CaeLum และสถานีบางบัว");
     dialog.innerHTML =
       '<div class="map-dialog-shell">' +
-        '<header class="map-dialog-bar"><div><span>STORY MAP</span><strong>CaeLum × Bang Bua</strong></div><button class="map-dialog-close" type="button" aria-label="ปิดแผนที่">×</button></header>' +
+        '<header class="map-dialog-bar"><div><span>แผนที่ประกอบเรื่อง</span><strong>CaeLum × Bang Bua</strong></div><button class="map-dialog-close" type="button" aria-label="ปิดแผนที่">×</button></header>' +
         '<div class="map-dialog-body"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum สถานีบางบัว ถนน และประตูหลัก"></div>' +
       '</div>';
 
@@ -547,7 +547,7 @@
       authorStripHtml() +
       '<div class="reader-heading novel-heading"><div><h2>สารบัญนิยาย</h2><p>' + chapters.length + ' ตอนที่เปิดให้อ่าน</p></div>' + (authorMode ? '<button class="button primary" data-add-chapter type="button">+ เพิ่มตอน</button>' : '') + '</div>' +
       '<section class="novel-map-feature" aria-label="แผนที่ CaeLum ก่อนเริ่มตอนที่ 1">' +
-        '<div class="novel-map-copy"><span class="novel-map-kicker">แผนที่ประกอบเรื่อง · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>Bang Bua Station</span><span>Main Gate</span><span>ไม่ใช่มาตราส่วนจริง</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
+        '<div class="novel-map-copy"><span class="novel-map-kicker">แผนที่ประกอบเรื่อง · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>สถานีบางบัว</span><span>ประตูหลัก</span><span>ไม่ใช่มาตราส่วนจริง</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
         '<button class="novel-map-preview" data-open-map type="button" aria-label="เปิดแผนที่ CaeLum แบบเต็มจอ"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum กับสถานีบางบัว" loading="eager"><span class="novel-map-zoom">ดูแผนที่เต็ม</span></button>' +
       '</section>' +
       '<section class="chapter-list">' + (chapters.length ? chapters.map(ch => {
@@ -597,7 +597,7 @@
       '<div class="novel-reader-toolbar"><button class="reader-menu-toggle" data-reader-menu-toggle type="button" aria-expanded="false">Aa <span>การอ่าน</span></button><div class="reader-tools-panel" id="readerToolsPanel"><button class="reader-tool" data-back-toc type="button">☰ <span>สารบัญ</span></button>' +
       '<label class="chapter-select-wrap"><span>ตอน</span><select data-chapter-select>' + chapters.map(ch => '<option value="' + esc(ch.id) + '"' + (ch.id===id ? ' selected' : '') + '>' + esc(ch.number) + ' · ' + esc(ch.title) + '</option>').join("") + '</select></label>' +
       '<div class="reader-tools-right"><button class="reader-tool compact" data-font-down type="button">A−</button><button class="reader-tool compact" data-font-up type="button">A+</button><button class="reader-tool" data-reader-line type="button">ระยะบรรทัด</button><button class="reader-tool" data-reader-width type="button">' + (prefs.width === "wide" ? 'แคบ' : 'กว้าง') + '</button><button class="reader-tool" data-reader-theme type="button">' + (prefs.theme === "paper" ? 'กระดาษ' : prefs.theme === "sepia" ? 'ซีเปีย' : 'กลางคืน') + '</button><button class="reader-tool" data-share-chapter type="button">แชร์</button></div></div></div>' +
-      '<header class="novel-chapter-head"><span class="novel-label">CAE LUM · CHAPTER ' + esc(chapter.number) + '</span><h1>' + esc(chapter.title) + '</h1>' +
+      '<header class="novel-chapter-head"><span class="novel-label">CAE LUM · ตอนที่ ' + esc(chapter.number) + '</span><h1>' + esc(chapter.title) + '</h1>' +
       (chapter.subtitle ? '<p class="chapter-subtitle">' + esc(chapter.subtitle) + '</p>' : '') + '<div class="chapter-reading-meta"><span>ประมาณ ' + estimateReadMinutes(chapter.body) + ' นาที</span><span>ตอน ' + (index+1) + ' จาก ' + chapters.length + '</span>' + (authorMode ? '<span>' + esc(chapter.status) + '</span>' : '') + '</div>' +
       (saved > .06 && saved < .94 ? '<button class="resume-reading" data-resume-reading type="button">อ่านต่อจาก ' + Math.round(saved*100) + '% ↓</button>' : '') + '</header>' +
       '<section class="novel-prose" id="novelProse">' + novelProseHtml(chapter.body) + '</section>' +
@@ -668,7 +668,7 @@
   }
 
   function breadcrumbsHtml(sectionId) {
-    let html='<button data-crumb-home type="button">World Archive</button>';
+    let html='<button data-crumb-home type="button">คลังโลก</button>';
     ancestorChain(sectionId).forEach(s => {
       html+='<span class="sep">/</span><button data-crumb-section="' + esc(s.id) + '" type="button">' + esc(s.readerLabel || s.name) + '</button>';
     });
@@ -778,7 +778,7 @@
     chapters.forEach(ch => items.push({type:"chapter",id:ch.id,title:"ตอน "+ch.number+" — "+ch.title,text:ch.summary}));
     sections.forEach(s => items.push({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description}));
     entries.forEach(e => items.push({type:"entry",id:e.id,title:e.title,text:e.summary}));
-    content.innerHTML='<div class="search-head"><p class="eyebrow">SEARCH</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและ World Archive</p></div><section class="search-results">' +
+    content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและคลังโลก</p></div><section class="search-results">' +
       (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"ข้อมูล") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
     content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
       searchQuery="";
