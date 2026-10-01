@@ -207,6 +207,22 @@
     chain.slice(0,-1).forEach(section => expandedNav.add(section.id));
   }
 
+  const ROOT_GROUPS = [
+    {id:"core",label:"โลกและระบบ",description:"กฎพื้นฐาน ประวัติศาสตร์ และคำสำคัญ"},
+    {id:"institutions",label:"สถาบันและผู้คน",description:"องค์กร มหาวิทยาลัย และตัวละคร"},
+    {id:"lived",label:"สังคมและชีวิต",description:"สถานที่ กฎหมาย เศรษฐกิจ การเมือง และเทคโนโลยี"},
+    {id:"danger",label:"ภัยและเนื้อเรื่อง",description:"มอนสเตอร์ เหตุการณ์ และปมที่เปิดเผยแล้ว"},
+    {id:"other",label:"หัวข้ออื่น",description:"ข้อมูลที่ยังไม่เข้ากลุ่มหลัก"}
+  ];
+
+  function groupedRootSections() {
+    const roots = childrenOf(null);
+    return ROOT_GROUPS.map(group => ({
+      ...group,
+      sections: roots.filter(section => (section.group || "other") === group.id)
+    })).filter(group => group.sections.length);
+  }
+
   function navSimple(type,icon,label,active) {
     return '<div class="nav-node-row"><button class="nav-toggle placeholder" tabindex="-1">+</button>' +
       '<button class="nav-btn' + (active ? ' active' : '') + '" data-nav-go="' + esc(type) + '">' +
@@ -257,8 +273,10 @@
     }
 
     html += navSimple("all","☰","คลังโลก",r.type === "all");
-    html += '<div class="nav-main-label">ข้อมูลของโลก</div>';
-    childrenOf(null).forEach(root => { html += navSectionNode(root,activeSection,0); });
+    groupedRootSections().forEach(group => {
+      html += '<div class="nav-group-label">' + esc(group.label) + '</div>';
+      group.sections.forEach(root => { html += navSectionNode(root,activeSection,0); });
+    });
     html += '</div>';
     categoryNav.innerHTML = html;
 
@@ -739,11 +757,11 @@
   function renderAllTopics() {
     const sections=visibleSections();
     const entries=visibleEntries();
-    const roots=sections.filter(s => !s.parentId);
+    const groups=groupedRootSections();
     content.innerHTML =
-      '<div class="search-head archive-index-head"><p class="eyebrow">คลังโลก CaeLum</p><h1>เลือกหัวข้อที่ต้องการสำรวจ</h1><p>ข้อมูลถูกแยกตามเรื่องเพื่อให้ค้นง่ายขึ้น แต่ละหมวดจะแสดงหัวข้อย่อยที่มีอยู่ก่อนกดเข้าไป</p></div>' +
+      '<div class="search-head archive-index-head"><p class="eyebrow">คลังโลก CaeLum</p><h1>เลือกหัวข้อที่ต้องการสำรวจ</h1><p>ข้อมูลถูกแบ่งตามความหมายของมันในโลกเรื่อง เพื่อให้เห็นตั้งแต่แรกว่ามีอะไรให้อ่านบ้าง</p></div>' +
       authorStripHtml() +
-      '<section class="topic-grid archive-root-grid">' + roots.map(sectionCardHtml).join("") + '</section>' +
+      groups.map(group => '<section class="archive-group"><header class="archive-group-head"><div><h2>' + esc(group.label) + '</h2><p>' + esc(group.description) + '</p></div><span>' + group.sections.length + ' หมวด</span></header><div class="topic-grid archive-root-grid">' + group.sections.map(sectionCardHtml).join("") + '</div></section>').join("") +
       (authorMode ? '<div class="reader-heading"><div><h2>ข้อมูลทั้งหมดสำหรับผู้แต่ง</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '');
     bindSectionCards();
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
