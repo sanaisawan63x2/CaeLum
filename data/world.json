@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "version": 48,
+  "version": 49,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
@@ -96,15 +96,16 @@
     },
     {
       "id": "caelum-academics",
-      "name": "การศึกษา / หลักสูตร",
+      "name": "การเรียนและหลักสูตร",
       "icon": "▤",
       "parentId": "caelum",
       "visibility": "public",
       "sort": 10,
-      "description": "โครงสร้างการเรียน การประเมิน และองค์ความรู้ระดับมหาวิทยาลัยด้านเวทมนตร์",
+      "description": "วิชา การประเมิน การฝึกภาคปฏิบัติ และโครงสร้างการเรียนของนักศึกษา CaeLum",
       "importance": "ใช้ติดตามหลักการศึกษาและพัฒนาการของผู้เรียนก่อนลงรายละเอียดระดับคณะหรือสาขา",
       "imageKey": "oldLibrary",
-      "readerLabel": "การศึกษา / หลักสูตร"
+      "readerLabel": "การเรียนและหลักสูตร",
+      "updatedAt": "2026-10-02T04:22:00+07:00"
     },
     {
       "id": "caelum-life",
@@ -331,15 +332,15 @@
     {
       "updatedAt": "2026-10-02T04:22:00+07:00",
       "id": "law-emergency",
-      "name": "เหตุฉุกเฉินและ Anomaly",
-      "readerLabel": "เหตุฉุกเฉินและ Anomaly",
+      "name": "เหตุฉุกเฉินและ Mana Anomaly",
+      "readerLabel": "เหตุฉุกเฉินและ Mana Anomaly",
       "parentId": "law",
       "visibility": "public",
       "sort": 20,
       "group": "danger",
       "icon": "△",
       "imageKey": "bangkokNight",
-      "description": "การเตือนภัย การอพยพ การปิดพื้นที่ และอำนาจของรัฐเมื่อเกิด Mana Anomaly",
+      "description": "การเตือนภัย การอพยพ การปิดพื้นที่ และอำนาจที่ใช้เมื่อ Mana Anomaly กลายเป็นภัยต่อสาธารณะ",
       "importance": "ทำให้เหตุฉุกเฉินมีขั้นตอนและข้อจำกัด ไม่ใช่พื้นที่ที่กฎหมายหายไปทั้งหมด"
     },
     {
@@ -387,43 +388,43 @@
     {
       "updatedAt": "2026-10-02T04:22:00+07:00",
       "id": "society-politics",
-      "name": "การเมืองและนโยบายสาธารณะ",
-      "readerLabel": "การเมืองและนโยบายสาธารณะ",
+      "name": "การเมืองและนโยบาย",
+      "readerLabel": "การเมืองและนโยบาย",
       "parentId": "society",
       "visibility": "public",
       "sort": 10,
       "group": "lived",
       "icon": "◐",
       "imageKey": "bangkokNight",
-      "description": "ข้อถกเถียงเรื่องอำนาจรัฐ ความปลอดภัย สิทธิประชาชน อุตสาหกรรมเวท และบทบาทของ I.A.D.C.",
+      "description": "อำนาจรัฐ สิทธิประชาชน ความปลอดภัย และข้อถกเถียงเชิงนโยบายในสังคมเวทสมัยใหม่",
       "importance": "เปิดพื้นที่สำหรับอาร์กการเมืองโดยไม่กำหนดว่าฝ่ายใดถูกหรือผิดล่วงหน้า"
     },
     {
       "updatedAt": "2026-10-02T04:22:00+07:00",
       "id": "society-life",
-      "name": "ชีวิต วัฒนธรรม และสื่อ",
-      "readerLabel": "ชีวิต วัฒนธรรม และสื่อ",
+      "name": "ชีวิตและวัฒนธรรม",
+      "readerLabel": "ชีวิตและวัฒนธรรม",
       "parentId": "society",
       "visibility": "public",
       "sort": 20,
       "group": "lived",
       "icon": "◌",
       "imageKey": "bangkokNight",
-      "description": "ชีวิตประจำวัน อาชีพ สื่อ กีฬา ความเชื่อ และการปรับตัวของผู้คนหลังเวทมนตร์กลายเป็นเรื่องปกติ",
+      "description": "ชีวิตประจำวัน อาชีพ สื่อ กีฬา ความเชื่อ และวิธีที่ผู้คนปรับตัวกับเวทมนตร์ในสังคม",
       "importance": "ทำให้โลกไม่ถูกอธิบายผ่านสถาบันและภัยอันตรายเพียงอย่างเดียว"
     },
     {
       "updatedAt": "2026-10-02T04:22:00+07:00",
       "id": "economy-core",
-      "name": "ตลาด Core และ Mana Crystal",
-      "readerLabel": "ตลาด Core และ Mana Crystal",
+      "name": "Monster Core และ Mana Crystal",
+      "readerLabel": "Monster Core และ Mana Crystal",
       "parentId": "economy",
       "visibility": "public",
       "sort": 10,
       "group": "lived",
       "icon": "◆",
       "imageKey": "oldLibrary",
-      "description": "สิทธิใน Monster Core การแปรรูป Mana Crystal การซื้อขาย และการค้าระหว่างประเทศ",
+      "description": "สิทธิ การแปรรูป การซื้อขาย และการค้าระหว่างประเทศของทรัพยากรที่ได้จากมอนสเตอร์",
       "importance": "เชื่อมการล่ามอนสเตอร์เข้ากับเศรษฐกิจจริงของโลก"
     },
     {
