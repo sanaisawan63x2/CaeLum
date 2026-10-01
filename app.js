@@ -72,8 +72,14 @@
   }
 
   function childrenOf(parentId) {
+    const parent = parentId || null;
     return visibleSections()
-      .filter(s => (s.parentId || null) === (parentId || null))
+      .filter(s => {
+        const primary = (s.parentId || null) === parent;
+        if (parent === null) return primary;
+        const secondary = Array.isArray(s.secondaryParentIds) && s.secondaryParentIds.includes(parent);
+        return primary || secondary;
+      })
       .sort((a,b) => (Number(a.sort)||0) - (Number(b.sort)||0) || String(a.name).localeCompare(String(b.name),"th"));
   }
 
