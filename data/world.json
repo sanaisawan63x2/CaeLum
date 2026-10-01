@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 52,
+  "version": 53,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
-    "updatedAt": "2026-10-01T23:18:07.316Z",
+    "updatedAt": "2026-10-01T23:19:39.727Z",
     "readerIntro": "อ่านนิยาย CaeLum หรือสำรวจโลกของเรื่องผ่านข้อมูลที่จัดเป็นหมวดชัดเจน ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาโลก เนื้อเรื่อง และระบบของ CaeLum",
     "assets": {
@@ -2452,7 +2452,7 @@
     },
     {
       "id": "arc1-protagonist-draft",
-      "title": "พระเอก — ชื่อยังไม่กำหนด",
+      "title": "Elias Leyndel",
       "visibility": "public",
       "status": "draft",
       "tags": [
@@ -2470,15 +2470,15 @@
         "แนวทางสำนวนและการเล่าเรื่อง"
       ],
       "openQuestions": "ชื่อ สัญชาติ รายละเอียดครอบครัว เหตุผลเฉพาะที่เลือก CaeLum อดีตบาดแผล และเส้นทางอาชีพที่เคยคิดไว้ยังไม่ล็อก",
-      "sectionId": "characters-arc1",
+      "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-01T23:18:06.066Z",
+      "updatedAt": "2026-10-01T23:19:39.722Z",
       "kicker": "",
       "character": {
-        "gender": "",
+        "gender": "ชาย",
         "age": "",
-        "nationality": "",
-        "affiliation": "",
+        "nationality": "เยอรมัน",
+        "affiliation": "นักศึกษาปี 1 · CaeLum University",
         "role": "",
         "portrait": "",
         "appearance": "",
