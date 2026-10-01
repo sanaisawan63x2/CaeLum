@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 51,
+  "version": 52,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
-    "updatedAt": "2026-10-02T05:25:00+07:00",
+    "updatedAt": "2026-10-01T23:18:07.316Z",
     "readerIntro": "อ่านนิยาย CaeLum หรือสำรวจโลกของเรื่องผ่านข้อมูลที่จัดเป็นหมวดชัดเจน ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาโลก เนื้อเรื่อง และระบบของ CaeLum",
     "assets": {
@@ -2453,7 +2453,7 @@
     {
       "id": "arc1-protagonist-draft",
       "title": "พระเอก — ชื่อยังไม่กำหนด",
-      "visibility": "author-only",
+      "visibility": "public",
       "status": "draft",
       "tags": [
         "Arc 1",
@@ -2472,7 +2472,21 @@
       "openQuestions": "ชื่อ สัญชาติ รายละเอียดครอบครัว เหตุผลเฉพาะที่เลือก CaeLum อดีตบาดแผล และเส้นทางอาชีพที่เคยคิดไว้ยังไม่ล็อก",
       "sectionId": "characters-arc1",
       "featured": false,
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-01T23:18:06.066Z",
+      "kicker": "",
+      "character": {
+        "gender": "",
+        "age": "",
+        "nationality": "",
+        "affiliation": "",
+        "role": "",
+        "portrait": "",
+        "appearance": "",
+        "personality": "",
+        "abilities": "",
+        "relationships": "",
+        "firstAppearance": ""
+      }
     },
     {
       "id": "arc1-research-participant-draft",
@@ -2861,7 +2875,7 @@
     "subtitle": "นิยายหลัก · ภาคการศึกษาแรก",
     "description": "ปลายภาคเรียนแรก นักศึกษาปีหนึ่งของ CaeLum ถูกพิจารณาโทษหลังทำให้ Boundary ของมหาวิทยาลัยหยุดทำงานโดยเจตนา เรื่องราวย้อนกลับไปยังสามเดือนก่อนหน้า—สู่การเรียน ชีวิตในมหาวิทยาลัย และเหตุการณ์ที่ค่อย ๆ พาเขาไปพบเด็กผู้หญิงผู้ไม่มีประวัติในโลกที่เขารู้จัก ก่อนการตัดสินใจหนึ่งคืนจะทำให้ความหมายของกฎ ความปลอดภัย และสิ่งที่เขาเชื่อมาตลอดเปลี่ยนไป",
     "coverAssetKey": "gothicCampus",
-    "updatedAt": "2026-09-30T23:42:59.805Z",
+    "updatedAt": "2026-10-01T23:18:07.316Z",
     "chapters": [
       {
         "id": "chapter-1",
