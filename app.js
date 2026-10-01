@@ -221,7 +221,7 @@
     if (kids.length) html += '<button class="nav-toggle' + (open ? ' open' : '') + '" data-nav-toggle="' + esc(section.id) + '" type="button" aria-label="' + (open ? 'ยุบหมวด' : 'ขยายหมวด') + '">' + (open ? '⌄' : '›') + '</button>';
     else html += '<button class="nav-toggle placeholder" tabindex="-1">›</button>';
     html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? ' active' : '') + '" data-section-go="' + esc(section.id) + '">' +
-      '<span class="nav-icon">' + esc(section.icon || "·") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span><span class="nav-count">' + countUnder(section.id) + '</span></button></div>';
+      '<span class="nav-icon">' + esc(section.icon || "·") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span><span class="nav-count" title="' + (kids.length ? esc(kids.length + " หมวดย่อย") : esc(countUnder(section.id) + " รายการ")) + '">' + (kids.length ? esc(kids.length + " หมวด") : countUnder(section.id)) + '</span></button></div>';
     if (kids.length && open) html += '<div class="nav-children">' + kids.map(k => navSectionNode(k,activeSection,depth+1)).join("") + '</div>';
     html += '</div>';
     return html;
@@ -326,7 +326,20 @@
 
   function sectionCardHtml(section) {
     const asset = assetFor(section);
-    return '<article class="topic-card" data-section-card="' + esc(section.id) + '"><div class="topic-card-image" style="' + styleBg(asset.url) + '"></div><div class="topic-card-copy"><span>' + esc(section.icon || "·") + '</span><h3>' + esc(section.readerLabel || section.name) + '</h3><p>' + esc(section.description || "") + '</p><small>' + countUnder(section.id) + ' รายการ</small></div></article>';
+    const kids = childrenOf(section.id);
+    const childPreview = kids.length
+      ? '<div class="topic-card-children">' + kids.slice(0,5).map(k => '<button data-section-jump="' + esc(k.id) + '" type="button">' + esc(k.readerLabel || k.name) + '</button>').join("") +
+        (kids.length > 5 ? '<span>+' + (kids.length-5) + '</span>' : '') + '</div>'
+      : "";
+    return '<article class="topic-card' + (kids.length ? ' has-children' : '') + '" data-section-card="' + esc(section.id) + '"><div class="topic-card-image" style="' + styleBg(asset.url) + '"></div><div class="topic-card-copy"><span>' + esc(section.icon || "·") + '</span><h3>' + esc(section.readerLabel || section.name) + '</h3><p>' + esc(section.description || "") + '</p>' + childPreview + '<small>' + countUnder(section.id) + ' รายการ' + (kids.length ? ' · ' + kids.length + ' หมวดย่อย' : '') + '</small></div></article>';
+  }
+
+  function bindSectionCards() {
+    bindSectionCards();
+    content.querySelectorAll("[data-section-jump]").forEach(btn => btn.addEventListener("click",event => {
+      event.stopPropagation();
+      navigate("section",btn.dataset.sectionJump);
+    }));
   }
 
   function entryCardHtml(entry) {
@@ -341,7 +354,7 @@
       authorStripHtml() + novelHomeSpotlightHtml() +
       '<div class="section-heading"><div><h2>World Archive</h2><p>เปิดดูข้อมูลของโลกตามหัวข้อที่สนใจ โดยไม่ต้องอ่านตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">สารบัญทั้งหมด</button></div>' +
       '<section class="path-grid">' + starts.map(sectionCardHtml).join("") + '</section>';
-    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    bindSectionCards();
     const all = content.querySelector("[data-open-wiki]");
     if (all) all.addEventListener("click",() => navigate("all"));
     bindAuthorStrip();
@@ -685,7 +698,7 @@
       (!kids.length && !entries.length ? '<div class="empty-state">หมวดนี้ยังไม่มีข้อมูล</div>' : '');
     bindBreadcrumbs();
     bindAuthorStrip();
-    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    bindSectionCards();
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
     const edit=content.querySelector("[data-edit-section]");
     if(edit) edit.addEventListener("click",() => openSectionEditor(id));
@@ -730,7 +743,7 @@
       '<div class="search-head"><p class="eyebrow">WORLD ARCHIVE</p><h1>สารบัญวิกิทั้งหมด</h1><p>ค้นโลก CaeLum จากหมวดหลักไปจนถึงรายละเอียดเฉพาะเรื่อง</p></div>' +
       authorStripHtml() + '<section class="topic-grid">' + sections.filter(s => !s.parentId).map(sectionCardHtml).join("") + '</section>' +
       '<div class="reader-heading"><div><h2>บทความทั้งหมด</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>';
-    content.querySelectorAll("[data-section-card]").forEach(card => card.addEventListener("click",() => navigate("section",card.dataset.sectionCard)));
+    bindSectionCards();
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
     bindAuthorStrip();
     updateTopbar("สารบัญวิกิ");
