@@ -311,7 +311,7 @@
     const last = chapters.find(ch => ch.id === lastId) || chapters[0];
     const p = readProgressMap()[last.id] || 0;
     const buttonLabel = p > .05 && p < .96 ? "อ่านต่อ " + Math.round(p*100) + "%" : "เริ่มอ่านนิยาย";
-    return '<section class="novel-spotlight"><div class="novel-spotlight-copy"><span class="novel-label">CAE LUM NOVEL</span><h2>' + esc(db.novel.title || "CaeLum") + '</h2>' +
+    return '<section class="novel-spotlight"><div class="novel-spotlight-copy"><span class="novel-label">นิยาย CaeLum</span><h2>' + esc(db.novel.title || "CaeLum") + '</h2>' +
       '<p>' + esc(db.novel.description || "") + '</p><div class="novel-spotlight-actions"><button class="button novel-primary" data-home-chapter="' + esc(last.id) + '" type="button">' + esc(buttonLabel) + '</button>' +
       '<button class="button novel-secondary" data-home-novel type="button">ดูสารบัญนิยาย</button></div></div>' +
       '<div class="novel-spotlight-meta"><span>ตอนที่เปิดอ่าน</span><strong>' + chapters.length + '</strong><small>ตอนล่าสุด · ' + esc(chapters[chapters.length-1].title) + '</small></div></section>';
@@ -471,7 +471,7 @@
     pop.className = "novel-glossary-popover";
     pop.setAttribute("role","dialog");
     pop.setAttribute("aria-label","คำอธิบาย " + String(entry.title || ""));
-    pop.innerHTML = '<button class="popover-close" type="button" aria-label="ปิด">×</button><span class="popover-label">WORLD ARCHIVE · คำอธิบาย</span><strong>' + esc(entry.title) + '</strong><p>' + esc(entry.summary || entry.details || "") + '</p><button class="popover-wiki-link" type="button"><span>อ่านรายละเอียดในวิกิ</span><span aria-hidden="true">→</span></button>';
+    pop.innerHTML = '<button class="popover-close" type="button" aria-label="ปิด">×</button><span class="popover-label">คำจากโลก CaeLum</span><strong>' + esc(entry.title) + '</strong><p>' + esc(entry.summary || entry.details || "") + '</p><button class="popover-wiki-link" type="button"><span>ดูข้อมูลเพิ่มเติม</span><span aria-hidden="true">→</span></button>';
     document.body.appendChild(pop);
     glossaryPopover = pop;
     const rect = button.getBoundingClientRect();
@@ -524,12 +524,12 @@
     const lastId = localStorage.getItem("caelum_last_chapter");
     const progress = readProgressMap();
     content.innerHTML =
-      '<section class="novel-library-hero"><div class="novel-library-cover" style="' + styleBg(cover.url) + '"></div><div class="novel-library-hero-copy"><span class="novel-label">NOVEL</span><h1>' + esc(db.novel.title || "CaeLum") + '</h1><p>' + esc(db.novel.description || "") + '</p>' +
+      '<section class="novel-library-hero"><div class="novel-library-cover" style="' + styleBg(cover.url) + '"></div><div class="novel-library-hero-copy"><span class="novel-label">นิยาย</span><h1>' + esc(db.novel.title || "CaeLum") + '</h1><p>' + esc(db.novel.description || "") + '</p>' +
       (chapters.length ? '<button class="button novel-primary" data-open-first type="button">' + (lastId && chapterById(lastId) ? 'อ่านต่อ' : 'เริ่มอ่าน') + '</button>' : '') + '</div></section>' +
       authorStripHtml() +
       '<div class="reader-heading novel-heading"><div><h2>สารบัญนิยาย</h2><p>' + chapters.length + ' ตอนที่เปิดให้อ่าน</p></div>' + (authorMode ? '<button class="button primary" data-add-chapter type="button">+ เพิ่มตอน</button>' : '') + '</div>' +
       '<section class="novel-map-feature" aria-label="แผนที่ CaeLum ก่อนเริ่มตอนที่ 1">' +
-        '<div class="novel-map-copy"><span class="novel-map-kicker">STORY MAP · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>Bang Bua Station</span><span>Main Gate</span><span>Not to scale</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
+        '<div class="novel-map-copy"><span class="novel-map-kicker">แผนที่ประกอบเรื่อง · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>Bang Bua Station</span><span>Main Gate</span><span>ไม่ใช่มาตราส่วนจริง</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
         '<button class="novel-map-preview" data-open-map type="button" aria-label="เปิดแผนที่ CaeLum แบบเต็มจอ"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum กับสถานีบางบัว" loading="eager"><span class="novel-map-zoom">ดูแผนที่เต็ม</span></button>' +
       '</section>' +
       '<section class="chapter-list">' + (chapters.length ? chapters.map(ch => {
