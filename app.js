@@ -1087,6 +1087,29 @@
     return html;
   }
 
+  function hiddenSectionInPath(sectionId) {
+    let current=sectionById(sectionId);
+    const seen=new Set();
+    while(current && !seen.has(current.id)) {
+      if(current.visibility==="author-only") return current;
+      seen.add(current.id);
+      current=current.parentId ? sectionById(current.parentId) : null;
+    }
+    return null;
+  }
+
+  function updateEntryVisibilityHint() {
+    const hint=$("entryVisibilityHint");
+    if(!hint) return;
+    const sectionId=$("entrySection").value;
+    const hidden=hiddenSectionInPath(sectionId);
+    const publicSelected=$("entryVisibility").value==="public";
+    hint.classList.toggle("warning",Boolean(publicSelected && hidden));
+    hint.textContent=publicSelected && hidden
+      ? 'หมวด “' + (hidden.readerLabel || hidden.name) + '” เป็น Author Only — รายการนี้จะไม่แสดงในหน้า Public'
+      : 'Public จะแสดงได้เมื่อหมวดที่เลือกและหมวดแม่เป็น Public ด้วย';
+  }
+
   function isCharacterSection(sectionId) {
     let current=sectionById(sectionId);
     const seen=new Set();
@@ -1156,6 +1179,7 @@
     $("entryQuestions").value=entry?entry.openQuestions||"":"";
     fillCharacterFields(entry);
     setCharacterEditorVisibility($("entrySection").value);
+    updateEntryVisibilityHint();
     $("deleteEntryButton").style.visibility=entry?"visible":"hidden";
     editorModal.showModal();
   }
@@ -1165,6 +1189,8 @@
     if(!title) return toast("ใส่ชื่อหัวข้อก่อน","error");
     if(!sectionId) return toast("เลือกหมวดก่อน","error");
     const existing=editingEntryId?entryById(editingEntryId):null;
+    const hiddenParent=$("entryVisibility").value==="public" ? hiddenSectionInPath(sectionId) : null;
+    if(hiddenParent) return toast('รายการตั้งเป็น Public แต่หมวด “' + (hiddenParent.readerLabel || hiddenParent.name) + '” ยังเป็น Author Only กรุณาย้ายรายการหรือเปิดหมวดก่อน',"error");
     const next=Object.assign({},existing||{},{
       id:editingEntryId||uid("entry"),sectionId:sectionId,title:title,visibility:$("entryVisibility").value,status:$("entryStatus").value,
       tags:$("entryTags").value.split(",").map(x=>x.trim()).filter(Boolean),featured:$("entryFeatured").checked,kicker:$("entryKicker").value.trim(),
@@ -1362,7 +1388,11 @@
     });
   }
 
-  $("entrySection").addEventListener("change",e=>setCharacterEditorVisibility(e.target.value));
+  $("entrySection").addEventListener("change",e=>{
+    setCharacterEditorVisibility(e.target.value);
+    updateEntryVisibilityHint();
+  });
+  $("entryVisibility").addEventListener("change",updateEntryVisibilityHint);
   document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).close()));
   $("menuButton").addEventListener("click",()=>document.body.classList.add("nav-open"));
   $("sidebarCloseButton").addEventListener("click",()=>document.body.classList.remove("nav-open"));
