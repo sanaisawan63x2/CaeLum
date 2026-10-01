@@ -19,6 +19,7 @@
   let searchQuery = "";
   let readingScrollHandler = null;
   let glossaryPopover = null;
+  let currentEntryTab = "basic";
   let expandedNav = new Set();
   let routeHistory = [];
   try {
@@ -834,21 +835,30 @@
     const c=entry.character||{};
     const initial=(entry.title||"?").trim().slice(0,1).toUpperCase();
     const portrait=c.portrait
-      ? '<div class="character-portrait"><img src="' + esc(c.portrait) + '" alt="ภาพตัวละคร ' + esc(entry.title) + '"></div>'
+      ? '<figure class="character-portrait has-image"><img src="' + esc(c.portrait) + '" alt="ภาพตัวละคร ' + esc(entry.title) + '" loading="eager"></figure>'
       : '<div class="character-portrait character-portrait-empty" aria-hidden="true"><span>' + esc(initial) + '</span></div>';
+
     const facts=[
       characterFact("เพศ",c.gender),
       characterFact("อายุ",c.age),
       characterFact("สัญชาติ / พื้นเพ",c.nationality),
-      characterFact("สังกัด / สถานะ",c.affiliation)
+      characterFact("สังกัด / สถานะ",c.affiliation),
+      characterFact("ปรากฏตัวครั้งแรก",c.firstAppearance)
     ].join("");
 
-    return '<div class="section-page-nav article-page-nav">' + pageBackHtml("section",entry.sectionId) +
+    const cards=[
+      c.appearance ? '<section class="character-info-card"><span class="character-info-kicker">Appearance</span><h2>ลักษณะภายนอก</h2><div>' + proseHtml(c.appearance,entry.id) + '</div></section>' : '',
+      c.personality ? '<section class="character-info-card"><span class="character-info-kicker">Personality</span><h2>บุคลิก</h2><div>' + proseHtml(c.personality,entry.id) + '</div></section>' : '',
+      c.abilities ? '<section class="character-info-card"><span class="character-info-kicker">Abilities</span><h2>เวทมนตร์และความสามารถ</h2><div>' + proseHtml(c.abilities,entry.id) + '</div></section>' : '',
+      c.relationships ? '<section class="character-info-card"><span class="character-info-kicker">Relations</span><h2>ความสัมพันธ์</h2><div>' + proseHtml(c.relationships,entry.id) + '</div></section>' : ''
+    ].filter(Boolean).join("");
+
+    return '<div class="section-page-nav character-page-nav">' + pageBackHtml("section",entry.sectionId) +
       '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div></div>' +
       authorStripHtml(entry.sectionId) +
-      '<article class="reader-article character-article">' +
-        '<header class="character-profile-head">' +
-          portrait +
+      '<article class="character-page">' +
+        '<header class="character-profile-hero">' +
+          '<div class="character-visual">' + portrait + '</div>' +
           '<div class="character-profile-intro">' +
             '<p class="reader-category">' + esc(section ? section.readerLabel || section.name : "ตัวละคร") + '</p>' +
             (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') +
@@ -858,18 +868,14 @@
             (facts ? '<div class="character-facts">' + facts + '</div>' : '') +
           '</div>' +
         '</header>' +
-        (entry.details ? '<section class="character-profile-section character-about"><h2>เกี่ยวกับตัวละคร</h2><div>' + proseHtml(entry.details,entry.id) + '</div></section>' : '') +
-        characterSectionHtml("ลักษณะภายนอก",c.appearance,entry.id) +
-        characterSectionHtml("บุคลิก",c.personality,entry.id) +
-        characterSectionHtml("เวทมนตร์และความสามารถ",c.abilities,entry.id) +
-        characterSectionHtml("ความสัมพันธ์",c.relationships,entry.id) +
-        (c.firstAppearance ? '<section class="character-first-appearance"><span>ปรากฏตัวครั้งแรก</span><strong>' + esc(c.firstAppearance) + '</strong></section>' : '') +
-        (entry.publicKnowledge ? '<section class="reader-section"><h2>ข้อมูลที่เปิดเผยแล้ว</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
+        (entry.details ? '<section class="character-about-card"><span class="character-info-kicker">Profile</span><h2>เกี่ยวกับตัวละคร</h2><div>' + proseHtml(entry.details,entry.id) + '</div></section>' : '') +
+        (cards ? '<div class="character-public-grid">' + cards + '</div>' : '') +
+        (entry.publicKnowledge ? '<section class="character-about-card character-public-knowledge"><span class="character-info-kicker">Known information</span><h2>ข้อมูลที่เปิดเผยแล้ว</h2><div>' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
         (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
         (authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes,entry.id) + '</div></section>' : '') +
         (authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions,entry.id) + '</div></section>' : '') +
-        (related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(x => '<button data-related="' + esc(x.id) + '" data-related-type="' + (x.sectionId ? 'entry':'section') + '" type="button">' + esc(x.title || x.readerLabel || x.name) + '</button>').join("") + '</div></section>' : '') +
-        (authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-entry type="button">แก้ไขข้อมูลนี้</button></div>' : '') +
+        (related.length ? '<section class="reader-related character-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(x => '<button data-related="' + esc(x.id) + '" data-related-type="' + (x.sectionId ? 'entry':'section') + '" type="button">' + esc(x.title || x.readerLabel || x.name) + '</button>').join("") + '</div></section>' : '') +
+        (authorMode ? '<div class="reader-edit-row character-edit-row"><button class="button primary" data-edit-entry type="button">แก้ไขข้อมูลนี้</button></div>' : '') +
       '</article>';
   }
 
@@ -1121,10 +1127,36 @@
     return false;
   }
 
+  function setEntryEditorTab(tab) {
+    const isCharacter=isCharacterSection($("entrySection").value);
+    if(tab==="character" && !isCharacter) tab="basic";
+    currentEntryTab=tab;
+    document.querySelectorAll("[data-entry-tab]").forEach(btn=>{
+      const active=btn.dataset.entryTab===tab;
+      btn.classList.toggle("active",active);
+      btn.setAttribute("aria-selected",active?"true":"false");
+    });
+    document.querySelectorAll("[data-entry-pane]").forEach(pane=>{
+      const active=pane.dataset.entryPane===tab;
+      pane.classList.toggle("active",active);
+      pane.hidden=!active;
+    });
+  }
+
   function setCharacterEditorVisibility(sectionId) {
-    const panel=$("characterFields");
-    if(!panel) return;
-    panel.hidden=!isCharacterSection(sectionId);
+    const isCharacter=isCharacterSection(sectionId);
+    const tab=$("characterTabButton");
+    if(tab) tab.hidden=!isCharacter;
+    if(!isCharacter && currentEntryTab==="character") setEntryEditorTab("basic");
+  }
+
+  function updateEntrySaveState() {
+    const state=$("entryEditorSaveState");
+    if(!state) return;
+    const section=sectionById($("entrySection").value);
+    const visibility=$("entryVisibility").value==="public" ? "Public" : "Author Only";
+    const type=isCharacterSection($("entrySection").value) ? "ตัวละคร" : "ข้อมูลโลก";
+    state.textContent=(section ? (section.readerLabel || section.name) : "ยังไม่เลือกหมวด") + " · " + type + " · " + visibility;
   }
 
   function fillCharacterFields(entry) {
@@ -1180,6 +1212,8 @@
     fillCharacterFields(entry);
     setCharacterEditorVisibility($("entrySection").value);
     updateEntryVisibilityHint();
+    updateEntrySaveState();
+    setEntryEditorTab("basic");
     $("deleteEntryButton").style.visibility=entry?"visible":"hidden";
     editorModal.showModal();
   }
@@ -1388,11 +1422,16 @@
     });
   }
 
+  document.querySelectorAll("[data-entry-tab]").forEach(btn=>btn.addEventListener("click",()=>setEntryEditorTab(btn.dataset.entryTab)));
   $("entrySection").addEventListener("change",e=>{
     setCharacterEditorVisibility(e.target.value);
     updateEntryVisibilityHint();
+    updateEntrySaveState();
   });
-  $("entryVisibility").addEventListener("change",updateEntryVisibilityHint);
+  $("entryVisibility").addEventListener("change",()=>{
+    updateEntryVisibilityHint();
+    updateEntrySaveState();
+  });
   document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).close()));
   $("menuButton").addEventListener("click",()=>document.body.classList.add("nav-open"));
   $("sidebarCloseButton").addEventListener("click",()=>document.body.classList.remove("nav-open"));
