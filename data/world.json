@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "version": 49,
+  "version": 50,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
@@ -92,7 +92,10 @@
       "importance": "รวมผังทางเข้า การศึกษา ความปลอดภัย และชีวิตนักศึกษา โดยระบุตำแหน่งที่ยืนยันแล้วแยกจากส่วนที่ยังร่างอยู่",
       "imageKey": "gothicCampus",
       "readerLabel": "CaeLum University",
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-02T04:22:00+07:00",
+      "secondaryParentIds": [
+        "locations"
+      ]
     },
     {
       "id": "caelum-academics",
