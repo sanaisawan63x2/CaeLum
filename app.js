@@ -27,6 +27,23 @@
     expandedNav = new Set();
   }
 
+  const SIDEBAR_MIN = 260;
+  const SIDEBAR_MAX = 560;
+  const SIDEBAR_DEFAULT = 320;
+  let sidebarWidth = Number(localStorage.getItem("caelum_sidebar_width") || SIDEBAR_DEFAULT);
+
+  function clampSidebarWidth(value) {
+    return Math.max(SIDEBAR_MIN,Math.min(SIDEBAR_MAX,Number(value)||SIDEBAR_DEFAULT));
+  }
+
+  function applySidebarWidth(value,persist=true) {
+    sidebarWidth = clampSidebarWidth(value);
+    document.documentElement.style.setProperty("--sidebar",sidebarWidth + "px");
+    if (persist) localStorage.setItem("caelum_sidebar_width",String(sidebarWidth));
+  }
+
+  applySidebarWidth(sidebarWidth,false);
+
   const $ = id => document.getElementById(id);
   const content = $("content");
   const categoryNav = $("categoryNav");
@@ -204,12 +221,6 @@
 
   function openNavPath(sectionId) {
     const chain = ancestorChain(sectionId);
-    const activeRoot = chain.length ? chain[0].id : null;
-    if (activeRoot) {
-      childrenOf(null).forEach(root => {
-        if (root.id !== activeRoot) clearExpandedSubtree(root.id);
-      });
-    }
     chain.slice(0,-1).forEach(section => expandedNav.add(section.id));
   }
 
@@ -238,11 +249,13 @@
   function navSectionNode(section,activeSection,depth) {
     const kids = childrenOf(section.id);
     const active = activeSection === section.id;
+    const activeChain = activeSection ? ancestorChain(activeSection).map(s => s.id) : [];
+    const inPath = !active && activeChain.includes(section.id);
     const open = expandedNav.has(section.id);
     let html = '<div class="nav-node"><div class="nav-node-row">';
     if (kids.length) html += '<button class="nav-toggle' + (open ? ' open' : '') + '" data-nav-toggle="' + esc(section.id) + '" type="button" aria-label="' + (open ? 'ยุบหมวด' : 'ขยายหมวด') + '">' + (open ? '⌄' : '›') + '</button>';
     else html += '<button class="nav-toggle placeholder" tabindex="-1">›</button>';
-    html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? ' active' : '') + '" data-section-go="' + esc(section.id) + '">' +
+    html += '<button class="nav-btn nav-indent-' + Math.min(depth,3) + (active ? ' active' : '') + (inPath ? ' in-path' : '') + '" data-section-go="' + esc(section.id) + '">' +
       '<span class="nav-icon">' + esc(section.icon || "·") + '</span><span class="nav-label">' + esc(section.readerLabel || section.name) + '</span><span class="nav-count" title="' + (kids.length ? esc(kids.length + " หมวดย่อย") : esc(countUnder(section.id) + " รายการ")) + '">' + (kids.length ? esc(kids.length + " หมวด") : countUnder(section.id)) + '</span></button></div>';
     if (kids.length && open) html += '<div class="nav-children">' + kids.map(k => navSectionNode(k,activeSection,depth+1)).join("") + '</div>';
     html += '</div>';
@@ -288,7 +301,13 @@
 
     categoryNav.querySelectorAll("[data-nav-go]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.navGo)));
     categoryNav.querySelectorAll("[data-chapter-go]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterGo)));
-    categoryNav.querySelectorAll("[data-section-go]").forEach(btn => btn.addEventListener("click",() => navigate("section",btn.dataset.sectionGo)));
+    categoryNav.querySelectorAll("[data-section-go]").forEach(btn => btn.addEventListener("click",() => {
+      const id = btn.dataset.sectionGo;
+      if (childrenOf(id).length) expandedNav.add(id);
+      ancestorChain(id).slice(0,-1).forEach(section => expandedNav.add(section.id));
+      localStorage.setItem("caelum_nav_open",JSON.stringify(Array.from(expandedNav)));
+      navigate("section",id);
+    }));
     categoryNav.querySelectorAll("[data-nav-toggle]").forEach(btn => btn.addEventListener("click",e => {
       e.stopPropagation();
       const id = btn.dataset.navToggle;
@@ -297,9 +316,6 @@
       if (expandedNav.has(id)) {
         clearExpandedSubtree(id);
       } else {
-        childrenOf(target.parentId || null).forEach(sibling => {
-          if (sibling.id !== id) clearExpandedSubtree(sibling.id);
-        });
         ancestorChain(id).slice(0,-1).forEach(section => expandedNav.add(section.id));
         expandedNav.add(id);
       }
@@ -1142,6 +1158,43 @@
     searchQuery=value;
     syncSearchInputs(value);
     renderPage();
+  }
+
+  const collapseNavButton = $("collapseNavButton");
+  if (collapseNavButton) collapseNavButton.addEventListener("click",() => {
+    expandedNav.clear();
+    localStorage.setItem("caelum_nav_open","[]");
+    renderNav();
+  });
+
+  const sidebarResizer = $("sidebarResizer");
+  if (sidebarResizer) {
+    let resizing = false;
+    const move = event => {
+      if (!resizing || window.innerWidth <= 1040) return;
+      applySidebarWidth(event.clientX,true);
+    };
+    const stop = () => {
+      if (!resizing) return;
+      resizing = false;
+      document.body.classList.remove("resizing-sidebar");
+    };
+    sidebarResizer.addEventListener("pointerdown",event => {
+      if (window.innerWidth <= 1040) return;
+      resizing = true;
+      document.body.classList.add("resizing-sidebar");
+      sidebarResizer.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+    sidebarResizer.addEventListener("pointermove",move);
+    sidebarResizer.addEventListener("pointerup",stop);
+    sidebarResizer.addEventListener("pointercancel",stop);
+    sidebarResizer.addEventListener("dblclick",() => applySidebarWidth(SIDEBAR_DEFAULT,true));
+    sidebarResizer.addEventListener("keydown",event => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); applySidebarWidth(sidebarWidth-20,true); }
+      if (event.key === "ArrowRight") { event.preventDefault(); applySidebarWidth(sidebarWidth+20,true); }
+      if (event.key === "Home") { event.preventDefault(); applySidebarWidth(SIDEBAR_DEFAULT,true); }
+    });
   }
 
   document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).close()));
