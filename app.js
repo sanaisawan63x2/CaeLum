@@ -596,10 +596,10 @@
 
     const dialog = document.createElement("dialog");
     dialog.className = "map-dialog";
-    dialog.setAttribute("aria-label","แผนที่ CaeLum และสถานีบางบัว");
+    dialog.setAttribute("aria-label","แผนที่บริเวณรอบ CaeLum");
     dialog.innerHTML =
       '<div class="map-dialog-shell">' +
-        '<header class="map-dialog-bar"><div><span>แผนที่ประกอบเรื่อง</span><strong>CaeLum × Bang Bua</strong></div><button class="map-dialog-close" type="button" aria-label="ปิดแผนที่">×</button></header>' +
+        '<header class="map-dialog-bar"><div><span>แผนที่ประกอบเรื่อง</span><strong>บริเวณรอบ CaeLum</strong></div><button class="map-dialog-close" type="button" aria-label="ปิดแผนที่">×</button></header>' +
         '<div class="map-dialog-body"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum สถานีบางบัว ถนน และประตูหลัก"></div>' +
       '</div>';
 
@@ -625,8 +625,8 @@
       authorStripHtml() +
       '<div class="reader-heading novel-heading"><div><h2>สารบัญนิยาย</h2><p>' + chapters.length + ' ตอนที่เปิดให้อ่าน</p></div>' + (authorMode ? '<button class="button primary" data-add-chapter type="button">+ เพิ่มตอน</button>' : '') + '</div>' +
       '<section class="novel-map-feature" aria-label="แผนที่ CaeLum ก่อนเริ่มตอนที่ 1">' +
-        '<div class="novel-map-copy"><span class="novel-map-kicker">แผนที่ประกอบเรื่อง · ก่อนตอนที่ 1</span><h3>CaeLum × Bang Bua</h3><p>ดูตำแหน่งตั้งต้นของสถานีบางบัว ถนนหน้า CaeLum และประตูหลักก่อนเริ่มอ่าน เพื่อให้เห็นภาพเส้นทางที่ตัวละครใช้ในช่วงเปิดเรื่อง</p><div class="novel-map-meta"><span>สถานีบางบัว</span><span>ประตูหลัก</span><span>ไม่ใช่มาตราส่วนจริง</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
-        '<button class="novel-map-preview" data-open-map type="button" aria-label="เปิดแผนที่ CaeLum แบบเต็มจอ"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตำแหน่ง CaeLum กับสถานีบางบัว" loading="eager"><span class="novel-map-zoom">ดูแผนที่เต็ม</span></button>' +
+        '<div class="novel-map-copy"><span class="novel-map-kicker">แผนที่ประกอบเรื่อง</span><h3>บริเวณรอบ CaeLum</h3><p>ผังคร่าว ๆ ของพื้นที่โดยรอบมหาวิทยาลัยและทางเข้าหลัก สำหรับใช้อ้างอิงตำแหน่งระหว่างอ่านเรื่อง</p><div class="novel-map-meta"><span>ทางเข้าหลัก</span><span>พื้นที่โดยรอบ</span><span>ไม่ใช่มาตราส่วนจริง</span></div><button class="button novel-map-button" data-open-map type="button">เปิดแผนที่เต็ม <span aria-hidden="true">↗</span></button></div>' +
+        '<button class="novel-map-preview" data-open-map type="button" aria-label="เปิดแผนที่บริเวณรอบ CaeLum แบบเต็มจอ"><img src="assets/caelum-bang-bua-map.svg" alt="ผังบริเวณรอบ CaeLum" loading="eager"><span class="novel-map-zoom">ดูแผนที่เต็ม</span></button>' +
       '</section>' +
       '<section class="chapter-list">' + (chapters.length ? chapters.map(ch => {
         const p = progress[ch.id] || 0;
