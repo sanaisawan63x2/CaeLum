@@ -1823,3 +1823,51 @@ body:not(.author-mode) .author-entry small{color:#71858f}
   .topic-card-copy p{-webkit-line-clamp:2}
   .nav-btn{height:42px}
 }
+
+
+/* Archive discoverability v36 */
+.topic-card.has-children{
+  min-height:168px;
+}
+.topic-card-children{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:11px 0 3px;
+}
+.topic-card-children button,
+.topic-card-children span{
+  min-height:28px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 9px;
+  border:1px solid #d8dfdf;
+  border-radius:999px;
+  background:#f6f8f7;
+  color:#4f6669;
+  font:600 10px var(--sans);
+}
+.topic-card-children button{
+  cursor:pointer;
+}
+.topic-card-children button:hover{
+  border-color:#9fbdba;
+  background:#edf5f3;
+  color:#245f66;
+}
+.nav-count{
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+@media(max-width:480px){
+  .topic-card-children{
+    gap:5px;
+    margin-top:8px;
+  }
+  .topic-card-children button,
+  .topic-card-children span{
+    min-height:26px;
+    padding:0 8px;
+    font-size:9px;
+  }
+}
