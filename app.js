@@ -20,6 +20,13 @@
   let readingScrollHandler = null;
   let glossaryPopover = null;
   let expandedNav = new Set();
+  let routeHistory = [];
+  try {
+    routeHistory = JSON.parse(sessionStorage.getItem("caelum_route_history") || "[]");
+    if (!Array.isArray(routeHistory)) routeHistory = [];
+  } catch {
+    routeHistory = [];
+  }
 
   try {
     expandedNav = new Set(JSON.parse(localStorage.getItem("caelum_nav_open") || "[]"));
@@ -199,7 +206,11 @@
     return {type:"home"};
   }
 
-  function navigate(type,id) {
+  function saveRouteHistory() {
+    sessionStorage.setItem("caelum_route_history",JSON.stringify(routeHistory.slice(-40)));
+  }
+
+  function navigate(type,id,options={}) {
     closeGlossaryPopover();
     if (readingScrollHandler) {
       window.removeEventListener("scroll",readingScrollHandler);
@@ -209,10 +220,44 @@
     if (type === "novel") next = "#novel";
     else if (type === "all") next = "#all";
     else if (id) next = "#" + type + "/" + encodeURIComponent(id);
+
+    const current = location.hash || "#home";
+    if (!options.skipHistory && current !== next) {
+      routeHistory.push(current);
+      saveRouteHistory();
+    }
+
     if (location.hash === next) renderAll();
     else location.hash = next;
     document.body.classList.remove("nav-open");
     window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function goBack(fallbackType="all",fallbackId=null) {
+    while (routeHistory.length) {
+      const previous = routeHistory.pop();
+      saveRouteHistory();
+      if (previous && previous !== (location.hash || "#home")) {
+        closeGlossaryPopover();
+        location.hash = previous;
+        document.body.classList.remove("nav-open");
+        window.scrollTo({top:0,behavior:"smooth"});
+        return;
+      }
+    }
+    navigate(fallbackType,fallbackId,{skipHistory:true});
+  }
+
+  function pageBackHtml(fallbackType="all",fallbackId=null) {
+    return '<button class="page-back" data-page-back type="button" data-fallback-type="' + esc(fallbackType) + '"' +
+      (fallbackId ? ' data-fallback-id="' + esc(fallbackId) + '"' : '') +
+      '><span aria-hidden="true">←</span><span>ย้อนกลับ</span></button>';
+  }
+
+  function bindPageBack() {
+    content.querySelectorAll("[data-page-back]").forEach(btn => btn.addEventListener("click",() => {
+      goBack(btn.dataset.fallbackType || "all",btn.dataset.fallbackId || null);
+    }));
   }
 
   function clearExpandedSubtree(sectionId) {
@@ -744,7 +789,7 @@
     if (kids.length) {
       content.innerHTML =
         '<section class="section-landing">' +
-          '<div class="breadcrumbs section-landing-breadcrumbs">' + breadcrumbsHtml(id) + '</div>' +
+          '<div class="section-page-nav">' + pageBackHtml(section.parentId ? "section" : "all",section.parentId || null) + '<div class="breadcrumbs section-landing-breadcrumbs">' + breadcrumbsHtml(id) + '</div></div>' +
           '<div class="section-landing-copy"><p class="eyebrow">หมวดข้อมูล</p><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p></div>' +
           '<div class="section-choice-head"><div><h2>เลือกหัวข้อ</h2><p>เลือกเรื่องที่ต้องการอ่านต่อจากด้านล่าง</p></div><span>' + kids.length + ' หัวข้อ</span></div>' +
           '<div class="section-choice-list">' + kids.map(subsectionChoiceHtml).join("") + '</div>' +
@@ -753,7 +798,8 @@
         '</section>';
     } else {
       content.innerHTML =
-        '<section class="section-hero simple-section-hero"><div class="section-hero-bg" style="' + styleBg(asset.url) + '"></div><div class="section-hero-content"><div class="breadcrumbs">' + breadcrumbsHtml(id) + '</div><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p>' +
+        '<div class="section-page-nav standalone">' + pageBackHtml(section.parentId ? "section" : "all",section.parentId || null) + '<div class="breadcrumbs">' + breadcrumbsHtml(id) + '</div></div>' +
+        '<section class="section-hero simple-section-hero"><div class="section-hero-bg" style="' + styleBg(asset.url) + '"></div><div class="section-hero-content"><h1>' + esc(section.readerLabel || section.name) + '</h1><p>' + esc(section.description || "") + '</p>' +
         (authorMode ? '<div class="section-actions"><button class="button secondary" data-edit-section type="button">แก้หมวดนี้</button></div>' : '') + '</div></section>' +
         authorStripHtml(id) +
         (entries.length ? '<div class="reader-heading"><div><h2>ข้อมูลในหมวดนี้</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '') +
@@ -761,6 +807,7 @@
     }
 
     bindBreadcrumbs();
+    bindPageBack();
     bindAuthorStrip();
     content.querySelectorAll("[data-section-jump]").forEach(btn => btn.addEventListener("click",() => navigate("section",btn.dataset.sectionJump)));
     content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
@@ -780,7 +827,7 @@
     const related=(entry.links || []).map(relationTarget).filter(Boolean);
     const mapFigure=entry.id==="caelum-bang-bua-map" ? '<figure class="location-map"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตั้งต้น แสดง CaeLum ถนนหน้าเมือง รางรถไฟฟ้ายกระดับ สถานีบางบัว บันไดลง และทางข้ามเข้าสู่ประตูหลัก"><figcaption>จุดยืนยันของผัง: สถานีบางบัว → บันไดลง → ทางเท้า → ทางข้ามถนน → ประตูหลัก</figcaption></figure>' : "";
     content.innerHTML =
-      '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div>' + authorStripHtml(entry.sectionId) +
+      '<div class="section-page-nav article-page-nav">' + pageBackHtml("section",entry.sectionId) + '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div></div>' + authorStripHtml(entry.sectionId) +
       '<article class="reader-article"><header class="reader-article-head"><p class="reader-category">' + esc(section ? section.readerLabel || section.name : "CaeLum") + '</p>' +
       (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
       mapFigure +
@@ -792,6 +839,7 @@
       (related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(x => '<button data-related="' + esc(x.id) + '" data-related-type="' + (x.sectionId ? 'entry':'section') + '" type="button">' + esc(x.title || x.readerLabel || x.name) + '</button>').join("") + '</div></section>' : '') +
       (authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-entry type="button">แก้ไขข้อมูลนี้</button></div>' : '') + '</article>';
     bindBreadcrumbs();
+    bindPageBack();
     bindAuthorStrip();
     content.querySelectorAll("[data-wiki-glossary]").forEach(btn => btn.addEventListener("click",() => navigate("entry",btn.dataset.wikiGlossary)));
     content.querySelectorAll("[data-related]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.relatedType,btn.dataset.related)));
