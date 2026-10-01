@@ -2310,3 +2310,67 @@ body.resizing-sidebar *{
     margin-top:5px;
   }
 }
+
+
+/* =========================================================
+   Archive back navigation v54
+   ========================================================= */
+.section-page-nav{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+.section-page-nav.standalone{
+  width:min(100%,980px);
+  margin:0 auto 14px;
+}
+.article-page-nav{
+  width:min(100%,900px);
+  margin:0 auto 14px;
+}
+.section-page-nav .breadcrumbs{
+  min-width:0;
+  margin:0;
+  overflow:hidden;
+}
+.page-back{
+  flex:0 0 auto;
+  min-height:36px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--panel);
+  color:#50616a;
+  font:600 11px var(--sans);
+}
+.page-back:hover{
+  border-color:#a6bfbd;
+  background:#f7faf9;
+  color:#245e65;
+}
+.page-back>span:first-child{
+  font-size:15px;
+  line-height:1;
+}
+.section-landing-breadcrumbs{
+  margin:0;
+}
+@media(max-width:700px){
+  .section-page-nav{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:9px;
+  }
+  .section-page-nav.standalone,
+  .article-page-nav{
+    margin-bottom:12px;
+  }
+  .page-back{
+    min-height:38px;
+    padding:0 12px;
+  }
+}
