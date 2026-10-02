@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=31">
-  <link rel="stylesheet" href="stability.css?v=61">
+  <link rel="stylesheet" href="stability.css?v=62">
 </head>
 <body>
   <div class="app">
@@ -193,7 +193,7 @@
         <section class="entry-editor-pane character-form" id="characterFields" data-entry-pane="character" hidden>
           <div class="entry-pane-heading">
             <div><span>Character Profile</span><h3>ข้อมูลเฉพาะสำหรับหน้าตัวละคร</h3></div>
-            <p>ช่องที่เว้นว่างจะไม่แสดงบนหน้า Public</p>
+            <p>กรอกเฉพาะสิ่งที่มีผลกับตัวละคร ช่องถิ่นที่มาไม่จำเป็นต้องมีทุกคน</p>
           </div>
 
           <div class="character-form-grid">
@@ -206,8 +206,8 @@
               <input id="characterAge" placeholder="เช่น 19">
             </label>
             <label class="field">
-              <span>สัญชาติ / พื้นเพกว้าง ๆ</span>
-              <input id="characterNationality" placeholder="เช่น เยอรมัน">
+              <span>ถิ่นที่มา / เมือง <small>(ถ้ามีผลกับเรื่อง)</small></span>
+              <input id="characterOrigin" placeholder="เช่น เมืองที่เติบโต หรือปล่อยว่างได้">
             </label>
             <label class="field">
               <span>สังกัด / สถานะ</span>
@@ -361,6 +361,6 @@
     </form>
   </dialog>
 
-  <script src="app.js?v=61"></script>
+  <script src="app.js?v=62"></script>
 </body>
 </html>
