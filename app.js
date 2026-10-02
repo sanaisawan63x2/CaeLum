@@ -857,9 +857,9 @@
     const facts=[
       characterFact("เพศ",c.gender),
       characterFact("อายุ",c.age),
-      characterFact("ถิ่นที่มา",c.origin),
+      c.origin ? characterFact("ถิ่นที่มา",c.origin) : "",
       characterFact("สังกัด / สถานะ",c.affiliation),
-      characterFact("ปรากฏตัวครั้งแรก",c.firstAppearance)
+      c.firstAppearance ? characterFact("ปรากฏตัวครั้งแรก",c.firstAppearance) : ""
     ].join("");
 
     const cards=[
