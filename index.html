@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=31">
-  <link rel="stylesheet" href="stability.css?v=63">
+  <link rel="stylesheet" href="stability.css?v=64">
 </head>
 <body>
   <div class="app">
@@ -197,6 +197,11 @@
           </div>
 
           <div class="character-form-grid">
+            <div class="character-editor-group-title span-2">
+              <span>ข้อมูลพื้นฐาน</span>
+              <small>ข้อมูลสั้น ๆ ที่ใช้แนะนำตัวละคร</small>
+            </div>
+
             <label class="field">
               <span>เพศ</span>
               <input id="characterGender" placeholder="เช่น ชาย">
@@ -213,6 +218,14 @@
               <span>สังกัด / สถานะ</span>
               <input id="characterAffiliation" placeholder="เช่น นักศึกษาปี 1 · CaeLum University">
             </label>
+            <label class="field">
+              <span>มือข้างถนัด</span>
+              <input id="characterHandedness" placeholder="เช่น ขวา / ซ้าย / ใช้ได้ทั้งสองข้าง">
+            </label>
+            <label class="field">
+              <span>ปรากฏตัวครั้งแรก</span>
+              <input id="characterFirstAppearance" placeholder="เช่น ตอนที่ 1 — ชื่อตอน">
+            </label>
             <label class="field span-2">
               <span>บทบาทที่ผู้อ่านควรรู้</span>
               <input id="characterRole" placeholder="เช่น นักศึกษาปีหนึ่งของ CaeLum">
@@ -222,14 +235,60 @@
               <input id="characterPortrait" placeholder="assets/characters/elias.webp หรือ URL รูป">
               <small>ระบบจะแสดงตามสัดส่วนจริงของภาพ ไม่บีบหรือยืดภาพ</small>
             </label>
+
+            <div class="character-editor-group-title span-2">
+              <span>บุคลิกและชีวิตประจำวัน</span>
+              <small>รายละเอียดเล็ก ๆ ที่ช่วยให้ตัวละครรู้สึกเป็นคนจริง</small>
+            </div>
+
+            <label class="field span-2">
+              <span>บุคลิกที่เปิดเผยแล้ว</span>
+              <textarea id="characterPersonality" rows="4" placeholder="นิสัย วิธีเข้าสังคม วิธีแสดงอารมณ์ หรือมุมที่คนอ่านมองเห็น"></textarea>
+            </label>
+            <label class="field">
+              <span>งานอดิเรก</span>
+              <input id="characterHobbies" placeholder="เช่น อ่านหนังสือ วิ่ง ถ่ายรูป">
+            </label>
+            <label class="field">
+              <span>นิสัยเล็ก ๆ / พฤติกรรมประจำตัว</span>
+              <input id="characterHabits" placeholder="เช่น ชอบหมุนปากกาเวลาคิด">
+            </label>
+            <label class="field">
+              <span>เพลง / แนวเพลงที่ชอบ</span>
+              <input id="characterFavoriteMusic" placeholder="เช่น Jazz, Rock หรือชื่อเพลง">
+            </label>
+            <label class="field">
+              <span>อาหารที่ชอบ</span>
+              <input id="characterFavoriteFood" placeholder="เช่น แกงกะหรี่ ขนมปัง กาแฟ">
+            </label>
+            <label class="field">
+              <span>สิ่งที่ชอบ</span>
+              <input id="characterLikes" placeholder="คั่นหลายอย่างด้วย ,">
+            </label>
+            <label class="field">
+              <span>สิ่งที่ไม่ชอบ</span>
+              <input id="characterDislikes" placeholder="คั่นหลายอย่างด้วย ,">
+            </label>
+
+            <div class="character-editor-group-title span-2">
+              <span>พื้นหลัง</span>
+              <small>เฉพาะส่วนที่เปิดเผยต่อผู้อ่านได้แล้ว ความลับให้เก็บใน “หลังบ้านผู้แต่ง”</small>
+            </div>
+
+            <label class="field span-2">
+              <span>พื้นหลังของตัวละคร</span>
+              <textarea id="characterBackground" rows="6" placeholder="เติบโตมาแบบไหน มีประสบการณ์อะไรที่หล่อหลอมเขา และอะไรพามาถึงจุดที่อยู่ในเรื่องตอนนี้"></textarea>
+            </label>
             <label class="field span-2">
               <span>ลักษณะภายนอก</span>
               <textarea id="characterAppearance" rows="4" placeholder="รูปร่าง การแต่งตัว ลักษณะที่คนอื่นมองเห็นได้"></textarea>
             </label>
-            <label class="field span-2">
-              <span>บุคลิกที่เปิดเผยแล้ว</span>
-              <textarea id="characterPersonality" rows="4" placeholder="เขียนเฉพาะสิ่งที่คนอ่านรับรู้จากเรื่องแล้ว"></textarea>
-            </label>
+
+            <div class="character-editor-group-title span-2">
+              <span>ความสามารถและความสัมพันธ์</span>
+              <small>แสดงเฉพาะข้อมูลที่เรื่องเปิดเผยแล้ว</small>
+            </div>
+
             <label class="field span-2">
               <span>เวทมนตร์ / ความสามารถที่เปิดเผยแล้ว</span>
               <textarea id="characterAbilities" rows="4" placeholder="เวท ความถนัด หรือทักษะที่ปรากฏในเรื่องแล้ว"></textarea>
@@ -237,10 +296,6 @@
             <label class="field span-2">
               <span>ความสัมพันธ์ที่เปิดเผยแล้ว</span>
               <textarea id="characterRelationships" rows="4" placeholder="เพื่อน คนรู้จัก อาจารย์ หรือความสัมพันธ์ที่คนอ่านรับรู้แล้ว"></textarea>
-            </label>
-            <label class="field span-2">
-              <span>ปรากฏตัวครั้งแรก</span>
-              <input id="characterFirstAppearance" placeholder="เช่น ตอนที่ 1 — ชื่อตอน">
             </label>
           </div>
         </section>
@@ -361,6 +416,6 @@
     </form>
   </dialog>
 
-  <script src="app.js?v=63"></script>
+  <script src="app.js?v=64"></script>
 </body>
 </html>
