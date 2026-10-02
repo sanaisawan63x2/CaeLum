@@ -3071,3 +3071,157 @@ body.resizing-sidebar *{
   .character-facts{grid-template-columns:1fr}
   .character-profile-intro h1{font-size:30px}
 }
+
+
+/* =========================================================
+   Character profile clarity + verified author saves v61
+   ========================================================= */
+.entry-editor-save-state[data-state="dirty"]{
+  color:#9a6a22;
+  font-weight:750;
+}
+.entry-editor-save-state[data-state="saving"]{
+  color:#2f6f78;
+  font-weight:750;
+}
+.entry-editor-save-state[data-state="saved"]{
+  color:#31705b;
+  font-weight:750;
+}
+.entry-editor-save-state[data-state="error"]{
+  color:#a44753;
+  font-weight:750;
+}
+
+.character-entry-card{
+  align-items:center;
+}
+.character-entry-card>div{
+  min-width:0;
+}
+.entry-character-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0 9px;
+}
+.entry-character-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:0 9px;
+  border:1px solid #d9dfdd;
+  border-radius:999px;
+  background:#f7f9f8;
+  color:#526a6d;
+  font-size:10px;
+  font-weight:700;
+  line-height:1;
+}
+.character-entry-card p{
+  margin-top:0;
+}
+
+.character-basics{
+  margin-top:22px;
+  padding-top:17px;
+  border-top:1px solid var(--line-soft);
+}
+.character-basics-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:9px;
+}
+.character-basics-head>span{
+  color:var(--text);
+  font-size:12px;
+  font-weight:800;
+}
+.character-basics-head>small{
+  color:var(--muted);
+  font-size:9.5px;
+}
+.character-facts{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:0;
+}
+.character-fact{
+  min-height:66px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.character-fact.is-empty strong{
+  color:#a1aaad;
+  font-weight:600;
+}
+.character-fact strong{
+  font-size:13px;
+}
+.character-fact span{
+  font-size:9px;
+}
+
+.character-portrait.has-image{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  aspect-ratio:auto;
+  background:#f2efe8;
+}
+.character-portrait.has-image img{
+  width:auto;
+  max-width:100%;
+  height:auto;
+  max-height:560px;
+  object-fit:contain;
+  object-position:center top;
+}
+
+/* Keep the public profile visually structured even when some fields are not filled yet. */
+.character-about-card,
+.character-info-card,
+.character-related{
+  box-shadow:0 4px 18px rgba(28,39,47,.035);
+}
+
+@media(max-width:640px){
+  .entry-character-meta{
+    gap:5px;
+    margin-top:7px;
+  }
+  .entry-character-meta span{
+    min-height:24px;
+    padding:0 8px;
+    font-size:9.5px;
+  }
+  .character-basics{
+    margin-top:18px;
+    padding-top:14px;
+  }
+  .character-basics-head{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:2px;
+  }
+  .character-facts{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .character-fact{
+    min-height:62px;
+  }
+  .character-portrait.has-image img{
+    width:auto;
+    max-width:100%;
+    max-height:70dvh;
+  }
+}
+
+@media(max-width:380px){
+  .character-facts{
+    grid-template-columns:1fr;
+  }
+}
