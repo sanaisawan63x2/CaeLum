@@ -445,6 +445,16 @@
     return /^\d+(?:\s*[–-]\s*\d+)?$/.test(v) ? v + " ปี" : v;
   }
 
+  function characterDisplayName(entry) {
+    const c=(entry&&entry.character)||{};
+    return String(c.thaiName||entry.title||"").trim();
+  }
+
+  function characterEnglishName(entry) {
+    const c=(entry&&entry.character)||{};
+    return c.thaiName && entry.title && c.thaiName!==entry.title ? entry.title : "";
+  }
+
   function characterQuickMeta(entry) {
     if(!isCharacterSection(entry.sectionId)) return "";
     const c=entry.character||{};
@@ -454,7 +464,10 @@
   }
 
   function entryCardHtml(entry) {
-    return '<article class="entry-card' + (isCharacterSection(entry.sectionId)?' character-entry-card':'') + '" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(entry.title) + '</h3>' + characterQuickMeta(entry) + '<p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
+    const character=isCharacterSection(entry.sectionId);
+    const displayName=character?characterDisplayName(entry):entry.title;
+    const englishName=character?characterEnglishName(entry):"";
+    return '<article class="entry-card' + (character?' character-entry-card':'') + '" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(displayName) + '</h3>' + (englishName?'<span class="character-card-english-name">'+esc(englishName)+'</span>':'') + characterQuickMeta(entry) + '<p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
   }
 
   function renderHome() {
@@ -849,9 +862,11 @@
 
   function characterEntryHtml(entry,section,related) {
     const c=entry.character||{};
-    const initial=(entry.title||"?").trim().slice(0,1).toUpperCase();
+    const displayName=characterDisplayName(entry);
+    const englishName=characterEnglishName(entry);
+    const initial=(displayName||entry.title||"?").trim().slice(0,1).toUpperCase();
     const portrait=c.portrait
-      ? '<figure class="character-portrait has-image"><img src="' + esc(c.portrait) + '" alt="ภาพตัวละคร ' + esc(entry.title) + '" loading="eager"></figure>'
+      ? '<figure class="character-portrait has-image"><img src="' + esc(c.portrait) + '" alt="ภาพตัวละคร ' + esc(displayName) + '" loading="eager"></figure>'
       : '<div class="character-portrait character-portrait-empty" aria-hidden="true"><span>' + esc(initial) + '</span></div>';
 
     const facts=[
@@ -887,7 +902,7 @@
     ].filter(Boolean).join("");
 
     return '<div class="section-page-nav character-page-nav">' + pageBackHtml("section",entry.sectionId) +
-      '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(entry.title) + '</span></div></div>' +
+      '<div class="breadcrumbs article-breadcrumbs">' + breadcrumbsHtml(entry.sectionId) + '<span class="sep">/</span><span>' + esc(displayName) + '</span></div></div>' +
       authorStripHtml(entry.sectionId) +
       '<article class="character-page">' +
         '<header class="character-profile-hero">' +
@@ -895,7 +910,8 @@
           '<div class="character-profile-intro">' +
             '<p class="reader-category">' + esc(section ? section.readerLabel || section.name : "ตัวละคร") + '</p>' +
             (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') +
-            '<h1>' + esc(entry.title) + '</h1>' +
+            '<h1>' + esc(displayName) + '</h1>' +
+            (englishName ? '<p class="character-english-name">' + esc(englishName) + '</p>' : '') +
             (c.role ? '<p class="character-role">' + esc(c.role) + '</p>' : '') +
             (entry.summary ? '<p class="reader-lead">' + esc(entry.summary) + '</p>' : '') +
             '<section class="character-basics"><div class="character-basics-head"><span>ข้อมูลพื้นฐาน</span><small>ข้อมูลที่เปิดเผยในปัจจุบัน</small></div><div class="character-facts">' + facts + '</div></section>' +
@@ -927,7 +943,7 @@
       content.querySelectorAll("[data-related]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.relatedType,btn.dataset.related)));
       const edit=content.querySelector("[data-edit-entry]");
       if(edit) edit.addEventListener("click",() => openEntryEditor(id));
-      updateTopbar(entry.title);
+      updateTopbar(characterDisplayName(entry));
       return;
     }
     const mapFigure=entry.id==="caelum-bang-bua-map" ? '<figure class="location-map"><img src="assets/caelum-bang-bua-map.svg" alt="ผังตั้งต้น แสดง CaeLum ถนนหน้าเมือง รางรถไฟฟ้ายกระดับ สถานีบางบัว บันไดลง และทางข้ามเข้าสู่ประตูหลัก"><figcaption>จุดยืนยันของผัง: สถานีบางบัว → บันไดลง → ทางเท้า → ทางข้ามถนน → ประตูหลัก</figcaption></figure>' : "";
@@ -972,11 +988,16 @@
     const q=String(query).toLowerCase();
     const chapters=visibleChapters().filter(ch => [ch.title,ch.subtitle,ch.summary,ch.body].join(" ").toLowerCase().includes(q));
     const sections=visibleSections().filter(s => [s.name,s.readerLabel,s.description,s.importance].join(" ").toLowerCase().includes(q));
-    const entries=visibleEntries().filter(e => [e.title,e.kicker,e.summary,e.details,e.publicKnowledge].concat(authorMode?[e.storyUse,e.continuityNotes,e.openQuestions]:[]).concat(e.tags||[]).join(" ").toLowerCase().includes(q));
+    const entries=visibleEntries().filter(e => [e.title,e.character&&e.character.thaiName,e.kicker,e.summary,e.details,e.publicKnowledge].concat(authorMode?[e.storyUse,e.continuityNotes,e.openQuestions]:[]).concat(e.tags||[]).join(" ").toLowerCase().includes(q));
     const items=[];
     chapters.forEach(ch => items.push({type:"chapter",id:ch.id,title:"ตอน "+ch.number+" — "+ch.title,text:ch.summary}));
     sections.forEach(s => items.push({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description}));
-    entries.forEach(e => items.push({type:"entry",id:e.id,title:e.title,text:e.summary}));
+    entries.forEach(e => {
+      const char=isCharacterSection(e.sectionId);
+      const primary=char?characterDisplayName(e):e.title;
+      const secondary=char?characterEnglishName(e):"";
+      items.push({type:"entry",id:e.id,title:primary+(secondary?" ("+secondary+")":""),text:e.summary});
+    });
     content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและคลังโลก</p></div><section class="search-results">' +
       (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"ข้อมูล") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
     content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
@@ -1249,6 +1270,7 @@
 
   function fillCharacterFields(entry) {
     const c=(entry && entry.character) || {};
+    $("characterThaiName").value=c.thaiName||"";
     $("characterGender").value=c.gender||"";
     $("characterAge").value=c.age||"";
     $("characterOrigin").value=c.origin||"";
@@ -1272,6 +1294,7 @@
 
   function readCharacterFields() {
     return {
+      thaiName:$("characterThaiName").value.trim(),
       gender:$("characterGender").value.trim(),
       age:$("characterAge").value.trim(),
       origin:$("characterOrigin").value.trim(),
