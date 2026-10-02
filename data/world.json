@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 70,
+  "version": 71,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
-    "updatedAt": "2026-10-02T02:07:02.325Z",
+    "updatedAt": "2026-10-02T02:19:13.857Z",
     "readerIntro": "อ่านนิยาย CaeLum หรือสำรวจโลกของเรื่องผ่านข้อมูลที่จัดเป็นหมวดชัดเจน ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาโลก เนื้อเรื่อง และระบบของ CaeLum",
     "assets": {
@@ -2631,7 +2631,7 @@
     },
     {
       "id": "arc1-principal-investigator-draft",
-      "title": "เจ้าของโครงการวิจัย — ชื่อยังไม่กำหนด",
+      "title": "Professor Shojin",
       "visibility": "public",
       "status": "draft",
       "tags": [
@@ -2653,15 +2653,15 @@
       "openQuestions": "ชื่อ สาขาวิจัย ตำแหน่งใน CaeLum ประสบการณ์ส่วนตัวที่ทำให้สนใจ stigma ของ Mana variation และถิ่นที่มาหากมีผลกับเรื่องยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T02:07:02.325Z",
+      "updatedAt": "2026-10-02T02:19:13.852Z",
       "character": {
-        "thaiName": "",
-        "gender": "",
+        "thaiName": "ศาสตราจารย์โชจิน",
+        "gender": "ชาย",
         "age": "",
         "origin": "",
         "affiliation": "นักวิจัย · CaeLum University",
         "handedness": "",
-        "role": "เจ้าของโครงการวิจัยเกี่ยวกับความแปรผันของ Mana",
+        "role": "หัวหน้าโครงการวิจัยเกี่ยวกับความแปรผันของ Mana",
         "portrait": "",
         "appearance": "",
         "personality": "",
