@@ -6,7 +6,7 @@
     repo: "CaeLum",
     branch: "main",
     dataPath: "data/world.json",
-    rawDataUrl: "https://raw.githubusercontent.com/sanaisawan63x2/CaeLum/main/data/world.json"
+    rawDataUrl: "data/world.json"
   };
 
   let db = { schemaVersion:4, version:1, project:{}, novel:{chapters:[]}, sections:[], entries:[] };
