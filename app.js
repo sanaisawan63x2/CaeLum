@@ -859,12 +859,29 @@
       characterFact("อายุ",c.age),
       c.origin ? characterFact("ถิ่นที่มา",c.origin) : "",
       characterFact("สังกัด / สถานะ",c.affiliation),
+      c.handedness ? characterFact("มือข้างถนัด",c.handedness) : "",
       c.firstAppearance ? characterFact("ปรากฏตัวครั้งแรก",c.firstAppearance) : ""
     ].join("");
 
+    const lifestyleItems=[
+      c.hobbies ? ["งานอดิเรก",c.hobbies] : null,
+      c.favoriteMusic ? ["เพลง / แนวเพลงที่ชอบ",c.favoriteMusic] : null,
+      c.favoriteFood ? ["อาหารที่ชอบ",c.favoriteFood] : null,
+      c.likes ? ["สิ่งที่ชอบ",c.likes] : null,
+      c.dislikes ? ["สิ่งที่ไม่ชอบ",c.dislikes] : null,
+      c.habits ? ["นิสัยเล็ก ๆ",c.habits] : null
+    ].filter(Boolean);
+
+    const lifestyle=lifestyleItems.length
+      ? '<section class="character-about-card character-lifestyle-card"><span class="character-info-kicker">Daily life</span><h2>ชีวิตประจำวันและความชอบ</h2><div class="character-lifestyle-grid">' +
+        lifestyleItems.map(item=>'<div class="character-lifestyle-item"><span>'+esc(item[0])+'</span><strong>'+esc(item[1])+'</strong></div>').join("") +
+        '</div></section>'
+      : '';
+
     const cards=[
-      c.appearance ? '<section class="character-info-card"><span class="character-info-kicker">Appearance</span><h2>ลักษณะภายนอก</h2><div>' + proseHtml(c.appearance,entry.id) + '</div></section>' : '',
       c.personality ? '<section class="character-info-card"><span class="character-info-kicker">Personality</span><h2>บุคลิก</h2><div>' + proseHtml(c.personality,entry.id) + '</div></section>' : '',
+      c.background ? '<section class="character-info-card"><span class="character-info-kicker">Background</span><h2>พื้นหลัง</h2><div>' + proseHtml(c.background,entry.id) + '</div></section>' : '',
+      c.appearance ? '<section class="character-info-card"><span class="character-info-kicker">Appearance</span><h2>ลักษณะภายนอก</h2><div>' + proseHtml(c.appearance,entry.id) + '</div></section>' : '',
       c.abilities ? '<section class="character-info-card"><span class="character-info-kicker">Abilities</span><h2>เวทมนตร์และความสามารถ</h2><div>' + proseHtml(c.abilities,entry.id) + '</div></section>' : '',
       c.relationships ? '<section class="character-info-card"><span class="character-info-kicker">Relations</span><h2>ความสัมพันธ์</h2><div>' + proseHtml(c.relationships,entry.id) + '</div></section>' : ''
     ].filter(Boolean).join("");
@@ -885,6 +902,7 @@
           '</div>' +
         '</header>' +
         (entry.details ? '<section class="character-about-card"><span class="character-info-kicker">Profile</span><h2>เกี่ยวกับตัวละคร</h2><div>' + proseHtml(entry.details,entry.id) + '</div></section>' : '') +
+        lifestyle +
         (cards ? '<div class="character-public-grid">' + cards + '</div>' : '') +
         (entry.publicKnowledge ? '<section class="character-about-card character-public-knowledge"><span class="character-info-kicker">Known information</span><h2>ข้อมูลที่เปิดเผยแล้ว</h2><div>' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
         (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
@@ -1235,10 +1253,18 @@
     $("characterAge").value=c.age||"";
     $("characterOrigin").value=c.origin||"";
     $("characterAffiliation").value=c.affiliation||"";
+    $("characterHandedness").value=c.handedness||"";
     $("characterRole").value=c.role||"";
     $("characterPortrait").value=c.portrait||"";
     $("characterAppearance").value=c.appearance||"";
     $("characterPersonality").value=c.personality||"";
+    $("characterHobbies").value=c.hobbies||"";
+    $("characterHabits").value=c.habits||"";
+    $("characterFavoriteMusic").value=c.favoriteMusic||"";
+    $("characterFavoriteFood").value=c.favoriteFood||"";
+    $("characterLikes").value=c.likes||"";
+    $("characterDislikes").value=c.dislikes||"";
+    $("characterBackground").value=c.background||"";
     $("characterAbilities").value=c.abilities||"";
     $("characterRelationships").value=c.relationships||"";
     $("characterFirstAppearance").value=c.firstAppearance||"";
@@ -1250,10 +1276,18 @@
       age:$("characterAge").value.trim(),
       origin:$("characterOrigin").value.trim(),
       affiliation:$("characterAffiliation").value.trim(),
+      handedness:$("characterHandedness").value.trim(),
       role:$("characterRole").value.trim(),
       portrait:$("characterPortrait").value.trim(),
       appearance:$("characterAppearance").value.trim(),
       personality:$("characterPersonality").value.trim(),
+      hobbies:$("characterHobbies").value.trim(),
+      habits:$("characterHabits").value.trim(),
+      favoriteMusic:$("characterFavoriteMusic").value.trim(),
+      favoriteFood:$("characterFavoriteFood").value.trim(),
+      likes:$("characterLikes").value.trim(),
+      dislikes:$("characterDislikes").value.trim(),
+      background:$("characterBackground").value.trim(),
       abilities:$("characterAbilities").value.trim(),
       relationships:$("characterRelationships").value.trim(),
       firstAppearance:$("characterFirstAppearance").value.trim()
