@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 72,
+  "version": 73,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
-    "updatedAt": "2026-10-02T02:20:19.323Z",
+    "updatedAt": "2026-10-02T02:20:44.068Z",
     "readerIntro": "อ่านนิยาย CaeLum หรือสำรวจโลกของเรื่องผ่านข้อมูลที่จัดเป็นหมวดชัดเจน ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาโลก เนื้อเรื่อง และระบบของ CaeLum",
     "assets": {
@@ -2653,11 +2653,11 @@
       "openQuestions": "ชื่อ สาขาวิจัย ตำแหน่งใน CaeLum ประสบการณ์ส่วนตัวที่ทำให้สนใจ stigma ของ Mana variation และถิ่นที่มาหากมีผลกับเรื่องยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T02:20:19.318Z",
+      "updatedAt": "2026-10-02T02:20:44.064Z",
       "character": {
         "thaiName": "ศาสตราจารย์โชจิน",
         "gender": "ชาย",
-        "age": "ประมาณ 40 ต้น ๆ",
+        "age": "40",
         "origin": "",
         "affiliation": "นักวิจัย · CaeLum University",
         "handedness": "",
