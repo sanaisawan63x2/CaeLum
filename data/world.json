@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 56,
+  "version": 57,
   "project": {
     "name": "CaeLum",
     "subtitle": "นิยายและคลังโลก",
-    "updatedAt": "2026-10-02T00:08:40.494Z",
+    "updatedAt": "2026-10-02T00:12:51.044Z",
     "readerIntro": "อ่านนิยาย CaeLum หรือสำรวจโลกของเรื่องผ่านข้อมูลที่จัดเป็นหมวดชัดเจน ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาโลก เนื้อเรื่อง และระบบของ CaeLum",
     "assets": {
@@ -2458,11 +2458,11 @@
       "openQuestions": "อายุที่แน่นอน สาขาที่เรียน รายละเอียดครอบครัว เหตุผลเฉพาะที่เลือก CaeLum รูปลักษณ์ บุคลิกเชิงลึก เวทมนตร์ที่ถนัด อดีตบาดแผล และเส้นทางอาชีพที่เคยคิดไว้ยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T00:08:40.490Z",
+      "updatedAt": "2026-10-02T00:12:51.040Z",
       "kicker": "นักศึกษาปีหนึ่งที่ไม่ได้เข้ามาใน CaeLum เพราะเชื่อว่าตัวเองมีชะตาพิเศษ—เขาเพียงเลือกเส้นทางที่ดูเป็นไปได้ที่สุดในเวลานั้น",
       "character": {
         "gender": "ชาย",
-        "age": "",
+        "age": "19–20",
         "nationality": "เยอรมัน",
         "affiliation": "นักศึกษาปี 1 · CaeLum University",
         "role": "นักศึกษาปีหนึ่งของ CaeLum และตัวละครหลักที่ผู้อ่านติดตามผ่านเหตุการณ์ช่วงต้นเรื่อง",
@@ -2495,14 +2495,14 @@
         "แนวทางพล็อตช่วงต้น",
         "จริยธรรมงานวิจัยที่เกี่ยวข้องกับมนุษย์"
       ],
-      "openQuestions": "อายุ สัญชาติ สาขาที่เรียน รูปลักษณ์ บุคลิก เหตุผลส่วนตัวที่เข้าร่วมโครงการ เวทมนตร์ที่ใช้ ความสัมพันธ์กับ Elias และรายละเอียดชีวิตประจำวันยังไม่ล็อก",
+      "openQuestions": "สัญชาติ สาขาที่เรียน รูปลักษณ์ บุคลิก เหตุผลส่วนตัวที่เข้าร่วมโครงการ เวทมนตร์ที่ใช้ ความสัมพันธ์กับ Elias และรายละเอียดชีวิตประจำวันยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T00:06:54.035Z",
+      "updatedAt": "2026-10-02T00:12:51.044Z",
       "kicker": "นักศึกษาคนหนึ่งที่มีค่าการวัด Mana แตกต่างจากคนทั่วไปเล็กน้อย — มากพอให้ถูกศึกษา แต่ไม่มากพอให้ชีวิตของเขาหยุดเป็นชีวิตธรรมดา",
       "character": {
         "gender": "ชาย",
-        "age": "",
+        "age": "19",
         "nationality": "",
         "affiliation": "นักศึกษา · CaeLum University",
         "role": "ผู้เข้าร่วมโครงการวิจัยเกี่ยวกับความแปรผันของ Mana",
@@ -2536,7 +2536,20 @@
       "openQuestions": "ชื่อ สัญชาติ เพศ อาชีพที่แน่นอนของครอบครัว และเหตุผลที่เลือกเรียน CaeLum ยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-02T00:12:51.044Z",
+      "character": {
+        "gender": "",
+        "age": "",
+        "nationality": "",
+        "affiliation": "นักศึกษา · CaeLum University",
+        "role": "นักศึกษาในกลุ่มเรียนหรือ Practical เดียวกับ Elias",
+        "portrait": "",
+        "appearance": "",
+        "personality": "",
+        "abilities": "",
+        "relationships": "",
+        "firstAppearance": ""
+      }
     },
     {
       "id": "arc1-research-assistant-draft",
@@ -2561,7 +2574,20 @@
       "openQuestions": "ชื่อ ประเทศต้นทาง ระดับการศึกษา สถานะทุน และสิ่งที่เขาเสี่ยงจะสูญเสียหากโครงการหยุดยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-02T00:12:51.044Z",
+      "character": {
+        "gender": "",
+        "age": "25–29",
+        "nationality": "",
+        "affiliation": "Research Assistant · CaeLum University",
+        "role": "ผู้ดูแลผู้เข้าร่วมโครงการและงานเก็บข้อมูลในชีวิตประจำวัน",
+        "portrait": "",
+        "appearance": "",
+        "personality": "",
+        "abilities": "",
+        "relationships": "",
+        "firstAppearance": ""
+      }
     },
     {
       "id": "arc1-principal-investigator-draft",
@@ -2587,7 +2613,20 @@
       "openQuestions": "ชื่อ สัญชาติ สาขาวิจัย ตำแหน่งใน CaeLum และประสบการณ์ส่วนตัวที่ทำให้สนใจ stigma ของ Mana variation ยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-02T00:12:51.044Z",
+      "character": {
+        "gender": "",
+        "age": "",
+        "nationality": "",
+        "affiliation": "นักวิจัย · CaeLum University",
+        "role": "เจ้าของโครงการวิจัยเกี่ยวกับความแปรผันของ Mana",
+        "portrait": "",
+        "appearance": "",
+        "personality": "",
+        "abilities": "",
+        "relationships": "",
+        "firstAppearance": ""
+      }
     },
     {
       "id": "arc1-practical-supervisor-draft",
@@ -2613,7 +2652,20 @@
       "openQuestions": "ชื่อ สัญชาติ ตำแหน่งการสอน เหตุผลส่วนตัวที่ออกจากงานภาคสนาม และรายละเอียดครอบครัวยังไม่ล็อก",
       "sectionId": "characters",
       "featured": false,
-      "updatedAt": "2026-10-02T04:22:00+07:00"
+      "updatedAt": "2026-10-02T00:12:51.044Z",
+      "character": {
+        "gender": "",
+        "age": "",
+        "nationality": "",
+        "affiliation": "ผู้สอน Practical · CaeLum University",
+        "role": "ผู้คุมการฝึก Practical และอดีตเจ้าหน้าที่ตอบสนอง Mana Anomaly ระดับเมือง",
+        "portrait": "",
+        "appearance": "",
+        "personality": "",
+        "abilities": "",
+        "relationships": "",
+        "firstAppearance": ""
+      }
     },
     {
       "id": "glossary-artifact",
