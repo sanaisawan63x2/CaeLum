@@ -448,7 +448,7 @@
   function characterQuickMeta(entry) {
     if(!isCharacterSection(entry.sectionId)) return "";
     const c=entry.character||{};
-    const items=[c.gender,formatCharacterAge(c.age),c.nationality,c.affiliation].filter(Boolean);
+    const items=[c.gender,formatCharacterAge(c.age),c.origin,c.affiliation].filter(Boolean);
     if(!items.length) return "";
     return '<div class="entry-character-meta">' + items.map(x=>'<span>' + esc(x) + '</span>').join("") + '</div>';
   }
@@ -857,7 +857,7 @@
     const facts=[
       characterFact("เพศ",c.gender),
       characterFact("อายุ",c.age),
-      characterFact("สัญชาติ / พื้นเพ",c.nationality),
+      characterFact("ถิ่นที่มา",c.origin),
       characterFact("สังกัด / สถานะ",c.affiliation),
       characterFact("ปรากฏตัวครั้งแรก",c.firstAppearance)
     ].join("");
@@ -1233,7 +1233,7 @@
     const c=(entry && entry.character) || {};
     $("characterGender").value=c.gender||"";
     $("characterAge").value=c.age||"";
-    $("characterNationality").value=c.nationality||"";
+    $("characterOrigin").value=c.origin||"";
     $("characterAffiliation").value=c.affiliation||"";
     $("characterRole").value=c.role||"";
     $("characterPortrait").value=c.portrait||"";
@@ -1248,7 +1248,7 @@
     return {
       gender:$("characterGender").value.trim(),
       age:$("characterAge").value.trim(),
-      nationality:$("characterNationality").value.trim(),
+      origin:$("characterOrigin").value.trim(),
       affiliation:$("characterAffiliation").value.trim(),
       role:$("characterRole").value.trim(),
       portrait:$("characterPortrait").value.trim(),
