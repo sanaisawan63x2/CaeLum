@@ -812,7 +812,7 @@
     if (!section || !isVisible(section)) return navigate("all");
     const asset=assetFor(section);
     const kids=childrenOf(id);
-    const entries=entriesIn(id,false).sort((a,b)=>String(a.title).localeCompare(String(b.title),"th"));
+    const entries=entriesIn(id,false).sort((a,b)=>{\n      const aSort=Number.isFinite(Number(a.sort))?Number(a.sort):100000;\n      const bSort=Number.isFinite(Number(b.sort))?Number(b.sort):100000;\n      return aSort-bSort || String(a.title).localeCompare(String(b.title),"th");\n    });
 
     if (kids.length) {
       content.innerHTML =
