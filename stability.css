@@ -3225,3 +3225,83 @@ body.resizing-sidebar *{
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   Character lifestyle + background editor v65
+   ========================================================= */
+.character-editor-group-title{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin:8px 0 0;
+  padding:13px 0 8px;
+  border-bottom:1px solid var(--line-soft);
+}
+.character-editor-group-title:first-child{
+  margin-top:0;
+  padding-top:0;
+}
+.character-editor-group-title>span{
+  color:var(--text);
+  font-size:13px;
+  font-weight:800;
+}
+.character-editor-group-title>small{
+  max-width:440px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+  text-align:right;
+}
+
+.character-lifestyle-card{
+  margin-top:14px;
+}
+.character-lifestyle-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:14px;
+}
+.character-lifestyle-item{
+  min-width:0;
+  padding:12px 13px;
+  border:1px solid var(--line-soft);
+  border-radius:12px;
+  background:#faf8f3;
+}
+.character-lifestyle-item>span{
+  display:block;
+  margin-bottom:4px;
+  color:var(--muted);
+  font-size:9.5px;
+  font-weight:750;
+}
+.character-lifestyle-item>strong{
+  display:block;
+  overflow-wrap:anywhere;
+  color:var(--text);
+  font-size:12.5px;
+  font-weight:650;
+  line-height:1.55;
+}
+
+@media(max-width:640px){
+  .character-editor-group-title{
+    display:block;
+    margin-top:6px;
+    padding-top:12px;
+  }
+  .character-editor-group-title>small{
+    display:block;
+    max-width:none;
+    margin-top:3px;
+    text-align:left;
+  }
+  .character-lifestyle-grid{
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+}
