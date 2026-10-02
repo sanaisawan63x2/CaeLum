@@ -439,8 +439,22 @@
     '</button>';
   }
 
+  function formatCharacterAge(value) {
+    const v=String(value||"").trim();
+    if(!v) return "";
+    return /^\d+(?:\s*[–-]\s*\d+)?$/.test(v) ? v + " ปี" : v;
+  }
+
+  function characterQuickMeta(entry) {
+    if(!isCharacterSection(entry.sectionId)) return "";
+    const c=entry.character||{};
+    const items=[c.gender,formatCharacterAge(c.age),c.nationality,c.affiliation].filter(Boolean);
+    if(!items.length) return "";
+    return '<div class="entry-character-meta">' + items.map(x=>'<span>' + esc(x) + '</span>').join("") + '</div>';
+  }
+
   function entryCardHtml(entry) {
-    return '<article class="entry-card" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(entry.title) + '</h3><p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
+    return '<article class="entry-card' + (isCharacterSection(entry.sectionId)?' character-entry-card':'') + '" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(entry.title) + '</h3>' + characterQuickMeta(entry) + '<p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
   }
 
   function renderHome() {
@@ -822,8 +836,10 @@
   }
 
   function characterFact(label,value) {
-    if(!value) return "";
-    return '<div class="character-fact"><span>' + esc(label) + '</span><strong>' + esc(value) + '</strong></div>';
+    const raw=String(value||"").trim();
+    const display=label==="อายุ" ? formatCharacterAge(raw) : raw;
+    const empty=!display;
+    return '<div class="character-fact' + (empty?' is-empty':'') + '"><span>' + esc(label) + '</span><strong>' + esc(display||"—") + '</strong></div>';
   }
 
   function characterSectionHtml(title,value,entryId) {
@@ -865,7 +881,7 @@
             '<h1>' + esc(entry.title) + '</h1>' +
             (c.role ? '<p class="character-role">' + esc(c.role) + '</p>' : '') +
             (entry.summary ? '<p class="reader-lead">' + esc(entry.summary) + '</p>' : '') +
-            (facts ? '<div class="character-facts">' + facts + '</div>' : '') +
+            '<section class="character-basics"><div class="character-basics-head"><span>ข้อมูลพื้นฐาน</span><small>ข้อมูลที่เปิดเผยในปัจจุบัน</small></div><div class="character-facts">' + facts + '</div></section>' +
           '</div>' +
         '</header>' +
         (entry.details ? '<section class="character-about-card"><span class="character-info-kicker">Profile</span><h2>เกี่ยวกับตัวละคร</h2><div>' + proseHtml(entry.details,entry.id) + '</div></section>' : '') +
@@ -1031,6 +1047,50 @@
     updateVersion();
   }
 
+  async function saveEntryMerged(next,message) {
+    let lastError=null;
+    for(let attempt=0;attempt<2;attempt++) {
+      const remote=await githubFile();
+      const remoteDb=normalizeDb(JSON.parse(base64ToUtf8(remote.content.replace(/\n/g,""))));
+      if(next.featured) remoteDb.entries.forEach(e=>{if(e.sectionId===next.sectionId&&e.id!==next.id)e.featured=false;});
+      const index=remoteDb.entries.findIndex(e=>e.id===next.id);
+      if(index>=0) remoteDb.entries[index]=next; else remoteDb.entries.push(next);
+      remoteDb.version=(Number(remoteDb.version)||1)+1;
+      remoteDb.project.updatedAt=new Date().toISOString();
+      if(remoteDb.novel) remoteDb.novel.updatedAt=new Date().toISOString();
+
+      const response=await fetch("https://api.github.com/repos/"+CONFIG.owner+"/"+CONFIG.repo+"/contents/"+CONFIG.dataPath,{
+        method:"PUT",
+        headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+adminToken,"X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"},
+        body:JSON.stringify({message:message||"Update CaeLum entry",content:utf8ToBase64(JSON.stringify(remoteDb,null,2)),sha:remote.sha,branch:CONFIG.branch})
+      });
+
+      if(response.status===409 && attempt===0) {
+        lastError=new Error("ข้อมูลเปลี่ยนพร้อมกัน กำลังลองบันทึกกับไฟล์ล่าสุดอีกครั้ง");
+        continue;
+      }
+      if(!response.ok) {
+        let detail="";
+        try{detail=(await response.json()).message||"";}catch{}
+        throw new Error("GitHub บันทึกไม่สำเร็จ"+(detail?": "+detail:""));
+      }
+
+      const result=await response.json();
+      remoteSha=result.content && result.content.sha ? result.content.sha : "";
+
+      const verified=await githubFile();
+      const verifiedDb=normalizeDb(JSON.parse(base64ToUtf8(verified.content.replace(/\n/g,""))));
+      const saved=verifiedDb.entries.find(e=>e.id===next.id);
+      if(!saved || saved.updatedAt!==next.updatedAt) throw new Error("GitHub รับไฟล์แล้วแต่ตรวจสอบข้อมูลที่บันทึกกลับมาไม่ตรง กรุณาลองอีกครั้ง");
+
+      db=verifiedDb;
+      remoteSha=verified.sha;
+      updateVersion();
+      return saved;
+    }
+    throw lastError||new Error("บันทึกไม่สำเร็จ");
+  }
+
   async function enterAuthorMode() {
     const token=$("tokenInput").value.trim();
     if(!token) return toast("ใส่ GitHub Token ก่อน","error");
@@ -1150,13 +1210,23 @@
     if(!isCharacter && currentEntryTab==="character") setEntryEditorTab("basic");
   }
 
-  function updateEntrySaveState() {
+  function setEntrySaveFeedback(kind,text) {
     const state=$("entryEditorSaveState");
     if(!state) return;
+    state.dataset.state=kind||"neutral";
+    state.textContent=text||"";
+  }
+
+  function updateEntrySaveState() {
     const section=sectionById($("entrySection").value);
     const visibility=$("entryVisibility").value==="public" ? "Public" : "Author Only";
     const type=isCharacterSection($("entrySection").value) ? "ตัวละคร" : "ข้อมูลโลก";
-    state.textContent=(section ? (section.readerLabel || section.name) : "ยังไม่เลือกหมวด") + " · " + type + " · " + visibility;
+    setEntrySaveFeedback("neutral",(section ? (section.readerLabel || section.name) : "ยังไม่เลือกหมวด") + " · " + type + " · " + visibility);
+  }
+
+  function markEntryDirty() {
+    if(!editorModal.open) return;
+    setEntrySaveFeedback("dirty","มีการแก้ไขที่ยังไม่ได้บันทึก");
   }
 
   function fillCharacterFields(entry) {
@@ -1225,6 +1295,7 @@
     const existing=editingEntryId?entryById(editingEntryId):null;
     const hiddenParent=$("entryVisibility").value==="public" ? hiddenSectionInPath(sectionId) : null;
     if(hiddenParent) return toast('รายการตั้งเป็น Public แต่หมวด “' + (hiddenParent.readerLabel || hiddenParent.name) + '” ยังเป็น Author Only กรุณาย้ายรายการหรือเปิดหมวดก่อน',"error");
+
     const next=Object.assign({},existing||{},{
       id:editingEntryId||uid("entry"),sectionId:sectionId,title:title,visibility:$("entryVisibility").value,status:$("entryStatus").value,
       tags:$("entryTags").value.split(",").map(x=>x.trim()).filter(Boolean),featured:$("entryFeatured").checked,kicker:$("entryKicker").value.trim(),
@@ -1234,14 +1305,24 @@
     });
     if(isCharacterSection(sectionId)) next.character=readCharacterFields();
     else if(next.character) delete next.character;
-    const backup=JSON.parse(JSON.stringify(db));
-    if(next.featured) db.entries.forEach(e=>{if(e.sectionId===sectionId&&e.id!==next.id)e.featured=false;});
-    const i=db.entries.findIndex(e=>e.id===next.id);
-    if(i>=0) db.entries[i]=next; else db.entries.push(next);
-    const btn=$("saveEntryButton"); setBusy(btn,true,"กำลังบันทึก…");
-    try{await saveDatabase((existing?"Update entry: ":"Add entry: ")+title);editorModal.close();editingEntryId=null;navigate("entry",next.id);renderAll();toast("บันทึกแล้ว","success");}
-    catch(error){db=backup;toast(error.message||"บันทึกไม่สำเร็จ","error");}
-    finally{setBusy(btn,false);}
+
+    const btn=$("saveEntryButton");
+    setBusy(btn,true,"กำลังบันทึก…");
+    setEntrySaveFeedback("saving","กำลังบันทึกและตรวจสอบกับ GitHub…");
+    try{
+      const saved=await saveEntryMerged(next,(existing?"Update entry: ":"Add entry: ")+title);
+      setEntrySaveFeedback("saved","บันทึกขึ้น GitHub แล้ว · World v"+db.version);
+      editorModal.close();
+      editingEntryId=null;
+      navigate("entry",saved.id);
+      renderAll();
+      toast("บันทึกขึ้น GitHub แล้ว · World v"+db.version,"success");
+    }catch(error){
+      setEntrySaveFeedback("error","บันทึกไม่สำเร็จ — "+(error.message||"เกิดข้อผิดพลาด"));
+      toast(error.message||"บันทึกไม่สำเร็จ","error");
+    }finally{
+      setBusy(btn,false);
+    }
   }
 
   async function deleteEntry() {
@@ -1423,6 +1504,8 @@
   }
 
   document.querySelectorAll("[data-entry-tab]").forEach(btn=>btn.addEventListener("click",()=>setEntryEditorTab(btn.dataset.entryTab)));
+  editorModal.addEventListener("input",markEntryDirty);
+  editorModal.addEventListener("change",markEntryDirty);
   $("entrySection").addEventListener("change",e=>{
     setCharacterEditorVisibility(e.target.value);
     updateEntryVisibilityHint();
