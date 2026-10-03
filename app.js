@@ -316,7 +316,7 @@
 
     let html = '<div class="nav-tree">';
     html += navSimple("home","⌂","หน้าหลัก",r.type === "home");
-    html += navSimple("novel","◫","นิยาย",r.type === "novel" || r.type === "chapter");
+    if (visibleChapters().length || authorMode) html += navSimple("novel","◫","นิยาย",r.type === "novel" || r.type === "chapter");
 
     if (r.type === "novel" || r.type === "chapter") {
       const chapters = visibleChapters();
@@ -474,7 +474,7 @@
     const hero = db.project.assets.bangkokNight || {};
     const starts = ["overview","magic","caelum","law","society","technology"].map(sectionById).filter(Boolean).filter(isVisible);
     content.innerHTML =
-      '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · นิยายและคลังโลก</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
+      '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · คลังโลกและเซตติ้ง</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
       authorStripHtml() + novelHomeSpotlightHtml() +
       '<div class="section-heading"><div><h2>สำรวจโลก CaeLum</h2><p>เลือกอ่านเฉพาะเรื่องที่สนใจได้ทันที ไม่จำเป็นต้องไล่ตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">ดูคลังทั้งหมด</button></div>' +
       '<section class="path-grid">' + starts.map(sectionCardHtml).join("") + '</section>';
@@ -1002,7 +1002,7 @@
       const secondary=char?characterEnglishName(e):"";
       items.push({type:"entry",id:e.id,title:primary+(secondary?" ("+secondary+")":""),text:e.summary});
     });
-    content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากนิยายและคลังโลก</p></div><section class="search-results">' +
+    content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากคลังโลก</p></div><section class="search-results">' +
       (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"ข้อมูล") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
     content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
       searchQuery="";
