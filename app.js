@@ -316,7 +316,7 @@
 
     let html = '<div class="nav-tree">';
     html += navSimple("home","⌂","หน้าหลัก",r.type === "home");
-    if (visibleChapters().length || authorMode) html += navSimple("novel","◫","นิยาย",r.type === "novel" || r.type === "chapter");
+    if (visibleChapters().length || authorMode) if (visibleChapters().length || authorMode) html += navSimple("novel","◫","นิยาย",r.type === "novel" || r.type === "chapter");
 
     if (r.type === "novel" || r.type === "chapter") {
       const chapters = visibleChapters();
