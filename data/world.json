@@ -1,10 +1,10 @@
 {
   "schemaVersion": 4,
-  "version": 115,
+  "version": 116,
   "project": {
     "name": "CaeLum",
     "subtitle": "คลังโลกและเซตติ้ง",
-    "updatedAt": "2026-10-11T22:39:00+07:00",
+    "updatedAt": "2026-10-11T23:05:00+07:00",
     "readerIntro": "สำรวจโลก CaeLum ผ่านข้อมูลเซตติ้งที่จัดเป็นหมวด ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี มอนสเตอร์ ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาเซตติ้งและ World Bible ของ CaeLum",
     "assets": {
@@ -2762,17 +2762,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Overview",
-        "Locked"
+        "Specification"
       ],
-      "summary": "ระบบการต่อสู้เป็น Real-time Action Combat ผู้เล่นควบคุมการเคลื่อนที่ การเล็ง การโจมตี การใช้ Spell และการหลบแบบเรียลไทม์ โดยมี Mana, Cooldown และ Dodge Charge เป็นทรัพยากรหลัก",
-      "details": "ประเภทระบบ\n- Real-time Action Combat\n- ไม่ใช้ Turn-based, Turn Order หรือระบบคำสั่ง 6 ปุ่มแบบเดิม\n- การเล่นเน้น Movement, Targeting, Resource Management, Spell Usage, Dodge Timing และการอ่าน Enemy Pattern\n\nองค์ประกอบหลัก\n- Move / Run\n- Lock-on / Manual Aim\n- Basic Attack\n- Spell Slot 3 ช่อง\n- Mana และ Mana Regeneration\n- Cooldown ราย Spell\n- Dodge Charge 3 ครั้ง พร้อม I-Frame\n- Heart-based Health\n- Ultimate Gauge\n- Enemy Attack Pattern\n- Combat HUD\n- Combat State / Player Action State\n\nหลักการเชิงสถาปัตยกรรม\n- Combat Logic ต้องแยกเป็นระบบย่อย ไม่รวมทุกอย่างไว้ใน PlayerCombatController\n- ค่าที่ใช้ Balance ต้องแก้จาก Data หรือ Config ได้\n- Spell ต้องเป็น Data-driven\n- Damage ต้องผ่าน Damage Event / Damage Receiver กลาง\n- UI อ่านสถานะจาก Gameplay System และไม่เป็นผู้ตัดสิน Gameplay State\n- โครงสร้างต้องไม่ปิดทางการพัฒนา Host-authoritative Co-op ในอนาคต\n\nระบบที่ยังไม่ถือเป็น Core Combat\n- Guard\n- Parry\n- Heavy Attack\n- Stamina\n- Poise\n- Stagger Gauge\n- Critical Hit\n- Armor Formula\n- Elemental Reaction\n- Consumable Combat Item\n- Weakness System\n- Status Resistance",
+      "summary": "ระบบต่อสู้หลักเป็น Real-time Action Combat ผู้เล่นต้องตัดสินใจและออกคำสั่งตลอดเวลา ทั้งการเคลื่อนที่ เลือกเป้าหมาย ใช้เวท หลบ และบริหารทรัพยากร ไม่มีการรอเทิร์นหรือเลือกคำสั่งแบบระบบเดิม",
+      "details": "## ทิศทางของระบบ\nCombat ของ CaeLum ใช้การควบคุมแบบเรียลไทม์เป็นแกน ผู้เล่นสามารถเคลื่อนที่ วิ่ง เล็ง Lock-on ใช้ Basic Attack ใช้ Spell และ Dodge ได้ระหว่างการต่อสู้ เป้าหมายคือให้การตัดสินใจเกิดจากจังหวะของศัตรูและทรัพยากรที่มีอยู่ ไม่ใช่การรอ Turn\n\n- ระบบปัจจุบันไม่ใช่ Turn-based\n- ไม่มี Turn Order หรือ Speed ที่ใช้กำหนดลำดับเทิร์น\n- ไม่ใช้ระบบ Rock-Paper-Scissors แบบต้นแบบเก่า\n- ไม่ใช้ Combat UI 6 ปุ่มแบบเดิม\n- Basic Attack, Spell และ Dodge เป็น Action ที่เกิดขึ้นทันทีตาม Input และ State ของตัวละคร\n\n## สิ่งที่ผู้เล่นต้องจัดการระหว่างต่อสู้\nผู้เล่นไม่ได้ดูเพียง HP ของศัตรู แต่ต้องดูสถานะของตัวเองหลายอย่างพร้อมกัน ระบบเหล่านี้ต้องทำงานแยกกันและส่งข้อมูลหากันผ่าน State หรือ Event ที่ชัดเจน\n\n- ตำแหน่งและระยะห่างจากศัตรู\n- Current Target หรือทิศทางที่กำลัง Aim\n- Mana ที่เหลืออยู่\n- Cooldown ของ Spell แต่ละช่อง\n- Dodge Charge ที่เหลือ\n- จำนวน Heart ปัจจุบัน\n- Ultimate Gauge\n- จังหวะ Wind-up และ Attack Pattern ของศัตรู\n\n## สถานะของข้อมูลในเอกสาร\nรายละเอียดในหมวด Combat ใช้สามระดับเพื่อให้ทีมรู้ว่าอะไรทำได้เลยและอะไรยังไม่ควรเขียนตายตัว\n\n- ล็อกแล้ว: หลักการของระบบยืนยันแล้ว เช่น Spell มี Cooldown รายสกิล หรือ Dodge มี I-Frame\n- ปรับค่าได้: ระบบยืนยันแล้ว แต่ตัวเลขยังใช้เพื่อ Prototype เช่น Mana สูงสุดหรือเวลาฟื้น Dodge\n- ยังไม่กำหนด: ยังไม่มีข้อสรุป เช่นสูตร Ultimate, Healing หรือ Respawn\n\n> ตัวเลขทดลองต้องอยู่ใน Data หรือ Config ที่แก้ได้ ไม่ควรถูกเขียนฝังไว้ใน Logic หลัก\n\n## ระบบที่ยังไม่ถือว่าเป็นส่วนของ Combat ปัจจุบัน\nรายการนี้ไม่ได้แปลว่าจะไม่มีตลอดไป แต่ยังไม่มีข้อมูลพอให้ถือเป็นข้อกำหนดสำหรับเดฟ\n\n- Guard\n- Parry\n- Heavy Attack\n- Stamina\n- Poise\n- Stagger Gauge\n- Critical Hit\n- Armor Formula\n- Consumable Combat Item\n- Weakness System\n- Status Resistance\n- Elemental Reaction\n\n## เป้าหมายของเอกสารชุดนี้\nเอกสาร 12 หัวข้อนี้เป็นสเปกกลางสำหรับ Gameplay, Code และ UI ทุกระบบที่เกี่ยวกับ Combat ควรอ้างอิงหลักเดียวกันก่อนเพิ่มรายละเอียดเฉพาะ Spell, Enemy หรือ Boss เพื่อป้องกันการมี Logic ซ้ำหรือพฤติกรรมไม่ตรงกันระหว่างระบบ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-overview",
       "featured": false,
-      "kicker": "สถานะปัจจุบัน: Locked Specification",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-controls-spec",
@@ -2782,17 +2781,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Controls",
-        "Targeting"
+        "Specification"
       ],
-      "summary": "ผู้เล่นเคลื่อนที่และวิ่งได้ระหว่าง Combat พร้อมรองรับทั้ง Lock-on และ Manual Aim เพื่อไม่บังคับให้ Spell ทุกชนิดใช้ Targeting รูปแบบเดียวกัน",
-      "details": "Movement\n- Move: Locked\n- Run: Locked\n- Movement ต้องทำงานระหว่าง Combat\n- ยังไม่มี Stamina สำหรับการวิ่งในสเปกปัจจุบัน\n\nLock-on\n- เก็บ Current Target ไว้ใน Targeting System\n- รองรับ LockTarget(), UnlockTarget() และ SwitchTarget()\n- Spell หรือ Basic Attack ที่ต้องใช้เป้าหมายอ้างอิง Current Target ได้\n- ระยะ Lock-on และกฎการเปลี่ยนเป้าหมาย: TBD\n\nManual Aim\n- ต้องรองรับการเล็งโดยไม่ใช้ Lock-on\n- Spell Data ควรรองรับ Targeted, Directional และ Manual Aim\n- Targeting Requirement ต้องตรวจใน Cast Validation ก่อน Execute Spell",
+      "summary": "ส่วนนี้กำหนดว่าผู้เล่นควบคุมตัวละครและเลือกเป้าหมายอย่างไรระหว่าง Combat โดยรองรับทั้ง Lock-on และ Manual Aim เพื่อไม่ให้ Spell ทุกชนิดถูกบังคับให้ใช้วิธีเล็งแบบเดียวกัน",
+      "details": "## Movement ระหว่าง Combat\nผู้เล่นต้องยังเคลื่อนที่และวิ่งได้ในขณะต่อสู้ Movement จึงเป็นระบบพื้นฐานที่ Combat ใช้งานร่วมด้วย ไม่ใช่ Action ที่เปิดเฉพาะตอน Exploration\n\n- Move: ล็อกแล้ว\n- Run: ล็อกแล้ว\n- การเคลื่อนที่ต้องทำงานพร้อมกับการอ่าน Target และ Enemy State\n- ยังไม่มี Stamina สำหรับการวิ่งในสเปกปัจจุบัน\n- Jump และ Crouch ใน Combat ยังไม่ถูกกำหนดเป็นกลไกหลัก\n\n## Lock-on\nLock-on ใช้เมื่อผู้เล่นต้องการให้เกมมี Current Target ที่ชัดเจน เช่น การโจมตีที่ต้องหันเข้าหาศัตรูหรือ Spell ที่ต้องรู้ว่าเป้าหมายคือใคร\n\nTargeting System ควรเก็บ Current Target แยกจาก Combat Controller เพื่อให้ Basic Attack, Spell, Camera และ HUD อ่านค่าเดียวกันได้\n\n- LockTarget(): กำหนด Current Target\n- UnlockTarget(): ล้าง Current Target\n- SwitchTarget(): เปลี่ยนไปยังเป้าหมายอื่น\n- ระยะ Lock-on และกฎการเลือกเป้าหมายที่ใกล้ที่สุดยังปรับได้\n- เมื่อ Target ใช้งานไม่ได้ ระบบต้องสามารถปลดหรือหาเป้าหมายใหม่โดยไม่ทำให้ Combat State ค้าง\n\n## Manual Aim\nไม่ใช่ Spell ทุกชนิดที่ควรบังคับใช้ Lock-on ระบบจึงต้องรองรับการเล็งด้วยทิศทางกล้องหรือ Reticle ด้วย\n\nSpell Data ควรบอกว่าต้องใช้ Targeting แบบใด เช่น\n\n- Targeted: ต้องมีเป้าหมายชัดเจน\n- Directional: ยิงตามทิศทางที่ผู้เล่นหันหรือเล็ง\n- Manual Aim: ใช้ตำแหน่ง Reticle หรือ Aim Point\n\n## การใช้ Targeting ตอน Cast\nก่อน Spell ทำงานจริง Cast Validation ต้องตรวจเงื่อนไข Targeting ของ Spell นั้นก่อน หาก Spell ต้องมีเป้าหมายแต่ Current Target ไม่ถูกต้อง ไม่ควรหัก Mana หรือเริ่ม Cooldown\n\n## ขอบเขตที่เดฟควรแยกไว้\nMovement, Camera และ Targeting ควรเป็นระบบแยกกัน แม้จะสื่อสารกันตลอดเวลา การแยกส่วนนี้ทำให้ Spell ไม่ต้องเขียน Logic กล้องหรือการหา Target ซ้ำภายในแต่ละสกิล",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-controls",
       "featured": false,
-      "kicker": "Movement และ Target Context",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-resources-spec",
@@ -2802,18 +2800,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Mana",
-        "Resource",
-        "Dodge Charge"
+        "Specification"
       ],
-      "summary": "Mana เป็นทรัพยากรโจมตีหลัก ส่วน Dodge Charge เป็นทรัพยากรป้องกัน ทั้งสองระบบต้องแยกจากกันและปรับค่าผ่าน Data/Config ได้",
-      "details": "Mana\n- Basic Attack ใช้ Mana\n- Spell ทุกชนิดใช้ Mana\n- Mana ฟื้นตามเวลา\n- Max Mana: Tunable\n- Mana Regen per Second: Tunable\n- Basic Attack Mana Cost: Tunable\n- Spell Mana Cost: กำหนดแยกต่อ Spell\n\nค่าทดลอง\n- Max Mana ตัวอย่าง: 1000\n- Mana Cost ตัวอย่าง: 50 / 70 / 100\n- ค่าตัวอย่างทั้งหมดห้าม Hard-code\n\nMana Regeneration\n- แนวคิดพื้นฐาน: CurrentMana += ManaRegenRate × deltaTime\n- Current Mana ต้องไม่เกิน Max Mana\n\nDodge Charge\n- Max Dodge Charge = 3\n- Dodge 1 ครั้งใช้ 1 Charge\n- Charge ฟื้นทีละหนึ่งแบบ Sequential Recharge\n- Recharge Time ตัวอย่าง: ประมาณ 20 วินาทีต่อ Charge\n- Recharge Time เป็น Tunable Parameter",
+      "summary": "Mana เป็นทรัพยากรหลักของการโจมตี ทั้ง Basic Attack และ Spell ใช้ Mana ส่วน Dodge ใช้ Charge ของตัวเอง ระบบเหล่านี้ต้องแยกค่าและกฎการฟื้นออกจากกัน",
+      "details": "## Mana\nMana ใช้เป็นข้อจำกัดหลักของการโจมตี ผู้เล่นจึงไม่สามารถกด Basic Attack หรือ Spell ต่อเนื่องโดยไม่ดูทรัพยากร\n\n- Basic Attack ใช้ Mana\n- Spell ทุกชนิดใช้ Mana\n- Mana Cost ของแต่ละ Spell กำหนดแยกกัน\n- หาก Mana ไม่พอ Action นั้นต้องไม่สำเร็จ\n- เมื่อ Cast ไม่สำเร็จจาก Mana ไม่พอ ห้ามหัก Mana\n\n## Max Mana\nเคยใช้ค่า 1000 เป็นตัวเลขสำหรับ Prototype เท่านั้น ค่านี้ยังไม่ใช่ Final Balance\n\nMaxMana ต้องเป็น Parameter ที่ปรับได้จากข้อมูลตัวละครหรือ Config เพื่อรองรับการบาลานซ์และ Progression ภายหลัง\n\n## Mana Cost\nตัวเลข 50, 70 และ 100 ที่เคยใช้เป็นเพียงตัวอย่างช่วงค่า ไม่ใช่ Tier ที่บังคับให้ทุก Spell ต้องใช้\n\nBasic Attack เองควรมี BasicAttackManaCost แยกจาก Spell Data เพื่อให้ปรับความถี่ของการโจมตีพื้นฐานได้โดยไม่กระทบ Spell\n\n## Mana Regeneration\nMana ฟื้นกลับตามเวลา เป้าหมายของระบบคือให้ผู้เล่นมีช่วงใช้ Mana และช่วงเว้นจังหวะเพื่อให้ทรัพยากรกลับมา โดยไม่ต้องออกจาก Combat ทุกครั้ง\n\nแนวคิดพื้นฐานของค่า Runtime คือ CurrentMana เพิ่มตาม ManaRegenRate ต่อวินาทีและไม่เกิน MaxMana\n\n- ManaRegenRate เป็นค่าปรับได้\n- สูตรการฟื้นยังสามารถเปลี่ยนภายหลังได้\n- UI ต้องอ่าน CurrentMana และ MaxMana จากระบบ Mana จริง\n\n## Resource อื่นที่แยกจาก Mana\nDodge Charge และ Ultimate Gauge ไม่ใช่ Mana รูปแบบอื่น จึงไม่ควรถูกเก็บรวมเป็นตัวแปร Resource ชุดเดียวที่ใช้กฎเดียวกัน\n\n- Dodge มีระบบ Charge และ Recharge ของตัวเอง\n- Ultimate มี Gauge และเงื่อนไขเพิ่มเกจของตัวเอง\n- Heart เป็น Health State ไม่ใช่ Mana\n\n## ข้อมูล Runtime ที่ Player ต้องมี\nอย่างน้อย Player Combat Data ต้องสามารถเข้าถึง Max/Current Hearts, Max/Current Mana, Mana Regen Rate, Dodge Charge, Dodge Recharge, I-Frame Duration, Ultimate Gauge และ Equipped Spell ได้ โดยไม่จำเป็นต้องเก็บทั้งหมดไว้ใน Component เดียว",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-resources",
       "featured": false,
-      "kicker": "Mana และ Dodge Charge",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-spells-spec",
@@ -2823,18 +2819,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Spell",
-        "Loadout",
-        "Cooldown"
+        "Specification"
       ],
-      "summary": "ผู้เล่นติดตั้ง Spell ได้ 3 ช่องโดยไม่จำกัดประเภท ช่องทั้งหมดใช้โครงสร้างเดียวกันและตรวจ Mana, Cooldown, Player State และ Targeting ก่อน Cast",
-      "details": "Spell Slots\n- Equipped Spell Slots = 3\n- Spell Slot ไม่ล็อกประเภทเวท\n- สามารถติดตั้ง Attack / Debuff / Buff / Mobility ในรูปแบบใดก็ได้\n- Basic Attack แยกจาก Spell Slot\n\nMagic Type\n- Attack\n- Debuff\n- Buff\n- Mobility\n- Magic Type เป็น Gameplay Taxonomy ไม่ใช่การแบ่งศาสตร์เวทของโลก\n\nSpell Data ขั้นต่ำ\n- SpellID\n- SpellName\n- MagicType\n- ManaCost\n- Cooldown\n- CastType\n- TargetingType\n- Damage / Effect\n- CastTime\n- Icon\n- Animation\n- VFX\n\nCast Validation\n1. Player สามารถ Action ได้\n2. Spell ถูก Equip อยู่\n3. Mana เพียงพอ\n4. Cooldown พร้อม\n5. Targeting Condition ถูกต้อง\n6. Spend Mana\n7. Start Cooldown\n8. Execute Spell\n9. Hit Detection\n10. Apply Damage / Effect\n\nLoadout Lock\n- เปลี่ยน Spell Loadout ได้ก่อน Combat\n- เมื่อเข้าสู่ Combat ให้ Lock Loadout\n- ปลด Lock เมื่อออกจาก Combat\n\nCombo\n- Combo หมายถึง Build Synergy ระหว่าง Spell\n- ไม่มี Timed Combo Counter\n- ไม่มี Elemental Reaction Engine ในสเปกปัจจุบัน",
+      "summary": "ผู้เล่นมี Spell Slot 3 ช่องแบบไม่ล็อกประเภท แต่ละ Spell มี Mana Cost และ Cooldown ของตัวเอง ก่อน Cast ต้องผ่านการตรวจ State, Resource และ Targeting ให้ครบ",
+      "details": "## Spell Slot\nผู้เล่นติดตั้ง Spell ได้ 3 ช่อง ช่องทั้งหมดเป็น Slot แบบอิสระ ไม่มีข้อบังคับว่าแต่ละช่องต้องเป็นเวทประเภทใด\n\nตัวอย่าง Build ที่ถูกต้องสามารถเป็น Attack สามช่อง หรือผสม Attack, Buff และ Mobility ตามที่ผู้เล่นต้องการ\n\n- EquippedSpell มี 3 ช่อง\n- Basic Attack ไม่กินหนึ่งใน 3 ช่อง\n- Ultimate ไม่กินหนึ่งใน 3 ช่อง\n- การเลือก Spell เป็นส่วนของ Loadout ไม่ใช่การสุ่มระหว่าง Combat\n\n## Magic Type\nSpell แต่ละตัวมี Gameplay Type เพื่อบอกหน้าที่หลักของสกิล\n\n- Attack\n- Debuff\n- Buff\n- Mobility\n\nประเภทเหล่านี้ใช้สำหรับระบบเกมและการจัดข้อมูล ไม่ใช่ชื่อสาขาวิชาเวทใน Lore และไม่ควรนำไปบังคับว่าผู้เล่นต้องใส่ครบทุกประเภท\n\n## Mana Cost และ Cooldown\nSpell ใช้ Mana และมี Cooldown รายสกิล สองเงื่อนไขนี้ทำงานแยกกัน\n\nผู้เล่นอาจมี Mana พอ แต่ยัง Cast ไม่ได้เพราะ Cooldown ไม่พร้อม หรือ Cooldown พร้อมแล้วแต่ Mana ไม่พอก็ Cast ไม่ได้เช่นกัน\n\n## Cast Validation\nก่อน Execute Spell ให้ตรวจเงื่อนไขตามลำดับที่ชัดเจนเพื่อหลีกเลี่ยงการเสีย Resource จาก Cast ที่ไม่สมบูรณ์\n\n1. Player อยู่ใน State ที่อนุญาตให้ Cast\n2. Spell ถูกติดตั้งใน Slot ที่เรียกใช้\n3. Mana เพียงพอ\n4. Cooldown พร้อม\n5. Target หรือ Aim Condition ถูกต้อง\n6. หัก Mana\n7. เริ่ม Cooldown\n8. เล่น Cast / Animation\n9. ทำ Hit Detection\n10. Apply Damage หรือ Effect\n\nลำดับจริงอาจปรับตาม Animation System แต่เงื่อนไขสำคัญคือต้องไม่ Spend Resource ก่อนรู้ว่า Cast ผ่าน Validation\n\n## Spell Data\nSpell ควรสร้างจาก Data มากกว่าการเขียน Logic ทุกตัวไว้ใน PlayerCombatController โดยข้อมูลขั้นต่ำควรรองรับ\n\n- SpellID และ SpellName\n- MagicType\n- ManaCost\n- Cooldown\n- CastType\n- TargetingType\n- Damage หรือ Effect\n- CastTime\n- Icon\n- Animation\n- VFX\n\nSpell บางตัวไม่จำเป็นต้องใช้ทุก Field แต่โครงสร้างควรรองรับโดยไม่ต้องเปลี่ยน Core System\n\n## Basic Attack\nBasic Attack เป็น Action พื้นฐานแยกจาก Spell Slot และยังใช้ Mana ตามกติกาของ Combat ปัจจุบัน\n\nวิธีจำกัดความถี่ของ Basic Attack เช่น Cooldown, Attack Rate หรือ Animation Lock ยังไม่ล็อก จึงควรแยกไว้ให้เปลี่ยนได้ภายหลัง\n\n## Loadout Lock\nผู้เล่นสามารถจัด Spell ก่อนเข้าสู่ Combat แต่เมื่อ Combat เริ่มแล้ว Loadout ต้องถูก Lock จนกว่าจะออกจาก Combat เพื่อให้การเตรียม Build มีความหมายและลดการสลับสกิลเพื่อแก้สถานการณ์ทันที\n\n## Combo และ Build Synergy\nคำว่า Combo ในระบบปัจจุบันหมายถึง Spell ที่ทำงานส่งต่อกัน เช่น Spell แรกใส่ Debuff แล้ว Spell ที่สองใช้ประโยชน์จากสถานะนั้น\n\n- ไม่มี Timed Combo Counter ที่ล็อกไว้\n- ไม่มีระบบกด 1 → 2 → 3 ตามจังหวะเป็นแกนหลัก\n- ไม่มี Elemental Reaction Engine ที่นำธาตุมาผสมเป็น Reaction ใหม่โดยอัตโนมัติ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-spells",
       "featured": false,
-      "kicker": "Spell 3 ช่องแบบ Data-driven",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-dodge-spec",
@@ -2844,18 +2838,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Dodge",
-        "I-Frame",
-        "Locked"
+        "Specification"
       ],
-      "summary": "Dodge ใช้ Charge และมี I-Frame ระหว่างช่วงที่กำหนด Charge ฟื้นทีละหนึ่งเพื่อป้องกันการ Spam Dodge ต่อเนื่องโดยไม่มีข้อจำกัด",
-      "details": "ค่าพื้นฐาน\n- Max Dodge Charge = 3\n- Dodge 1 ครั้งใช้ 1 Charge\n- I-Frame: Locked\n- I-Frame Duration: Tunable\n- Recharge Time ต่อ Charge: Tunable\n- ค่า Prototype ปัจจุบันประมาณ 20 วินาทีต่อ Charge\n\nRecharge Behavior\n- 0 Charge → ประมาณ 20 วินาที → 1 Charge\n- ประมาณ 40 วินาที → 2 Charges\n- ประมาณ 60 วินาที → 3 Charges\n- ห้ามคืน 3 Charges พร้อมกันเมื่อครบ 60 วินาที\n\nDodge Validation\n- CurrentDodgeCharge > 0\n- Player อยู่ใน State ที่อนุญาตให้ Dodge\n- ไม่อยู่ใน Invalid Action State\n\nDodge Flow\n1. Input Dodge\n2. Validate State และ Charge\n3. Consume 1 Charge\n4. Start Dodge Movement\n5. Enable I-Frame\n6. Disable I-Frame\n7. Start หรือ Continue Recharge Queue",
+      "summary": "Dodge เป็นทรัพยากรป้องกันที่ใช้ Charge สูงสุด 3 ครั้ง มี I-Frame และฟื้น Charge ทีละหนึ่ง การออกแบบนี้ทำให้การหลบต้องเลือกจังหวะ ไม่สามารถกดต่อเนื่องได้โดยไม่มีต้นทุน",
+      "details": "## หน้าที่ของ Dodge\nDodge ใช้หลบ Attack ที่ผู้เล่นอ่านจังหวะได้จาก Enemy Pattern ระบบจึงต้องทำงานร่วมกับ Movement, Animation, Damage Receiver และ Enemy Attack Timing\n\nDodge ไม่ใช่เพียงการเคลื่อนตัวเร็ว แต่มีช่วง I-Frame ที่ทำให้ Damage บางชนิดไม่ถูก Apply\n\n## Dodge Charge\nจำนวน Charge สูงสุดปัจจุบันคือ 3\n\n- Dodge 1 ครั้งใช้ 1 Charge\n- เมื่อไม่มี Charge ผู้เล่นไม่สามารถเริ่ม Dodge ใหม่ได้\n- Max Dodge Charge = 3 เป็นกติกาที่ล็อกไว้สำหรับ Prototype ปัจจุบัน\n- การแสดงผล Charge ต้องอ้างอิงค่าจริงจาก Dodge System\n\n## Sequential Recharge\nCharge ฟื้นทีละหนึ่ง ไม่ใช่รอครบเวลารวมแล้วคืนทั้งสามครั้งพร้อมกัน\n\nค่าทดลองคือประมาณ 20 วินาทีต่อหนึ่ง Charge หากใช้หมดทั้ง 3 ครั้ง ภาพรวมจะเป็นประมาณ 20 วินาทีได้คืนครั้งแรก, 40 วินาทีได้ครั้งที่สอง และ 60 วินาทีกลับเต็ม\n\n> เวลา 20 วินาทีเป็นค่า Prototype ต้องแก้ได้โดยไม่เปลี่ยน Logic\n\n## I-Frame\nระหว่างช่วง I-Frame Damage Receiver ต้องมองว่า Player อยู่ในสถานะ Invulnerable ต่อ Attack ที่หลบได้\n\nIFrameDuration ยังไม่ล็อกเป็นตัวเลขและต้องปรับให้สัมพันธ์กับ Animation จริง ไม่ควรผูกกับความยาว Animation ทั้งคลิปโดยอัตโนมัติ\n\n## Dodge Validation\nก่อนเริ่ม Dodge อย่างน้อยต้องตรวจ\n\n- Current Dodge Charge มากกว่า 0\n- Player อยู่ใน State ที่อนุญาตให้ Dodge\n- ไม่มี Action หรือ Lock State ที่ห้าม Dodge ในขณะนั้น\n\nหาก Validation ไม่ผ่าน ห้าม Consume Charge\n\n## Runtime Flow\n1. รับ Dodge Input\n2. ตรวจ State และ Charge\n3. Consume 1 Charge\n4. เริ่ม Dodge Movement / Animation\n5. เปิด I-Frame ในช่วงที่กำหนด\n6. ปิด I-Frame\n7. เริ่มหรือดำเนิน Recharge Queue ต่อ\n\nระบบ Recharge ควรทำงานต่อเนื่องเมื่อ Charge ไม่เต็ม และหยุดเมื่อกลับถึง Max Charge",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-dodge",
       "featured": false,
-      "kicker": "Defensive Resource แบบ 3 Charges",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-damage-spec",
@@ -2865,18 +2857,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Damage",
-        "Heart",
-        "Health"
+        "Specification"
       ],
-      "summary": "Player Health ใช้ระบบ Heart โดยเริ่มต้นที่ประมาณ 3 Hearts ความเสียหายต้องผ่าน Damage Receiver กลางและตรวจ I-Frame ก่อนลด Heart",
-      "details": "Heart System\n- Base Max Hearts = 3\n- Max Hearts สามารถเพิ่มจาก Progression\n- Max Hearts ต้องเป็นตัวแปร\n- เมื่อ Current Hearts <= 0 ให้เข้าสู่ Defeated State\n\nDamage\n- การโจมตีมาตรฐานสามารถใช้แนวคิด 1 Valid Hit ≈ 1 Heart\n- Heart Damage ต้องกำหนดต่อ Attack ได้\n- Boss Attack หรือ Attack พิเศษสามารถใช้ค่าความเสียหายต่างกันได้\n- ห้าม Hard-code ว่าทุก Attack ลด 1 Heart\n\nDamage Pipeline\n1. Attacker สร้าง Hit\n2. Hit Detection ยืนยันการชน\n3. ส่ง Damage Event\n4. Damage Receiver ตรวจสถานะเป้าหมาย\n5. หาก Player มี I-Frame ให้ Ignore Damage\n6. หากไม่มี I-Frame ให้ Apply Heart Damage\n7. ตรวจ Defeated State\n\nPlayer Damage Output\n- Ultimate Gauge เพิ่มเมื่อ Damage ต่อ Enemy ถูกยืนยัน\n- การกดโจมตีแต่ไม่โดนเป้าหมายไม่เพิ่ม Ultimate Gauge",
+      "summary": "Player ใช้ Heart แทน HP ตัวเลขแบบ RPG ทั่วไป โดยเริ่มประมาณ 3 Hearts ความเสียหายผ่าน Damage Event กลางและต้องตรวจ I-Frame ก่อนเปลี่ยน Current Heart",
+      "details": "## Heart-based Health\nฐานปัจจุบันคือ Player เริ่มด้วย 3 Hearts แนวคิดนี้ต้องการให้ผู้เล่นอ่านจำนวนครั้งที่ยังพลาดได้ง่ายกว่าการดู HP หลักร้อยหรือหลักพัน\n\n- Base Max Hearts = 3\n- Current Hearts เริ่มเท่ากับ Max Hearts เมื่อเข้าสู่สภาพพร้อมเล่น\n- เมื่อ Current Hearts เหลือ 0 ให้เข้าสู่ Defeated State\n- Max Hearts สามารถเพิ่มจาก Progression ได้\n\n## Damage ต่อหนึ่ง Attack\nแนวคิดเริ่มต้นคือ Attack มาตรฐานประมาณ 1 Valid Hit ต่อ 1 Heart แต่ต้องไม่ Hard-code กฎนี้ไว้กับ Damage Receiver\n\nAttack แต่ละชนิดควรกำหนด HeartDamage ของตัวเอง เพื่อให้ Boss, Attack พิเศษ หรือกลไกในอนาคตสามารถสร้างความเสียหายต่างกันได้\n\n## Damage Event กลาง\nการโจมตีไม่ควรแก้ค่า Heart หรือ Enemy Health โดยตรงจาก Script ของสกิลแต่ละตัว ให้ผ่าน Damage Event / Damage Receiver กลางแทน\n\n1. Attacker สร้าง Hit\n2. Hit Detection ยืนยันว่าโดนเป้าหมาย\n3. สร้าง Damage Event\n4. Target Damage Receiver ตรวจ State\n5. Apply หรือ Ignore Damage\n6. ส่งผลลัพธ์กลับไปยังระบบที่ต้องรู้ว่า Damage สำเร็จหรือไม่\n\nแนวทางนี้ทำให้ Ultimate Gauge, Hit Feedback และระบบอื่นฟังผลจากเหตุการณ์เดียวกันได้\n\n## Incoming Damage ต่อ Player\nก่อนลด Heart ต้องตรวจ I-Frame ของ Player\n\n- ถ้า I-Frame Active: ไม่ลด Heart\n- ถ้าไม่มี I-Frame: Apply HeartDamage\n- หลังรับ Damage ให้ตรวจ Current Hearts\n- หาก Current Hearts <= 0 ให้เข้าสู่ Defeated State\n\n## Damage ที่ Player ทำ\nUltimate Gauge เพิ่มเมื่อ Damage ต่อ Enemy ถูกยืนยันแล้ว ไม่ควรเพิ่มจากการกดปุ่มโจมตีเพียงอย่างเดียว เพราะ Attack ที่พลาดเป้าหมายไม่ได้สร้าง Damage จริง\n\n## ส่วนที่ยังไม่กำหนด\nHealing, วิธีคืน Heart ระหว่างหรือหลัง Combat, Damage Reduction, Armor และตำแหน่ง Respawn หลัง Defeated ยังไม่มีข้อสรุป ระบบ Heart จึงไม่ควรเขียนสมมติฐานเหล่านี้เพิ่มเอง",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-damage",
       "featured": false,
-      "kicker": "Heart-based Health และ Damage Event กลาง",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-ultimate-spec",
@@ -2886,17 +2876,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Ultimate",
-        "Gauge"
+        "Specification"
       ],
-      "summary": "Ultimate ใช้ Gauge แยกจาก Mana, Dodge และ Spell Cooldown การสะสม Gauge เกิดจาก Damage ที่ผู้เล่นทำสำเร็จ ไม่ผูกกับ Input การโจมตีโดยตรง",
-      "details": "หลักการที่ล็อกแล้ว\n- Ultimate Gauge เป็น Resource แยก\n- Ultimate ไม่ใช้หนึ่งใน Spell Slot 3 ช่อง\n- Damage ที่ Player ทำสำเร็จเพิ่ม Ultimate Gauge\n- ควรรับข้อมูลจาก OnDamageDealt หรือ Damage Confirmed Event\n- Ultimate สามารถเชื่อมกับ Relationship Progression สำหรับการเรียนรู้หรือปลดล็อก\n\nค่าที่ยังต้องออกแบบ\n- Gauge Maximum\n- ปริมาณ Gauge ที่ได้รับต่อ Damage\n- เงื่อนไขการกดใช้\n- ใช้ Gauge ทั้งหมดหรือบางส่วน\n- Mana Cost\n- Cooldown เพิ่มเติม\n- Invulnerability ระหว่าง Animation\n- การเก็บ Gauge ข้าม Combat",
+      "summary": "Ultimate เป็นระบบแยกจาก Spell Slot, Mana และ Dodge ผู้เล่นสะสม Gauge จาก Damage ที่ทำสำเร็จ ส่วนกติกาการใช้ Ultimate ยังเปิดไว้เพื่อออกแบบภายหลัง",
+      "details": "## ตำแหน่งของ Ultimate ใน Combat\nUltimate เป็นความสามารถพิเศษที่มี Resource ของตัวเอง ไม่ใช่ Spell ช่องที่สี่และไม่ควรถูกยัดเข้าไปใน Spell Cooldown Manager โดยอัตโนมัติ\n\n- Ultimate แยกจาก Spell Slot 3 ช่อง\n- Ultimate Gauge แยกจาก Mana\n- Ultimate Gauge แยกจาก Dodge Charge\n- การแสดงผลอยู่ใน Combat HUD เป็น Resource อีกชุดหนึ่ง\n\n## การเพิ่ม Gauge\nหลักที่ล็อกไว้คือ Gauge เพิ่มเมื่อ Player เป็นฝ่ายสร้าง Damage ต่อศัตรูสำเร็จ\n\nจุดที่เหมาะสำหรับเพิ่ม Gauge คือหลัง Damage Event ยืนยันผล เช่น OnDamageDealt หรือ Damage Confirmed ไม่ใช่ตอนรับ Input Attack\n\nวิธีนี้ทำให้ Attack ที่พลาด, ถูก Block ในระบบอนาคต หรือไม่สร้าง Damage ไม่เพิ่ม Gauge โดยไม่ต้องเขียนเงื่อนไขซ้ำในทุกสกิล\n\n## ค่า Gauge\nHUD สามารถคิดเป็นช่วง 0–100% เพื่อให้ผู้เล่นอ่านง่าย แต่สูตรภายในและจำนวน Point จริงยังไม่ล็อก\n\n- UltimateMaxGauge: ปรับได้\n- Gauge Gain ต่อ Damage: ยังไม่ล็อก\n- Basic Attack และ Spell สามารถให้ Gauge ต่างกันได้ในอนาคต\n- Boss หรือ Target ประเภทต่าง ๆ อาจมี Modifier ได้หากภายหลังต้องการ\n\n## การปลดล็อก Ultimate\nUltimate สามารถเชื่อมกับ Relationship Progression ได้ หมายความว่าผู้เล่นอาจเรียนรู้หรือปลดล็อก Ultimate จากพัฒนาการความสัมพันธ์กับตัวละคร โดย Combat System เพียงรับข้อมูลว่า Ultimate ใดถูกปลดล็อกแล้ว\n\n## สิ่งที่ยังไม่ล็อก\n- ต้องมี Gauge เท่าใดจึงกดใช้ได้\n- ใช้ Gauge ทั้งหมดหรือบางส่วน\n- Ultimate ใช้ Mana เพิ่มหรือไม่\n- มี Cooldown หลังใช้หรือไม่\n- Player ได้ Invulnerability ระหว่าง Animation หรือไม่\n- Gauge คงเหลือข้าม Combat หรือรีเซ็ต\n- สูตร Gain ที่สัมพันธ์กับ Damage จริง\n\n> ตอนทำ Prototype ให้สร้าง Gauge, Gain Event และ HUD ให้ทำงานก่อน โดยยังไม่ต้องผูกสูตร Final Balance",
       "links": [],
-      "openQuestions": "Activation Rule, Gauge Formula และ Runtime Behavior หลังใช้งานยังเป็น TBD",
+      "openQuestions": "",
       "sectionId": "dev-combat-ultimate",
       "featured": false,
-      "kicker": "ทรัพยากรแยกจาก Mana และ Spell Slot",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-enemy-spec",
@@ -2906,18 +2895,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Enemy",
-        "AI",
-        "Pattern"
+        "Specification"
       ],
-      "summary": "Enemy Combat ต้องสนับสนุนการอ่านจังหวะและการตัดสินใจของผู้เล่น โดย Attack มีช่วงเตรียมโจมตี ช่วงโจมตี และช่วงฟื้นตัวอย่างชัดเจน",
-      "details": "โครง Attack Pattern ขั้นพื้นฐาน\n- Wind-up\n- Attack\n- Recovery\n\nหลักการ\n- Enemy ไม่ควรทำงานด้วยการเดินเข้าหาผู้เล่นและสุ่มโจมตีอย่างเดียว\n- Wind-up ต้องให้ข้อมูลเพียงพอสำหรับการอ่าน Timing\n- Dodge และ I-Frame ต้องมีความหมายต่อ Pattern\n- Pattern ของ Boss สามารถมีความซับซ้อนมากขึ้น แต่ยังต้องอ่านได้จาก Animation, VFX หรือ Timing\n- Enemy AI และ Pattern รายตัวเป็น Content Layer แยกจาก Core Combat\n\nสถานะที่ยังไม่ล็อก\n- Stagger\n- Poise\n- Armor\n- Weakness\n- Status Resistance\n- Exact AI Decision Tree",
+      "summary": "Enemy ต้องมี Attack Pattern ที่อ่านจังหวะได้ เพื่อให้ Dodge, Positioning และการเลือกช่วง Cast มีความหมาย ไม่ควรพึ่ง AI ที่เดินเข้าหาผู้เล่นแล้วสุ่มโจมตีอย่างเดียว",
+      "details": "## เป้าหมายของ Enemy Combat\nCombat ต้องทำให้ผู้เล่นสังเกตและเรียนรู้พฤติกรรมของศัตรูได้ ความยากจึงควรมาจากการอ่าน Pattern, Timing และการจัดการพื้นที่ มากกว่าการสุ่ม Attack โดยไม่มีสัญญาณ\n\n## โครงสร้าง Attack Pattern\nAttack ขั้นพื้นฐานควรคิดอย่างน้อยเป็นสามช่วง\n\n- Wind-up: ช่วงเตรียมโจมตีและส่งสัญญาณให้ผู้เล่นอ่าน\n- Attack: ช่วงที่ Hitbox, Projectile หรือ Damage Logic ทำงาน\n- Recovery: ช่วงหลังโจมตีที่ Enemy ยังไม่กลับเข้าสู่ Action ถัดไปทันที\n\nเวลาของแต่ละช่วงกำหนดต่อ Attack ได้และไม่ควรถูกบังคับให้เท่ากันทุกศัตรู\n\n## Readability\nWind-up ต้องสื่อสารด้วย Animation, VFX, Pose, Sound หรือการเคลื่อนไหวที่ผู้เล่นเรียนรู้ได้ หาก Attack ต้องใช้ Dodge Timing ที่แม่น แต่ไม่มีสัญญาณก่อนโจมตี ระบบจะรู้สึกสุ่มมากกว่าท้าทาย\n\n## ความสัมพันธ์กับ Dodge\nI-Frame และ Dodge Charge จะมีความหมายก็ต่อเมื่อ Player สามารถคาดเดาช่วงอันตรายได้ Enemy Pattern จึงต้องออกแบบร่วมกับ Dodge Window ไม่ใช่ทำ AI เสร็จแล้วค่อยกำหนด Dodge ภายหลัง\n\n## Boss และศัตรูทั่วไป\nBoss สามารถมีหลาย Pattern, Chain หรือ Phase ได้ แต่ Core System ไม่จำเป็นต้องรู้เนื้อหาของ Pattern เหล่านั้น Enemy Attack Controller ควรเปิดให้ Content Layer ใส่ข้อมูล Attack ต่างกันได้\n\n## ส่วนที่ยังไม่ล็อก\nStagger, Poise, Weakness, Armor, Status Resistance และ Decision Tree ของ Enemy AI ยังไม่ได้กำหนด อย่าให้ระบบเหล่านี้กลายเป็น Dependency ของ Core Combat ใน Prototype แรก",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-enemy",
       "featured": false,
-      "kicker": "Pattern ที่อ่านจังหวะได้",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-flow-spec",
@@ -2927,18 +2914,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "State",
-        "Flow",
-        "Runtime"
+        "Specification"
       ],
-      "summary": "Combat และ Player Action ต้องใช้ State ที่ชัดเจนเพื่อควบคุมสิทธิ์การเคลื่อนที่ การโจมตี การ Cast และการ Dodge โดยไม่พึ่งเงื่อนไขกระจายตาม Script",
-      "details": "Combat State ขั้นต่ำ\n- Exploration\n- Combat\n- Defeated\n\nEnter Combat\n- Lock Spell Loadout\n- Enable Combat HUD\n- Enable Enemy Targeting\n\nExit Combat\n- Unlock Spell Loadout\n- Clear Current Target\n- Disable หรือ Reduce Combat HUD\n\nPlayer Action State แนวทาง\n- Normal\n- Casting\n- Dodging\n- Hit\n- Disabled\n- Defeated\n\nระบบสามารถใช้ชื่ออื่นได้ แต่ต้องตอบได้อย่างชัดเจนว่า\n- CanMove\n- CanAttack\n- CanCast\n- CanDodge\n\nSpell Flow\nInput → Validate State → Validate Mana → Validate Cooldown → Validate Target → Spend Mana → Execute → Hit Detection → Damage/Effect\n\nDodge Flow\nInput → Validate → Consume Charge → Dodge Movement → I-Frame → Recharge\n\nIncoming Damage Flow\nEnemy Hit → Check I-Frame → Ignore หรือ Apply Heart Damage → Check Defeated",
+      "summary": "Combat ใช้ State เพื่อบอกว่าขณะนั้น Player และระบบต่าง ๆ ทำอะไรได้บ้าง ช่วยป้องกันปัญหา Action ชนกัน เช่น Cast ระหว่าง Defeated หรือ Consume Dodge ซ้ำในจังหวะที่ไม่ควรเกิด",
+      "details": "## Combat State\nState ระดับภาพรวมขั้นต่ำที่ต้องรองรับคือ Exploration, Combat และ Defeated\n\nเมื่อเปลี่ยน State ระบบอื่นต้องรับรู้ผ่านจุดกลาง ไม่ควรให้แต่ละ Script เดาเองจากระยะของ Enemy หรือสถานะ Animation\n\n## Enter Combat\nเมื่อเข้าสู่ Combat อย่างน้อยให้เกิดผลดังนี้\n\n- Lock Spell Loadout\n- เปิด Combat HUD\n- เปิดระบบ Targeting ที่เกี่ยวข้อง\n- เตรียม Enemy Combat State\n- เก็บสถานะว่าผู้เล่นกำลังอยู่ใน Combat\n\nเงื่อนไขว่าอะไรถือเป็นจุดเริ่ม Combat เช่นระยะ Aggro, Trigger Area หรือ Encounter Script ยังปรับได้\n\n## Exit Combat\nเมื่อออกจาก Combat\n\n- Unlock Spell Loadout\n- Clear Current Target ที่ไม่ควรคงอยู่\n- ปิดหรือลด Combat HUD\n- คืนระบบที่เกี่ยวข้องกลับสู่ Exploration State\n\nกฎเรื่อง Mana, Ultimate หรือ Heart หลังออก Combat ให้ระบบเจ้าของ Resource เป็นคนตัดสิน ไม่ควรถูกรีเซ็ตจาก Combat State Manager โดยไม่มีสเปก\n\n## Player Action State\nPlayer ต้องมีวิธีบอกว่า Action ใดอนุญาตในขณะนั้น ตัวอย่าง State ที่ใช้เป็นฐานได้คือ Normal, Casting, Dodging, Hit, Disabled และ Defeated\n\nไม่จำเป็นต้องใช้ชื่อเหล่านี้ตรง ๆ แต่ระบบต้องตอบค่าอย่าง CanMove, CanAttack, CanCast และ CanDodge ได้ชัดเจน\n\n## Combat Flow ภาพรวม\nEncounter → Enter Combat → Lock Loadout → Target/Aim → Move / Attack / Cast / Dodge → Manage Resource → Deal or Receive Damage → Update Ultimate / Heart → Enemy Defeated → Exit Combat\n\nFlow นี้เป็นภาพรวม ไม่ได้บังคับว่าผู้เล่นต้องทำ Action ตามลำดับเดียวทุกครั้ง\n\n## Spell Cast Flow\nInput → ตรวจ Player State → ตรวจ Spell Slot → ตรวจ Mana → ตรวจ Cooldown → ตรวจ Target/Aim → Spend Mana → Execute Cast → Hit Detection → Damage/Effect\n\n## Incoming Attack Flow\nEnemy Attack → Hit Detection → Player Damage Receiver → ตรวจ I-Frame → Ignore หรือ Apply Heart Damage → ตรวจ Defeated State\n\nDodge มี Flow ของตัวเองในหัวข้อ Dodge & I-Frame แต่ต้องส่ง State ให้ Damage Receiver อ่านได้ในช่วง I-Frame",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-flow",
       "featured": false,
-      "kicker": "State-driven Validation",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-hud-spec",
@@ -2948,18 +2933,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "HUD",
-        "UI",
-        "Feedback"
+        "Specification"
       ],
-      "summary": "Combat HUD ต้องแสดงข้อมูลที่จำเป็นต่อการตัดสินใจแบบเรียลไทม์ โดยอ่านค่า Runtime จากระบบต่อสู้และไม่เก็บ Gameplay Truth แยกไว้ใน UI",
-      "details": "ข้อมูลขั้นต่ำ\n- Current Hearts / Max Hearts\n- Current Mana / Max Mana\n- Dodge Charges\n- Recharge State ของ Dodge\n- Spell Slot 1: Ready / Cooldown\n- Spell Slot 2: Ready / Cooldown\n- Spell Slot 3: Ready / Cooldown\n- Ultimate Gauge\n- Basic Attack Input Context ตามระบบควบคุม\n\nหลักการ\n- UI ไม่เป็นเจ้าของ Mana, Cooldown, Heart หรือ Dodge Charge\n- Cooldown Visual ต้องอ้างอิง Runtime Cooldown ของ Spell จริง\n- Spell Ready State ต้องเปลี่ยนตาม Mana, Cooldown และ State ที่เกี่ยวข้อง\n- HUD ต้องสามารถอัปเดตจาก Event หรือ State Change โดยไม่ผูกกับ Spell รายตัว",
+      "summary": "HUD มีหน้าที่ทำให้ผู้เล่นเห็นสถานะที่ใช้ตัดสินใจระหว่าง Combat อย่างชัดเจน โดยทุกค่าบนหน้าจอต้องอ่านจาก Gameplay System จริง ไม่สร้าง State ซ้ำไว้ใน UI",
+      "details": "## ข้อมูลที่ต้องแสดง\nCombat HUD ขั้นพื้นฐานควรมีข้อมูลต่อไปนี้\n\n- Current Hearts และ Max Hearts\n- Current Mana และ Max Mana\n- Dodge Charge ที่เหลือ\n- สถานะการ Recharge ของ Dodge\n- Spell Slot 1 พร้อมใช้หรือเหลือ Cooldown เท่าใด\n- Spell Slot 2 พร้อมใช้หรือเหลือ Cooldown เท่าใด\n- Spell Slot 3 พร้อมใช้หรือเหลือ Cooldown เท่าใด\n- Ultimate Gauge\n- Context ของ Basic Attack ตามระบบ Input\n\n## Spell Feedback\nแต่ละ Spell Slot ต้องสื่อสารอย่างน้อยสองเรื่องคือ Cooldown และความพร้อมในการใช้ หาก Spell ยัง Cooldown อยู่ ผู้เล่นต้องเห็นเวลาหรือ Progress ที่เหลือ\n\nกรณี Mana ไม่พอควรมี Visual State แยกจาก Cooldown เพื่อให้ผู้เล่นรู้ว่าปัญหามาจาก Resource ไม่ใช่เวลา\n\n## Dodge Feedback\nCharge ควรอ่านเป็นจำนวนครั้งที่ยังใช้ได้ทันที และสามารถแสดง Progress ของ Charge ที่กำลังฟื้นอยู่ได้ เพื่อให้ผู้เล่นประเมินว่าควรเสี่ยง Dodge ครั้งถัดไปหรือไม่\n\n## Heart Feedback\nHeart แสดงสถานะ Health แบบจำนวนครั้งที่รับความเสียหายได้ ควรเปลี่ยนตาม Damage Event จริงและรองรับ Max Hearts ที่เพิ่มจาก Progression โดยไม่ต้องแก้ Layout Logic ทุกครั้ง\n\n## Ultimate Feedback\nUltimate Gauge สามารถแสดงเป็นเปอร์เซ็นต์ 0–100% ในระดับ UI แม้ค่าภายในจะใช้ Scale อื่น เมื่อระบบ Activation ถูกออกแบบแล้ว UI ค่อยเพิ่ม Ready State หรือ Input Prompt\n\n## UI ไม่เป็นเจ้าของ Gameplay State\nHUD ต้องอ่านค่าจาก ManaComponent, DodgeController, Spell Cooldown, Heart Component และ Ultimate Gauge ไม่ควรลด Mana, เริ่ม Cooldown หรือแก้ Heart จาก Script UI\n\nการอัปเดตใช้ Event หรือ State Change ได้ตาม Architecture ของโปรเจกต์ แต่ต้องมี Gameplay System เป็นแหล่งข้อมูลจริงเพียงจุดเดียว\n\n## ตัวอย่างภาพรวมบนหน้าจอ\nPlayer สามารถเห็น Hearts, แถบ Mana, Dodge 3 จุด, Spell 3 ช่องพร้อม Cooldown และ Ultimate Gauge ในพื้นที่เดียวกัน โดยลำดับและตำแหน่งจริงยังเป็นงาน UI/UX ที่ปรับได้ตามการทดสอบ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-hud",
       "featured": false,
-      "kicker": "UI แสดงสถานะจาก Gameplay System",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-progression-spec",
@@ -2969,18 +2952,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Progression",
-        "Class",
-        "Relationship"
+        "Specification"
       ],
-      "summary": "การเรียนและ Relationship Progression สามารถปลดล็อกความสามารถที่ Combat ใช้ได้ แต่ Combat Core ไม่ควรรับผิดชอบ Logic การเรียนหรือความสัมพันธ์โดยตรง",
-      "details": "Class / QTE\n- การเรียนใช้ปลดล็อกหรือพัฒนา Spell\n- QTE และผลการเรียนเป็นระบบภายนอก Combat\n- Combat รับผลในรูป Spell Unlock, Spell Upgrade หรือ Parameter ที่ระบบ Progression อนุญาต\n\nSpell Unlock Interface\n- Combat Loadout ต้องตรวจว่า Spell ถูกปลดล็อกแล้วก่อน Equip\n- Spell Unlock Data ควรมาจาก Save / Progression System\n\nHeart Progression\n- Max Hearts สามารถเพิ่มได้จาก Progression\n- Combat System รับค่า Max Hearts ที่อัปเดตแล้ว\n\nUltimate Progression\n- Ultimate สามารถปลดล็อกจาก Relationship Progression\n- Combat System รับสถานะ Unlock และข้อมูล Ultimate ที่พร้อมใช้งาน\n\nหลักการ\n- ห้ามผูก QTE, Class Schedule หรือ Relationship Logic ไว้ใน PlayerCombatController",
+      "summary": "ระบบเรียนและ Progression ส่งผลให้ Combat มีความสามารถเพิ่มขึ้น แต่ Logic ของ Class, QTE หรือ Relationship ต้องอยู่นอก Combat Core แล้วส่งผลลัพธ์เข้ามาในรูป Unlock หรือค่าที่อัปเดตแล้ว",
+      "details": "## การเรียนกับ Spell\nผู้เล่นไม่ได้มี Spell ทุกตัวตั้งแต่เริ่มเกม การเข้าเรียนและพัฒนาความชำนาญเป็นหนึ่งในทางที่ใช้ปลดล็อกหรือพัฒนา Spell\n\nCombat System ไม่ต้องรู้ว่าผู้เล่นผ่านบทเรียนไหนมา เพียงตรวจข้อมูล Unlock ก่อนให้ Spell ถูก Equip หรือใช้งาน\n\n## Class QTE\nแนวคิดที่ล็อกไว้คือ Class สามารถมี QTE หรือกิจกรรมที่ใช้วัดการฝึก ผู้เล่นทำกิจกรรมเหล่านี้เพื่อพัฒนา Proficiency หรือผ่าน Requirement ของ Spell\n\n- Class QTE เป็นระบบภายนอก Combat\n- Difficulty ของ QTE สามารถเพิ่มตามความก้าวหน้า\n- วิชาหรือกิจกรรมสามารถหมุนเวียนตามวันหรือสัปดาห์\n- สูตรคะแนน, เกรด และ Threshold สำหรับ Unlock ยังไม่ล็อก\n\n## Spell Unlock\nSave / Progression System ควรเป็นเจ้าของข้อมูลว่า Spell ใดถูกปลดล็อกแล้ว Combat Loadout เพียงอ่านข้อมูลนี้ก่อนอนุญาตให้ Equip\n\nหากมี Spell Upgrade ภายหลัง ควรส่ง Level หรือ Variant ของ Spell เข้ามาผ่าน Data เช่นเดียวกัน\n\n## Heart Progression\nMax Hearts สามารถเพิ่มขึ้นจาก Progression ได้ Health System จึงต้องรับ MaxHearts ที่เปลี่ยนได้ และ HUD ต้องรองรับจำนวน Heart ที่มากกว่า 3\n\nวิธีได้ Heart เพิ่มและจำนวนสูงสุดยังไม่ล็อก\n\n## Ultimate และ Relationship\nUltimate สามารถปลดล็อกจาก Relationship Progression ได้ Combat System รับเพียง Unlock State และ Ultimate Data ที่ใช้งานได้ โดยไม่ควรอ่านค่าความสัมพันธ์หรือ Event เนื้อเรื่องโดยตรง\n\n## หลักการแยกระบบ\nPlayerCombatController ไม่ควรมี Class Schedule, QTE Score, Relationship Point หรือเงื่อนไขเนื้อเรื่องอยู่ข้างใน การแยกนี้ทำให้ทีมปรับ Progression ได้โดยไม่ต้องแก้ Combat Logic และกลับกัน",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-progression",
       "featured": false,
-      "kicker": "แยก Progression ออกจาก Combat Core",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     },
     {
       "id": "dev-combat-prototype-spec",
@@ -2990,18 +2971,16 @@
       "tags": [
         "Developer",
         "Combat",
-        "Prototype",
-        "Architecture",
-        "Co-op"
+        "Specification"
       ],
-      "summary": "Prototype แรกต้องพิสูจน์ Core Combat Loop ก่อนเพิ่ม Content, Balance เชิงลึก หรือ Multiplayer Feature โดยทุกค่าที่เกี่ยวกับ Balance ต้องปรับได้โดยไม่แก้ Logic หลัก",
-      "details": "Minimum Prototype\n- Player Movement / Run\n- Camera\n- Lock-on\n- Manual Aim\n- Basic Attack\n- Mana / Mana Regeneration\n- Spell Slot 3 ช่อง\n- Spell Mana Cost\n- Spell Cooldown\n- Dodge 3 Charges\n- Sequential Dodge Recharge\n- I-Frame\n- Heart Health\n- Enemy รับ Damage\n- Enemy โจมตี Player\n- Ultimate Gauge Gain\n- Combat HUD\n\nComponent Separation แนวทาง\n- PlayerCombatController\n- PlayerMovementController\n- TargetingSystem\n- HealthHeartComponent\n- ManaComponent\n- DodgeController\n- SpellCaster\n- SpellCooldownManager\n- CombatLoadout\n- UltimateGaugeComponent\n- DamageReceiver\n- CombatStateManager\n- CombatHUD\n- EnemyCombatController\n- EnemyAttackController\n- EnemyHealth / DamageReceiver\n- EnemyAI\n\nค่าที่ห้าม Hard-code\n- Max Mana\n- Mana Regen Rate\n- Basic Attack Mana Cost\n- Spell Mana Cost\n- Spell Cooldown\n- Max Hearts\n- Heart Damage\n- Dodge Recharge Time\n- Dodge I-Frame Duration\n- Ultimate Max Gauge\n- Ultimate Gain\n- Spell Damage / Effect Value\n\nCo-op Compatibility\n- ทิศทางระยะยาวเป็น Host-authoritative / Shared Session\n- Prototype สามารถเริ่มจาก Single-player\n- Damage, Mana, Cooldown, Dodge และ Enemy State ต้องแยก Logic ชัดเจนเพื่อให้ Host สามารถเป็น Authority ได้ภายหลัง\n- Down/Revive, Friendly Fire และ Co-op Scaling: TBD",
+      "summary": "Prototype แรกควรพิสูจน์ Core Combat Loop ให้เล่นได้ครบก่อนเพิ่มระบบเสริม โดยแยก Component ตามหน้าที่และทำค่าบาลานซ์ทั้งหมดให้ปรับได้จาก Data หรือ Inspector",
+      "details": "## Minimum Prototype\nเวอร์ชันแรกที่ใช้ทดสอบความรู้สึกของ Combat ควรทำให้ชุดนี้ใช้งานร่วมกันได้จริง\n\n- Player Movement และ Run\n- Camera\n- Lock-on\n- Manual Aim\n- Basic Attack\n- Mana และ Mana Regeneration\n- Spell Slot 3 ช่อง\n- Spell Mana Cost\n- Spell Cooldown\n- Dodge 3 Charges\n- Sequential Dodge Recharge\n- I-Frame\n- Heart Health\n- Enemy รับ Damage ได้\n- Enemy โจมตี Player ได้\n- Ultimate Gauge เพิ่มจาก Damage\n- Combat HUD\n\nเมื่อชุดนี้เล่นได้ครบวงจรจึงค่อยตัดสินใจว่าระบบเสริมใดจำเป็นจริงจากการทดสอบ\n\n## Component Separation\nแนวทางการแบ่งหน้าที่ที่ใช้ได้กับ Unity\n\n- PlayerCombatController: ประสาน Action หลัก ไม่ถือ Logic ทุกระบบ\n- PlayerMovementController: Movement\n- TargetingSystem: Lock-on / Current Target / Aim Context\n- HealthHeartComponent: Heart และ Defeated Check\n- ManaComponent: Mana และ Regeneration\n- DodgeController: Charge, Recharge และ I-Frame\n- SpellCaster: Cast Request และ Execute\n- SpellCooldownManager: Cooldown ราย Spell\n- CombatLoadout: Equipped Spell และ Loadout Lock\n- UltimateGaugeComponent: Gauge และ Gain\n- DamageReceiver: รับ Damage Event\n- CombatStateManager: Exploration / Combat / Defeated\n- CombatHUD: แสดงข้อมูล\n- EnemyCombatController / EnemyAttackController / EnemyAI: ฝั่งศัตรู\n\nชื่อ Component สามารถเปลี่ยนตาม Coding Convention ได้ แต่หน้าที่ไม่ควรถูกรวมจนแก้ระบบหนึ่งแล้วกระทบอีกระบบโดยไม่จำเป็น\n\n## Player Combat Data\nข้อมูล Runtime ขั้นต่ำที่ควรเข้าถึงได้ประกอบด้วย Max/Current Hearts, Max/Current Mana, Mana Regen, Max/Current Dodge Charges, Dodge Recharge Time, I-Frame Duration, Ultimate Gauge และ Equipped Spell\n\nบางค่าอาจอยู่คนละ Component ได้ ไม่จำเป็นต้องมีคลาสข้อมูลยักษ์ตัวเดียว\n\n## ค่าที่ห้าม Hard-code\nค่าต่อไปนี้ต้องเปลี่ยนได้โดยไม่แก้ Flow หลัก\n\n- Max Mana\n- Mana Regen Rate\n- Basic Attack Mana Cost\n- Spell Mana Cost\n- Spell Cooldown\n- Max Hearts\n- Heart Damage\n- Dodge Recharge Time\n- Dodge I-Frame Duration\n- Ultimate Max Gauge\n- Ultimate Gain\n- Spell Damage และ Effect Value\n\nค่าทดลอง เช่น Mana 1000, Spell Cost 50/70/100 และ Dodge Recharge ประมาณ 20 วินาที เป็นจุดเริ่มทดสอบ ไม่ใช่ Final Balance\n\n## ลำดับการพัฒนาแนะนำ\nเริ่มจาก Movement และ Targeting → ทำ Damage Receiver กับ Enemy Dummy → ต่อ Basic Attack และ Mana → ต่อ Spell/Cooldown → ทำ Dodge/I-Frame → Heart/Defeated → Ultimate Gauge → HUD → ทดสอบ Enemy Pattern\n\nลำดับนี้ช่วยให้แต่ละขั้นมีสิ่งที่ทดสอบได้จริงและลดการทำ UI หรือ Content ก่อน Core Logic พร้อม\n\n## รายการที่ยัง TBD\n- Ultimate Activation และสูตร Gauge\n- Healing และ Heart Recovery\n- Death / Respawn\n- Boss Damage Rule\n- Basic Attack Rate / Cooldown\n- Exact Mana Regen Rate\n- Exact Mana Cost\n- Exact Dodge I-Frame Duration\n- Exact Dodge Recharge Time\n- Exact Enemy AI\n- Guard / Parry / Stagger / Poise\n- Weakness / Armor / Critical Hit\n\nอย่าเพิ่มระบบในรายการ TBD เป็น Dependency ของ Prototype จนกว่าจะมีการตัดสินใจใหม่",
       "links": [],
-      "openQuestions": "Ultimate Activation, Death/Respawn, Healing, Boss Damage Rule และระบบ Combat เสริมที่ยังไม่ยืนยันเป็น TBD",
+      "openQuestions": "",
       "sectionId": "dev-combat-prototype",
       "featured": false,
-      "kicker": "ลำดับพัฒนาและ Architecture ขั้นต่ำ",
-      "updatedAt": "2026-10-11T22:39:00+07:00"
+      "kicker": "Developer Combat Specification",
+      "updatedAt": "2026-10-11T23:05:00+07:00"
     }
   ]
 }
