@@ -792,6 +792,137 @@
     return raw.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean).map(block => '<p>' + wikiGlossaryHtml(block,currentEntryId) + '</p>').join("");
   }
 
+  function isDeveloperCombatEntry(entry) {
+    if (!entry || !entry.sectionId) return false;
+    const root=rootOf(entry.sectionId);
+    return !!(root && root.id==="dev-combat");
+  }
+
+  function developerCombatEntries() {
+    const docs=[];
+    childrenOf("dev-combat").forEach(section => {
+      entriesIn(section.id,false)
+        .slice()
+        .sort((a,b)=>(Number(a.sort)||0)-(Number(b.sort)||0)||String(a.title).localeCompare(String(b.title),"th"))
+        .forEach(entry=>docs.push(entry));
+    });
+    return docs;
+  }
+
+  function developerSpecHtml(value,currentEntryId) {
+    const raw=String(value || "").replace(/\\r\\n|\\r/g,"\n");
+    const lines=raw.split("\n");
+    let html="";
+    let sectionOpen=false;
+    let listType="";
+
+    function closeList() {
+      if (!listType) return;
+      html += "</" + listType + ">";
+      listType="";
+    }
+
+    function closeSection() {
+      closeList();
+      if (!sectionOpen) return;
+      html += "</section>";
+      sectionOpen=false;
+    }
+
+    function openDefaultSection() {
+      if (sectionOpen) return;
+      html += '<section class="dev-spec-block">';
+      sectionOpen=true;
+    }
+
+    lines.forEach(line => {
+      const trimmed=line.trim();
+      if (!trimmed) {
+        closeList();
+        return;
+      }
+
+      if (trimmed.startsWith("## ")) {
+        closeSection();
+        html += '<section class="dev-spec-block"><h2>' + esc(trimmed.slice(3)) + '</h2>';
+        sectionOpen=true;
+        return;
+      }
+
+      openDefaultSection();
+
+      if (trimmed.startsWith("- ")) {
+        if (listType!=="ul") {
+          closeList();
+          html += "<ul>";
+          listType="ul";
+        }
+        html += "<li>" + wikiGlossaryHtml(trimmed.slice(2),currentEntryId) + "</li>";
+        return;
+      }
+
+      const numbered=trimmed.match(/^(\\d+)\\.\\s+(.+)$/);
+      if (numbered) {
+        if (listType!=="ol") {
+          closeList();
+          html += "<ol>";
+          listType="ol";
+        }
+        html += "<li>" + wikiGlossaryHtml(numbered[2],currentEntryId) + "</li>";
+        return;
+      }
+
+      if (trimmed.startsWith("> ")) {
+        closeList();
+        html += '<div class="dev-spec-note">' + wikiGlossaryHtml(trimmed.slice(2),currentEntryId) + "</div>";
+        return;
+      }
+
+      closeList();
+      html += "<p>" + wikiGlossaryHtml(trimmed,currentEntryId) + "</p>";
+    });
+
+    closeSection();
+    return html || '<section class="dev-spec-block"><p>—</p></section>';
+  }
+
+  function developerCombatNavHtml(entry) {
+    const docs=developerCombatEntries();
+    const currentIndex=docs.findIndex(x=>x.id===entry.id);
+    if (currentIndex<0) return "";
+    const prev=currentIndex>0 ? docs[currentIndex-1] : null;
+    const next=currentIndex<docs.length-1 ? docs[currentIndex+1] : null;
+
+    function docLabel(doc) {
+      const section=sectionById(doc.sectionId);
+      return section ? (section.readerLabel || section.name) : doc.title;
+    }
+
+    const topics=docs.map((doc,i) =>
+      '<button class="dev-topic-chip' + (doc.id===entry.id ? ' is-current' : '') + '" data-dev-topic="' + esc(doc.id) + '" type="button"' +
+      (doc.id===entry.id ? ' aria-current="page"' : '') + '><span>' + (i+1) + '</span>' + esc(docLabel(doc)) + '</button>'
+    ).join("");
+
+    const prevCard=prev
+      ? '<button class="dev-step-card prev" data-dev-topic="' + esc(prev.id) + '" type="button"><span>← หัวข้อก่อนหน้า</span><strong>' + esc(docLabel(prev)) + '</strong></button>'
+      : '<button class="dev-step-card prev root" data-dev-root type="button"><span>← กลับหน้ารวม</span><strong>ระบบการต่อสู้</strong></button>';
+
+    const nextCard=next
+      ? '<button class="dev-step-card next" data-dev-topic="' + esc(next.id) + '" type="button"><span>หัวข้อถัดไป →</span><strong>' + esc(docLabel(next)) + '</strong></button>'
+      : '<button class="dev-step-card next root" data-dev-root type="button"><span>อ่านครบแล้ว</span><strong>กลับหน้ารวมระบบการต่อสู้ →</strong></button>';
+
+    return '<section class="dev-reading-nav">' +
+      '<header class="dev-reading-nav-head"><div><span>COMBAT DOCUMENTATION</span><h2>อ่านหัวข้ออื่นต่อ</h2></div><strong>' + (currentIndex+1) + ' / ' + docs.length + '</strong></header>' +
+      '<div class="dev-topic-strip" aria-label="เลือกหัวข้อระบบการต่อสู้">' + topics + '</div>' +
+      '<div class="dev-step-grid">' + prevCard + nextCard + '</div>' +
+      '</section>';
+  }
+
+  function bindDeveloperCombatNav() {
+    content.querySelectorAll("[data-dev-topic]").forEach(btn => btn.addEventListener("click",()=>navigate("entry",btn.dataset.devTopic)));
+    content.querySelectorAll("[data-dev-root]").forEach(btn => btn.addEventListener("click",()=>navigate("section","dev-combat")));
+  }
+
   function wikiGlossaryHtml(raw,currentEntryId) {
     const lower=String(raw).toLocaleLowerCase("en");
     let best=null;
@@ -939,6 +1070,7 @@
     if(!entry || !isVisible(entry)) return navigate("all");
     const section=sectionById(entry.sectionId);
     const related=(entry.links || []).map(relationTarget).filter(Boolean);
+    const developerCombat=isDeveloperCombatEntry(entry);
     if(isCharacterSection(entry.sectionId)) {
       content.innerHTML=characterEntryHtml(entry,section,related);
       bindBreadcrumbs();
@@ -957,18 +1089,20 @@
       '<article class="reader-article"><header class="reader-article-head"><p class="reader-category">' + esc(section ? section.readerLabel || section.name : "CaeLum") + '</p>' +
       (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
       mapFigure +
-      '<section class="reader-body">' + proseHtml(entry.details || "—",entry.id) + '</section>' +
+      '<section class="reader-body' + (developerCombat ? ' dev-spec-body' : '') + '">' + (developerCombat ? developerSpecHtml(entry.details || "—",entry.id) : proseHtml(entry.details || "—",entry.id)) + '</section>' +
       (entry.publicKnowledge ? '<section class="reader-section"><h2>สิ่งที่คนในโลกรับรู้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
       (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
       (authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes,entry.id) + '</div></section>' : '') +
       (authorMode && entry.openQuestions ? '<section class="reader-section author-reader-section"><h2>สิ่งที่ยังไม่ล็อก</h2><div class="reader-section-copy">' + proseHtml(entry.openQuestions,entry.id) + '</div></section>' : '') +
       (related.length ? '<section class="reader-related"><h2>อ่านต่อ</h2><div class="reader-related-list">' + related.map(x => '<button data-related="' + esc(x.id) + '" data-related-type="' + (x.sectionId ? 'entry':'section') + '" type="button">' + esc(x.title || x.readerLabel || x.name) + '</button>').join("") + '</div></section>' : '') +
+      (developerCombat ? developerCombatNavHtml(entry) : '') +
       (authorMode ? '<div class="reader-edit-row"><button class="button primary" data-edit-entry type="button">แก้ไขข้อมูลนี้</button></div>' : '') + '</article>';
     bindBreadcrumbs();
     bindPageBack();
     bindAuthorStrip();
     content.querySelectorAll("[data-wiki-glossary]").forEach(btn => btn.addEventListener("click",() => navigate("entry",btn.dataset.wikiGlossary)));
     content.querySelectorAll("[data-related]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.relatedType,btn.dataset.related)));
+    if(developerCombat) bindDeveloperCombatNav();
     const edit=content.querySelector("[data-edit-entry]");
     if(edit) edit.addEventListener("click",() => openEntryEditor(id));
     updateTopbar(entry.title);
