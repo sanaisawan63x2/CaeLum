@@ -275,6 +275,7 @@
     {id:"institutions",label:"สถาบันและผู้คน",description:"องค์กร มหาวิทยาลัย และตัวละคร"},
     {id:"lived",label:"สังคมและชีวิต",description:"สถานที่ กฎหมาย เศรษฐกิจ การเมือง และเทคโนโลยี"},
     {id:"danger",label:"ภัยและเนื้อเรื่อง",description:"มอนสเตอร์ เหตุการณ์ และปมที่เปิดเผยแล้ว"},
+    {id:"dev",label:"ระบบเกมสำหรับ Developer",description:"ข้อกำหนด Gameplay, Logic, State และขอบเขตการพัฒนาระบบเกม"},
     {id:"other",label:"หัวข้ออื่น",description:"ข้อมูลที่ยังไม่เข้ากลุ่มหลัก"}
   ];
 
