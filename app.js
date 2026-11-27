@@ -795,12 +795,12 @@
   function isDeveloperCombatEntry(entry) {
     if (!entry || !entry.sectionId) return false;
     const root=rootOf(entry.sectionId);
-    return !!(root && root.id==="dev-combat");
+    return !!(root && root.group==="dev");
   }
 
-  function developerCombatEntries() {
+  function developerCombatEntries(rootId) {
     const docs=[];
-    childrenOf("dev-combat").forEach(section => {
+    childrenOf(rootId).forEach(section => {
       entriesIn(section.id,false)
         .slice()
         .sort((a,b)=>(Number(a.sort)||0)-(Number(b.sort)||0)||String(a.title).localeCompare(String(b.title),"th"))
@@ -887,7 +887,10 @@
   }
 
   function developerCombatNavHtml(entry) {
-    const docs=developerCombatEntries();
+    const root=rootOf(entry.sectionId);
+    if (!root) return "";
+    const rootLabel=root.readerLabel || root.name;
+    const docs=developerCombatEntries(root.id);
     const currentIndex=docs.findIndex(x=>x.id===entry.id);
     if (currentIndex<0) return "";
     const prev=currentIndex>0 ? docs[currentIndex-1] : null;
@@ -905,22 +908,22 @@
 
     const prevCard=prev
       ? '<button class="dev-step-card prev" data-dev-topic="' + esc(prev.id) + '" type="button"><span>← หัวข้อก่อนหน้า</span><strong>' + esc(docLabel(prev)) + '</strong></button>'
-      : '<button class="dev-step-card prev root" data-dev-root type="button"><span>← กลับหน้ารวม</span><strong>ระบบการต่อสู้</strong></button>';
+      : '<button class="dev-step-card prev root" data-dev-root="' + esc(root.id) + '" type="button"><span>← กลับหน้ารวม</span><strong>' + esc(rootLabel) + '</strong></button>';
 
     const nextCard=next
       ? '<button class="dev-step-card next" data-dev-topic="' + esc(next.id) + '" type="button"><span>หัวข้อถัดไป →</span><strong>' + esc(docLabel(next)) + '</strong></button>'
-      : '<button class="dev-step-card next root" data-dev-root type="button"><span>อ่านครบแล้ว</span><strong>กลับหน้ารวมระบบการต่อสู้ →</strong></button>';
+      : '<button class="dev-step-card next root" data-dev-root="' + esc(root.id) + '" type="button"><span>อ่านครบแล้ว</span><strong>กลับหน้ารวม ' + esc(rootLabel) + ' →</strong></button>';
 
     return '<section class="dev-reading-nav">' +
-      '<header class="dev-reading-nav-head"><div><span>COMBAT DOCUMENTATION</span><h2>อ่านหัวข้ออื่นต่อ</h2></div><strong>' + (currentIndex+1) + ' / ' + docs.length + '</strong></header>' +
-      '<div class="dev-topic-strip" aria-label="เลือกหัวข้อระบบการต่อสู้">' + topics + '</div>' +
+      '<header class="dev-reading-nav-head"><div><span>' + (root.id==="dev-combat" ? "COMBAT DOCUMENTATION" : "GAME DESIGN DOCUMENTATION") + '</span><h2>อ่านหัวข้ออื่นต่อ</h2></div><strong>' + (currentIndex+1) + ' / ' + docs.length + '</strong></header>' +
+      '<div class="dev-topic-strip" aria-label="เลือกหัวข้อเอกสาร Developer">' + topics + '</div>' +
       '<div class="dev-step-grid">' + prevCard + nextCard + '</div>' +
       '</section>';
   }
 
   function bindDeveloperCombatNav() {
     content.querySelectorAll("[data-dev-topic]").forEach(btn => btn.addEventListener("click",()=>navigate("entry",btn.dataset.devTopic)));
-    content.querySelectorAll("[data-dev-root]").forEach(btn => btn.addEventListener("click",()=>navigate("section","dev-combat")));
+    content.querySelectorAll("[data-dev-root]").forEach(btn => btn.addEventListener("click",()=>navigate("section",btn.dataset.devRoot)));
   }
 
   function wikiGlossaryHtml(raw,currentEntryId) {
