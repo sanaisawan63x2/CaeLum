@@ -19,6 +19,7 @@
   let searchQuery = "";
   let searchScope = "all";
   const openRootGroups = new Set();
+  const closedRootGroups = new Set();
   let readingScrollHandler = null;
   let glossaryPopover = null;
   let currentEntryTab = "basic";
@@ -384,7 +385,7 @@
         designGroups().forEach((group,i)=>{
           const key="design-"+i;
           const active=group.sections.some(s=>s.id===activeSection);
-          const open=openRootGroups.has(key)||active;
+          const open=openRootGroups.has(key)||(active&&!closedRootGroups.has(key));
           html += '<button class="nav-group-toggle" data-group-toggle="'+key+'" aria-expanded="'+open+'" type="button"><span>'+esc(group.label)+'</span><span>'+ (open?"−":"+") +'</span></button>';
           if(open) group.sections.forEach(s=>{const doc=entriesIn(s.id,false)[0];html+=doc?'<button type="button" class="nav-doc-link'+(s.id===activeSection?' active':'')+'" data-entry-go="'+esc(doc.id)+'">'+esc(s.readerLabel||s.name)+'</button>':navSectionNode(s,activeSection,0);});
         });
@@ -392,7 +393,7 @@
       if(combat) {
         html += '<button class="nav-index-link" data-section-go="dev-combat" type="button">Combat Specification · '+countUnder("dev-combat")+' เรื่อง</button>';
         const isCombat=activeSection&&rootOf(activeSection)?.id==="dev-combat";
-        const open=openRootGroups.has("combat")||isCombat;
+        const open=openRootGroups.has("combat")||(isCombat&&!closedRootGroups.has("combat"));
         html += '<button type="button" class="nav-group-toggle" data-group-toggle="combat" aria-expanded="'+!!open+'"><span>รายละเอียดระบบต่อสู้</span><span>'+(open?"−":"+")+'</span></button>';
         if(open) childrenOf("dev-combat").forEach(s=>{const doc=entriesIn(s.id,false)[0];if(doc)html+='<button type="button" class="nav-doc-link'+(s.id===activeSection?' active':'')+'" data-entry-go="'+esc(doc.id)+'">'+esc(s.readerLabel||s.name)+'</button>';});
       }
@@ -400,7 +401,7 @@
       html += navSimple("all","☰","สารบัญ World Bible",r.type==="all");
       groupedRootSections().filter(group=>group.id!=="dev").forEach(group=>{
         const activeRoot=activeSection&&rootOf(activeSection);
-        const open=openRootGroups.has(group.id)||group.sections.some(s=>activeRoot&&s.id===activeRoot.id);
+        const open=openRootGroups.has(group.id)||(!closedRootGroups.has(group.id)&&group.sections.some(s=>activeRoot&&s.id===activeRoot.id));
         html += '<button class="nav-group-toggle" data-group-toggle="'+esc(group.id)+'" type="button" aria-expanded="'+!!open+'"><span>'+esc(group.label)+'</span><span>'+(open?"−":"+")+'</span></button>';
         if(open) group.sections.forEach(root=>{html+=navSectionNode(root,activeSection,0);});
       });
@@ -410,7 +411,7 @@
 
     categoryNav.querySelectorAll("[data-nav-go]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.navGo)));
     categoryNav.querySelectorAll("[data-entry-go]").forEach(btn=>btn.addEventListener("click",()=>navigate("entry",btn.dataset.entryGo)));
-    categoryNav.querySelectorAll("[data-group-toggle]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.groupToggle;if(openRootGroups.has(key))openRootGroups.delete(key);else openRootGroups.add(key);renderNav();}));
+    categoryNav.querySelectorAll("[data-group-toggle]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.groupToggle;if(btn.getAttribute("aria-expanded")==="true"){openRootGroups.delete(key);closedRootGroups.add(key);}else{closedRootGroups.delete(key);openRootGroups.add(key);}renderNav();}));
     categoryNav.querySelectorAll("[data-chapter-go]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterGo)));
     categoryNav.querySelectorAll("[data-section-go]").forEach(btn => btn.addEventListener("click",() => {
       const id = btn.dataset.sectionGo;
@@ -1021,7 +1022,7 @@
   function renderSection(id) {
     const section=sectionById(id);
     if (!section || !isVisible(section)) return navigate("all");
-    if(id==="dev-game"||id==="dev-combat") return renderDesign();
+    if(id==="dev-game"||id==="dev-combat") return renderDesign(id);
     const asset=assetFor(section);
     const kids=childrenOf(id);
     const entries=entriesIn(id,false).sort((a,b)=>{
@@ -1206,17 +1207,23 @@
     if(!doc)return archiveChoiceHtml(section);
     return '<button type="button" class="design-doc" data-doc-go="'+esc(doc.id)+'"><span><strong>'+esc(section.readerLabel||section.name)+'</strong><small>'+esc(doc.summary||"")+'</small></span><span aria-hidden="true">→</span></button>';
   }
-  function renderDesign() {
+  function renderDesign(focus="") {
     const game=sectionById("dev-game"),combat=sectionById("dev-combat");
-    content.innerHTML='<div class="archive-page-head"><p class="eyebrow">GAME DESIGN · DEVELOPER</p><h1>ระบบเกมและการพัฒนา</h1><p>ข้อกำหนด Gameplay และสเปกเทคนิคแยกจากข้อเท็จจริงใน World Bible</p><button class="button secondary" data-workspace-go="all" type="button">← ไปคลังโลก</button></div>'+authorStripHtml()+
-      (game?'<section class="design-index"><h2>Game Design <small>'+countUnder(game.id)+' เรื่อง</small></h2><div class="design-index-grid">'+designGroups().map((g,i)=>'<section class="design-index-group"><h3><span>'+String(i+1).padStart(2,"0")+'</span>'+esc(g.label)+'</h3>'+g.sections.map(designDocHtml).join("")+'</section>').join("")+'</div></section>':"")+
-      (combat?'<section class="design-index"><h2>Combat Specification <small>'+countUnder(combat.id)+' เรื่อง</small></h2><div class="design-index-grid"><section class="design-index-group">'+childrenOf(combat.id).map(designDocHtml).join("")+'</section></div></section>':"");
+    const tabs='<div class="design-tabbar"><button type="button" data-workspace-go="design" class="'+(!focus?"is-active":"")+'">ภาพรวม</button>'+[game,combat].filter(Boolean).map(s=>'<button type="button" data-section-jump="'+esc(s.id)+'" class="'+(focus===s.id?"is-active":"")+'">'+(s.id==="dev-game"?"Game Design":"Combat Specification")+'</button>').join("")+'</div>';
+    const header='<div class="archive-page-head"><p class="eyebrow">GAME DESIGN · DEVELOPER</p><h1>'+(focus==="dev-combat"?"ระบบการต่อสู้":focus==="dev-game"?"Game Design":"ระบบเกมและการพัฒนา")+'</h1><p>ข้อกำหนด Gameplay และสเปกเทคนิค แยกจากข้อเท็จจริงใน World Bible</p><button class="button secondary" data-workspace-go="all" type="button">← ไปคลังโลก</button></div>';
+    const gameIndex=game?'<section class="design-index"><h2>Game Design <small>'+countUnder(game.id)+' เรื่อง</small></h2><div class="design-index-grid">'+designGroups().map((g,i)=>'<details class="design-index-group" '+(focus==="dev-game"&&i===0?"open":"")+'><summary><span>'+String(i+1).padStart(2,"0")+'</span><strong>'+esc(g.label)+'</strong><small>'+g.sections.length+' เรื่อง</small></summary><div class="design-group-docs">'+g.sections.map(designDocHtml).join("")+'</div></details>').join("")+'</div></section>':"";
+    const combatIndex=combat?'<section class="design-index"><h2>Combat Specification <small>'+countUnder(combat.id)+' เรื่อง</small></h2><details class="design-index-group" '+(focus==="dev-combat"?"open":"")+'><summary><span>⚔</span><strong>รายละเอียดระบบต่อสู้</strong><small>'+countUnder(combat.id)+' เรื่อง</small></summary><div class="design-group-docs">'+childrenOf(combat.id).map(designDocHtml).join("")+'</div></details></section>':"";
+    content.innerHTML=header+tabs+authorStripHtml(focus)+
+      (focus==="dev-combat"?combatIndex:focus==="dev-game"?gameIndex:gameIndex+combatIndex)+
+      (authorMode&&focus?'<div class="section-actions"><button class="button secondary" data-edit-design-section type="button">แก้หมวดนี้</button></div>':"");
     bindWorkspaceLinks();
     bindAuthorStrip();
     bindSectionCards();
     content.querySelectorAll("[data-doc-go]").forEach(b=>b.addEventListener("click",()=>navigate("entry",b.dataset.docGo)));
-    updateTopbar("Game Design");
+    const edit=content.querySelector("[data-edit-design-section]");if(edit)edit.addEventListener("click",()=>openSectionEditor(focus));
+    updateTopbar(focus==="dev-combat"?"Combat Specification":"Game Design");
   }
+
   function renderAllTopics() {
     const groups=groupedRootSections().filter(g=>g.id!=="dev");
     const entries=visibleEntries().filter(e=>sectionWorkspace(e.sectionId)==="all");
@@ -1777,6 +1784,10 @@
   if (collapseNavButton) collapseNavButton.addEventListener("click",() => {
     expandedNav.clear();
     openRootGroups.clear();
+    closedRootGroups.clear();
+    groupedRootSections().forEach(g=>closedRootGroups.add(g.id));
+    designGroups().forEach((g,i)=>closedRootGroups.add("design-"+i));
+    closedRootGroups.add("combat");
     localStorage.setItem("caelum_nav_open","[]");
     renderNav();
   });
