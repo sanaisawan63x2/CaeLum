@@ -17,6 +17,8 @@
   let editingSectionId = null;
   let editingChapterId = null;
   let searchQuery = "";
+  let searchScope = "all";
+  const openRootGroups = new Set();
   let readingScrollHandler = null;
   let glossaryPopover = null;
   let currentEntryTab = "basic";
@@ -198,6 +200,7 @@
     if (!raw || raw === "home") return {type:"home"};
     if (raw === "novel") return {type:"novel"};
     if (raw === "all") return {type:"all"};
+    if (raw === "design") return {type:"design"};
     const parts = raw.split("/");
     const type = parts.shift();
     const id = decodeURIComponent(parts.join("/"));
@@ -220,8 +223,10 @@
     let next = "#home";
     if (type === "novel") next = "#novel";
     else if (type === "all") next = "#all";
+    else if (type === "design") next = "#design";
     else if (id) next = "#" + type + "/" + encodeURIComponent(id);
 
+    if (searchQuery) { searchQuery=""; syncSearchInputs(""); }
     const current = location.hash || "#home";
     if (!options.skipHistory && current !== next) {
       routeHistory.push(current);
@@ -287,6 +292,36 @@
     })).filter(group => group.sections.length);
   }
 
+  const DESIGN_GROUPS = [
+    {label:"ภาพรวมและการเริ่มเกม",ids:["direction","presets","opening","calendar","daily"]},
+    {label:"การเรียนและความสามารถ",ids:["learning","exams","progression","resources","signature"]},
+    {label:"เมือง การต่อสู้ และเศรษฐกิจ",ids:["city","night","encounters","economy"]},
+    {label:"NPC ความสัมพันธ์ และภารกิจ",ids:["npc","relationships","quests"]},
+    {label:"Co-op และการบันทึก",ids:["coop","sync","save"]},
+    {label:"เนื้อเรื่องและขอบเขตงาน",ids:["narrative","world-events","finale","scope"]}
+  ];
+  function sectionWorkspace(sectionId) {
+    const root=rootOf(sectionId);
+    return root && root.group==="dev" ? "design" : "all";
+  }
+  function currentWorkspace() {
+    const r=route();
+    if (r.type==="design") return "design";
+    if (r.type==="section") return sectionWorkspace(r.id);
+    if (r.type==="entry") return sectionWorkspace((entryById(r.id)||{}).sectionId);
+    return "all";
+  }
+  function designGroups() {
+    const kids=childrenOf("dev-game");
+    const groups=DESIGN_GROUPS.map(g=>({label:g.label,sections:g.ids.map(id=>kids.find(s=>s.id==="dev-game-"+id)).filter(Boolean)})).filter(g=>g.sections.length);
+    const used=new Set(groups.flatMap(g=>g.sections.map(s=>s.id)));
+    const other=kids.filter(s=>!used.has(s.id));
+    if(other.length) groups.push({label:"ระบบเพิ่มเติม",sections:other});
+    return groups;
+  }
+  function workspaceSwitchHtml(workspace) {
+    return '<div class="workspace-switch" aria-label="เลือกคลังข้อมูล"><button data-nav-go="all" type="button" class="'+(workspace==="all"?"is-active":"")+'" '+(workspace==="all"?'aria-current="page"':'')+'>World Bible<small>โลกและเซตติ้ง</small></button><button data-nav-go="design" type="button" class="'+(workspace==="design"?"is-active":"")+'" '+(workspace==="design"?'aria-current="page"':'')+'>Game Design<small>ระบบเกม</small></button></div>';
+  }
   function navSimple(type,icon,label,active) {
     return '<div class="nav-node-row"><button class="nav-toggle placeholder" tabindex="-1">+</button>' +
       '<button class="nav-btn' + (active ? ' active' : '') + '" data-nav-go="' + esc(type) + '">' +
@@ -338,15 +373,44 @@
         '</div>';
     }
 
-    html += navSimple("all","☰","คลังโลก",r.type === "all");
-    groupedRootSections().forEach(group => {
-      html += '<div class="nav-group-label">' + esc(group.label) + '</div>';
-      group.sections.forEach(root => { html += navSectionNode(root,activeSection,0); });
-    });
+    const workspace=currentWorkspace();
+    html += workspaceSwitchHtml(workspace);
+    if(workspace==="design") {
+      html += navSimple("design","▤","สารบัญระบบเกม",r.type==="design");
+      const game=sectionById("dev-game");
+      const combat=sectionById("dev-combat");
+      if(game) {
+        html += '<button class="nav-index-link" data-section-go="dev-game" type="button">Game Design · '+countUnder("dev-game")+' เรื่อง</button>';
+        designGroups().forEach((group,i)=>{
+          const key="design-"+i;
+          const active=group.sections.some(s=>s.id===activeSection);
+          const open=openRootGroups.has(key)||active;
+          html += '<button class="nav-group-toggle" data-group-toggle="'+key+'" aria-expanded="'+open+'" type="button"><span>'+esc(group.label)+'</span><span>'+ (open?"−":"+") +'</span></button>';
+          if(open) group.sections.forEach(s=>{const doc=entriesIn(s.id,false)[0];html+=doc?'<button type="button" class="nav-doc-link'+(s.id===activeSection?' active':'')+'" data-entry-go="'+esc(doc.id)+'">'+esc(s.readerLabel||s.name)+'</button>':navSectionNode(s,activeSection,0);});
+        });
+      }
+      if(combat) {
+        html += '<button class="nav-index-link" data-section-go="dev-combat" type="button">Combat Specification · '+countUnder("dev-combat")+' เรื่อง</button>';
+        const isCombat=activeSection&&rootOf(activeSection)?.id==="dev-combat";
+        const open=openRootGroups.has("combat")||isCombat;
+        html += '<button type="button" class="nav-group-toggle" data-group-toggle="combat" aria-expanded="'+!!open+'"><span>รายละเอียดระบบต่อสู้</span><span>'+(open?"−":"+")+'</span></button>';
+        if(open) childrenOf("dev-combat").forEach(s=>{const doc=entriesIn(s.id,false)[0];if(doc)html+='<button type="button" class="nav-doc-link'+(s.id===activeSection?' active':'')+'" data-entry-go="'+esc(doc.id)+'">'+esc(s.readerLabel||s.name)+'</button>';});
+      }
+    } else {
+      html += navSimple("all","☰","สารบัญ World Bible",r.type==="all");
+      groupedRootSections().filter(group=>group.id!=="dev").forEach(group=>{
+        const activeRoot=activeSection&&rootOf(activeSection);
+        const open=openRootGroups.has(group.id)||group.sections.some(s=>activeRoot&&s.id===activeRoot.id);
+        html += '<button class="nav-group-toggle" data-group-toggle="'+esc(group.id)+'" type="button" aria-expanded="'+!!open+'"><span>'+esc(group.label)+'</span><span>'+(open?"−":"+")+'</span></button>';
+        if(open) group.sections.forEach(root=>{html+=navSectionNode(root,activeSection,0);});
+      });
+    }
     html += '</div>';
     categoryNav.innerHTML = html;
 
     categoryNav.querySelectorAll("[data-nav-go]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.navGo)));
+    categoryNav.querySelectorAll("[data-entry-go]").forEach(btn=>btn.addEventListener("click",()=>navigate("entry",btn.dataset.entryGo)));
+    categoryNav.querySelectorAll("[data-group-toggle]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.groupToggle;if(openRootGroups.has(key))openRootGroups.delete(key);else openRootGroups.add(key);renderNav();}));
     categoryNav.querySelectorAll("[data-chapter-go]").forEach(btn => btn.addEventListener("click",() => navigate("chapter",btn.dataset.chapterGo)));
     categoryNav.querySelectorAll("[data-section-go]").forEach(btn => btn.addEventListener("click",() => {
       const id = btn.dataset.sectionGo;
@@ -471,14 +535,26 @@
     return '<article class="entry-card' + (character?' character-entry-card':'') + '" data-entry-card="' + esc(entry.id) + '"><div><span class="entry-section">' + esc((sectionById(entry.sectionId) || {}).readerLabel || (sectionById(entry.sectionId) || {}).name || "CaeLum") + '</span><h3>' + esc(displayName) + '</h3>' + (englishName?'<span class="character-card-english-name">'+esc(englishName)+'</span>':'') + characterQuickMeta(entry) + '<p>' + esc(entry.summary || "") + '</p></div><span class="entry-arrow">→</span></article>';
   }
 
+  function archiveChoiceHtml(section) {
+    return '<button class="archive-choice" data-section-jump="'+esc(section.id)+'" type="button"><span class="archive-choice-icon">'+esc(section.icon||"·")+'</span><span class="archive-choice-text"><strong>'+esc(section.readerLabel||section.name)+'</strong><small>'+countUnder(section.id)+' เรื่อง</small></span><span aria-hidden="true">→</span></button>';
+  }
+  function archiveStartHtml() {
+    const world=visibleEntries().filter(e=>sectionWorkspace(e.sectionId)==="all").length;
+    const game=visibleEntries().filter(e=>sectionWorkspace(e.sectionId)==="design").length;
+    return '<section class="archive-start-grid"><button class="archive-start" data-workspace-go="all" type="button"><span class="archive-start-kicker">01 · WORLD BIBLE</span><strong>คลังโลกและเซตติ้ง</strong><p>มหาวิทยาลัย เวทมนตร์ เมือง สังคม ประวัติศาสตร์ และกฎของโลก</p><small>'+world+' บทความ · เปิดสารบัญ →</small></button><button class="archive-start" data-workspace-go="design" type="button"><span class="archive-start-kicker">02 · GAME DESIGN</span><strong>ระบบเกมและการพัฒนา</strong><p>Gameplay Loop, การเรียน, Co-op, ระบบต่อสู้ และ Narrative Design</p><small>'+game+' บทความ · เปิดสารบัญ →</small></button></section>';
+  }
+  function bindWorkspaceLinks() {
+    content.querySelectorAll("[data-workspace-go]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.workspaceGo)));
+  }
   function renderHome() {
     const hero = db.project.assets.bangkokNight || {};
     const starts = ["overview","magic","caelum","law","society","technology"].map(sectionById).filter(Boolean).filter(isVisible);
     content.innerHTML =
       '<section class="hero-cover compact-hero"><div class="cover-image" style="' + styleBg(hero.url) + '"></div><div class="hero-cover-content"><p class="eyebrow">CAE LUM · คลังโลกและเซตติ้ง</p><h1>CaeLum</h1><p class="lead">' + esc(db.project.readerIntro || "") + '</p></div></section>' +
-      authorStripHtml() + novelHomeSpotlightHtml() +
+      archiveStartHtml() + authorStripHtml() + novelHomeSpotlightHtml() +
       '<div class="section-heading"><div><h2>สำรวจโลก CaeLum</h2><p>เลือกอ่านเฉพาะเรื่องที่สนใจได้ทันที ไม่จำเป็นต้องไล่ตามลำดับ</p></div><button class="button secondary" data-open-wiki type="button">ดูคลังทั้งหมด</button></div>' +
-      '<section class="path-grid">' + starts.map(sectionCardHtml).join("") + '</section>';
+      '<section class="archive-compact-grid">' + starts.map(archiveChoiceHtml).join("") + '</section>'; 
+    bindWorkspaceLinks();
     bindSectionCards();
     const all = content.querySelector("[data-open-wiki]");
     if (all) all.addEventListener("click",() => navigate("all"));
@@ -916,7 +992,7 @@
 
     return '<section class="dev-reading-nav">' +
       '<header class="dev-reading-nav-head"><div><span>' + (root.id==="dev-combat" ? "COMBAT DOCUMENTATION" : "GAME DESIGN DOCUMENTATION") + '</span><h2>อ่านหัวข้ออื่นต่อ</h2></div><strong>' + (currentIndex+1) + ' / ' + docs.length + '</strong></header>' +
-      '<div class="dev-topic-strip" aria-label="เลือกหัวข้อเอกสาร Developer">' + topics + '</div>' +
+      '<details class="dev-topic-details"><summary>ดูสารบัญทุกหัวข้อ</summary><div class="dev-topic-strip" aria-label="เลือกหัวข้อเอกสาร Developer">' + topics + '</div></details>' +
       '<div class="dev-step-grid">' + prevCard + nextCard + '</div>' +
       '</section>';
   }
@@ -945,6 +1021,7 @@
   function renderSection(id) {
     const section=sectionById(id);
     if (!section || !isVisible(section)) return navigate("all");
+    if(id==="dev-game"||id==="dev-combat") return renderDesign();
     const asset=assetFor(section);
     const kids=childrenOf(id);
     const entries=entriesIn(id,false).sort((a,b)=>{
@@ -1068,12 +1145,24 @@
       '</article>';
   }
 
+  function bindArticleContents() {
+    const body=content.querySelector(".reader-body");
+    if(!body)return;
+    const headings=Array.from(body.querySelectorAll("h2"));
+    if(headings.length<3)return;
+    const toc=document.createElement("details");
+    toc.className="article-toc";
+    toc.innerHTML='<summary>สารบัญบทความ <small>'+headings.length+' หัวข้อ</small></summary><div>'+headings.map((h,i)=>'<button type="button" data-toc-index="'+i+'">'+esc(h.textContent)+'</button>').join("")+'</div>';
+    body.before(toc);
+    toc.querySelectorAll("[data-toc-index]").forEach(b=>b.addEventListener("click",()=>headings[Number(b.dataset.tocIndex)].scrollIntoView({behavior:"smooth",block:"start"})));
+  }
   function renderEntry(id) {
     const entry=entryById(id);
     if(!entry || !isVisible(entry)) return navigate("all");
     const section=sectionById(entry.sectionId);
-    const related=(entry.links || []).map(relationTarget).filter(Boolean);
+    const related=(entry.links || []).map(relationTarget).filter(x=>x&&isVisible(x));
     const developerCombat=isDeveloperCombatEntry(entry);
+    const hasHeadings=/(^|\n)## /.test(String(entry.details||""));
     if(isCharacterSection(entry.sectionId)) {
       content.innerHTML=characterEntryHtml(entry,section,related);
       bindBreadcrumbs();
@@ -1092,7 +1181,7 @@
       '<article class="reader-article"><header class="reader-article-head"><p class="reader-category">' + esc(section ? section.readerLabel || section.name : "CaeLum") + '</p>' +
       (entry.kicker ? '<p class="reader-kicker">' + esc(entry.kicker) + '</p>' : '') + '<h1>' + esc(entry.title) + '</h1><p class="reader-lead">' + esc(entry.summary || "") + '</p></header>' +
       mapFigure +
-      '<section class="reader-body' + (developerCombat ? ' dev-spec-body' : '') + '">' + (developerCombat ? developerSpecHtml(entry.details || "—",entry.id) : proseHtml(entry.details || "—",entry.id)) + '</section>' +
+      '<section class="reader-body' + ((developerCombat||hasHeadings) ? ' dev-spec-body' : '') + '">' + ((developerCombat||hasHeadings) ? developerSpecHtml(entry.details || "—",entry.id) : proseHtml(entry.details || "—",entry.id)) + '</section>' +
       (entry.publicKnowledge ? '<section class="reader-section"><h2>สิ่งที่คนในโลกรับรู้</h2><div class="reader-section-copy">' + proseHtml(entry.publicKnowledge,entry.id) + '</div></section>' : '') +
       (authorMode && entry.storyUse ? '<section class="reader-section author-reader-section"><h2>ใช้กับเนื้อเรื่องอย่างไร</h2><div class="reader-section-copy">' + proseHtml(entry.storyUse,entry.id) + '</div></section>' : '') +
       (authorMode && entry.continuityNotes ? '<section class="reader-section author-reader-section"><h2>ข้อควรจำเวลาเขียน</h2><div class="reader-section-copy">' + proseHtml(entry.continuityNotes,entry.id) + '</div></section>' : '') +
@@ -1106,47 +1195,65 @@
     content.querySelectorAll("[data-wiki-glossary]").forEach(btn => btn.addEventListener("click",() => navigate("entry",btn.dataset.wikiGlossary)));
     content.querySelectorAll("[data-related]").forEach(btn => btn.addEventListener("click",() => navigate(btn.dataset.relatedType,btn.dataset.related)));
     if(developerCombat) bindDeveloperCombatNav();
+    bindArticleContents();
     const edit=content.querySelector("[data-edit-entry]");
     if(edit) edit.addEventListener("click",() => openEntryEditor(id));
     updateTopbar(entry.title);
   }
 
-  function renderAllTopics() {
-    const sections=visibleSections();
-    const entries=visibleEntries();
-    const groups=groupedRootSections();
-    content.innerHTML =
-      '<div class="search-head archive-index-head"><p class="eyebrow">คลังโลก CaeLum</p><h1>เลือกหัวข้อที่ต้องการสำรวจ</h1><p>ข้อมูลถูกแบ่งตามความหมายของมันในโลกเรื่อง เพื่อให้เห็นตั้งแต่แรกว่ามีอะไรให้อ่านบ้าง</p></div>' +
-      authorStripHtml() +
-      groups.map(group => '<section class="archive-group"><header class="archive-group-head"><div><h2>' + esc(group.label) + '</h2><p>' + esc(group.description) + '</p></div><span>' + group.sections.length + ' หมวด</span></header><div class="topic-grid archive-root-grid">' + group.sections.map(sectionCardHtml).join("") + '</div></section>').join("") +
-      (authorMode ? '<div class="reader-heading"><div><h2>ข้อมูลทั้งหมดสำหรับผู้แต่ง</h2><p>' + entries.length + ' รายการ</p></div></div><section class="library-list">' + entries.map(entryCardHtml).join("") + '</section>' : '');
-    bindSectionCards();
-    content.querySelectorAll("[data-entry-card]").forEach(card => card.addEventListener("click",() => navigate("entry",card.dataset.entryCard)));
+  function designDocHtml(section) {
+    const doc=entriesIn(section.id,false)[0];
+    if(!doc)return archiveChoiceHtml(section);
+    return '<button type="button" class="design-doc" data-doc-go="'+esc(doc.id)+'"><span><strong>'+esc(section.readerLabel||section.name)+'</strong><small>'+esc(doc.summary||"")+'</small></span><span aria-hidden="true">→</span></button>';
+  }
+  function renderDesign() {
+    const game=sectionById("dev-game"),combat=sectionById("dev-combat");
+    content.innerHTML='<div class="archive-page-head"><p class="eyebrow">GAME DESIGN · DEVELOPER</p><h1>ระบบเกมและการพัฒนา</h1><p>ข้อกำหนด Gameplay และสเปกเทคนิคแยกจากข้อเท็จจริงใน World Bible</p><button class="button secondary" data-workspace-go="all" type="button">← ไปคลังโลก</button></div>'+authorStripHtml()+
+      (game?'<section class="design-index"><h2>Game Design <small>'+countUnder(game.id)+' เรื่อง</small></h2><div class="design-index-grid">'+designGroups().map((g,i)=>'<section class="design-index-group"><h3><span>'+String(i+1).padStart(2,"0")+'</span>'+esc(g.label)+'</h3>'+g.sections.map(designDocHtml).join("")+'</section>').join("")+'</div></section>':"")+
+      (combat?'<section class="design-index"><h2>Combat Specification <small>'+countUnder(combat.id)+' เรื่อง</small></h2><div class="design-index-grid"><section class="design-index-group">'+childrenOf(combat.id).map(designDocHtml).join("")+'</section></div></section>':"");
+    bindWorkspaceLinks();
     bindAuthorStrip();
-    updateTopbar("คลังโลก");
+    bindSectionCards();
+    content.querySelectorAll("[data-doc-go]").forEach(b=>b.addEventListener("click",()=>navigate("entry",b.dataset.docGo)));
+    updateTopbar("Game Design");
+  }
+  function renderAllTopics() {
+    const groups=groupedRootSections().filter(g=>g.id!=="dev");
+    const entries=visibleEntries().filter(e=>sectionWorkspace(e.sectionId)==="all");
+    content.innerHTML='<div class="archive-page-head"><p class="eyebrow">WORLD BIBLE</p><h1>คลังโลกและเซตติ้ง</h1><p>'+entries.length+' บทความ · เลือกหมวดที่สนใจ หรือค้นหาจากทุกบทความ</p><button class="button secondary" data-workspace-go="design" type="button">ไป Game Design →</button></div>'+authorStripHtml()+
+      '<div class="archive-group-grid">'+groups.map(group=>'<section class="archive-compact-group"><h2>'+esc(group.label)+'</h2><p>'+esc(group.description)+'</p><div class="archive-compact-list">'+group.sections.map(archiveChoiceHtml).join("")+'</div></section>').join("")+'</div>';
+    bindWorkspaceLinks();
+    bindSectionCards();
+    bindAuthorStrip();
+    updateTopbar("World Bible");
   }
 
   function renderSearch(query) {
-    const q=String(query).toLowerCase();
-    const chapters=visibleChapters().filter(ch => [ch.title,ch.subtitle,ch.summary,ch.body].join(" ").toLowerCase().includes(q));
-    const sections=visibleSections().filter(s => [s.name,s.readerLabel,s.description,s.importance].join(" ").toLowerCase().includes(q));
-    const entries=visibleEntries().filter(e => [e.title,e.character&&e.character.thaiName,e.kicker,e.summary,e.details,e.publicKnowledge].concat(authorMode?[e.storyUse,e.continuityNotes,e.openQuestions]:[]).concat(e.tags||[]).join(" ").toLowerCase().includes(q));
+    const q=String(query).toLocaleLowerCase().trim();
+    const terms=q.split(/\s+/).filter(Boolean);
     const items=[];
-    chapters.forEach(ch => items.push({type:"chapter",id:ch.id,title:"ตอน "+ch.number+" — "+ch.title,text:ch.summary}));
-    sections.forEach(s => items.push({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description}));
-    entries.forEach(e => {
+    function score(title,summary,body){
+      const t=String(title||"").toLocaleLowerCase(),s=String(summary||"").toLocaleLowerCase(),b=String(body||"").toLocaleLowerCase();
+      if(!terms.every(term=>(t+" "+s+" "+b).includes(term)))return -1;
+      return (t===q?100:t.includes(q)?55:0)+terms.reduce((n,term)=>n+(t.includes(term)?16:s.includes(term)?7:1),0)+(s.includes(q)?10:0);
+    }
+    function add(item,body){const n=score(item.title,item.text,body);if(n>=0)items.push({...item,score:n});}
+    visibleChapters().forEach(ch=>add({type:"chapter",id:ch.id,title:"ตอน "+ch.number+" — "+ch.title,text:ch.summary,workspace:"all",label:"นิยาย"},ch.body));
+    visibleSections().forEach(s=>add({type:"section",id:s.id,title:s.readerLabel||s.name,text:s.description,workspace:sectionWorkspace(s.id),label:"หมวด"},s.importance));
+    visibleEntries().forEach(e=>{
       const char=isCharacterSection(e.sectionId);
-      const primary=char?characterDisplayName(e):e.title;
+      const title=char?characterDisplayName(e):e.title;
       const secondary=char?characterEnglishName(e):"";
-      items.push({type:"entry",id:e.id,title:primary+(secondary?" ("+secondary+")":""),text:e.summary});
+      const sec=sectionById(e.sectionId);
+      const workspace=sectionWorkspace(e.sectionId);
+      add({type:"entry",id:e.id,title:title+(secondary?" ("+secondary+")":""),text:e.summary,workspace,label:sec?(sec.readerLabel||sec.name):"บทความ"},[e.kicker,e.details,e.publicKnowledge].concat(authorMode?[e.storyUse,e.continuityNotes,e.openQuestions]:[]).concat(e.tags||[]).join(" "));
     });
-    content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “' + esc(query) + '”</h1><p>พบ ' + items.length + ' รายการจากคลังโลก</p></div><section class="search-results">' +
-      (items.length ? items.map(item => '<article class="search-result" data-search-type="' + item.type + '" data-search-id="' + esc(item.id) + '"><div class="search-copy"><h3>' + esc(item.title) + '</h3><p>' + esc(item.text || "") + '</p></div><span class="search-type">' + (item.type==="chapter"?"นิยาย":item.type==="section"?"หมวด":"ข้อมูล") + '</span></article>').join("") : '<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>') + '</section>';
-    content.querySelectorAll("[data-search-id]").forEach(row => row.addEventListener("click",() => {
-      searchQuery="";
-      syncSearchInputs("");
-      navigate(row.dataset.searchType,row.dataset.searchId);
-    }));
+    const counts={all:items.length,world:items.filter(x=>x.workspace==="all").length,design:items.filter(x=>x.workspace==="design").length};
+    const visible=items.filter(x=>searchScope==="all"||x.workspace===(searchScope==="world"?"all":"design")).sort((a,b)=>b.score-a.score||Number(b.type==="entry")-Number(a.type==="entry")||a.title.localeCompare(b.title,"th"));
+    content.innerHTML='<div class="search-head"><p class="eyebrow">ค้นหา</p><h1>ผลการค้นหา “'+esc(query)+'”</h1><p>พบ '+visible.length+' รายการ · เรียงตามความเกี่ยวข้อง</p></div><div class="search-scope" aria-label="กรองผลการค้นหา">'+[["all","ทั้งหมด"],["world","World Bible"],["design","Game Design"]].map(([id,label])=>'<button type="button" data-search-scope="'+id+'" class="'+(searchScope===id?"is-active":"")+'" aria-pressed="'+(searchScope===id)+'">'+label+' <small>'+counts[id]+'</small></button>').join("")+'</div><section class="search-results">'+
+      (visible.length?visible.map(item=>'<button type="button" class="search-result" data-search-type="'+item.type+'" data-search-id="'+esc(item.id)+'"><div class="search-copy"><small class="result-path">'+(item.workspace==="design"?"GAME DESIGN":"WORLD BIBLE")+' · '+esc(item.label)+'</small><h3>'+esc(item.title)+'</h3><p>'+esc(item.text||"")+'</p></div><span class="search-type" aria-hidden="true">→</span></button>').join(""):'<div class="empty-state">ยังไม่พบข้อมูลที่ตรงกับคำค้นนี้</div>')+'</section>';
+    content.querySelectorAll("[data-search-scope]").forEach(b=>b.addEventListener("click",()=>{searchScope=b.dataset.searchScope;renderSearch(query);}));
+    content.querySelectorAll("[data-search-id]").forEach(row=>row.addEventListener("click",()=>navigate(row.dataset.searchType,row.dataset.searchId)));
     updateTopbar("ค้นหา");
   }
 
@@ -1157,6 +1264,7 @@
     if(r.type==="novel") return renderNovelHome();
     if(r.type==="chapter") return renderChapter(r.id);
     if(r.type==="all") return renderAllTopics();
+    if(r.type==="design") return renderDesign();
     if(r.type==="section") return renderSection(r.id);
     if(r.type==="entry") return renderEntry(r.id);
     renderHome();
@@ -1668,6 +1776,7 @@
   const collapseNavButton = $("collapseNavButton");
   if (collapseNavButton) collapseNavButton.addEventListener("click",() => {
     expandedNav.clear();
+    openRootGroups.clear();
     localStorage.setItem("caelum_nav_open","[]");
     renderNav();
   });
