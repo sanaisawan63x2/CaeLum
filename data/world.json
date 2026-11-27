@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "version": 117,
+  "version": 118,
   "project": {
     "name": "CaeLum",
     "thaiName": "คาเอลัม",
@@ -2984,4 +2984,10 @@
       "updatedAt": "2026-10-11T23:05:00+07:00"
     }
   ]
+,
+  "syncVerification": {
+    "purpose": "ทดสอบการซิงก์เอกสารเท่านั้น ไม่ใช่ข้อมูลเนื้อเรื่องหรือ Canon",
+    "code": "CAELUM-SYNC-118-JADE",
+    "temporary": true
+  }
 }
