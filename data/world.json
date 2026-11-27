@@ -1,11 +1,11 @@
 {
   "schemaVersion": 4,
-  "version": 118,
+  "version": 119,
   "project": {
     "name": "CaeLum",
     "thaiName": "คาเอลัม",
     "subtitle": "คลังโลกและเซตติ้ง",
-    "updatedAt": "2026-10-11T23:05:00+07:00",
+    "updatedAt": "2026-11-27T16:45:00+07:00",
     "readerIntro": "สำรวจโลก CaeLum (คาเอลัม) ผ่านข้อมูลเซตติ้งที่จัดเป็นหมวด ตั้งแต่เวทมนตร์ มหาวิทยาลัย กฎหมาย การเมือง เศรษฐกิจ เทคโนโลยี มอนสเตอร์ ไปจนถึงชีวิตประจำวันของผู้คน",
     "authorIntro": "พื้นที่จัดเก็บ Canon, Draft, ความลับหลังบ้าน และข้อกำหนดด้านความต่อเนื่องสำหรับการพัฒนาเซตติ้งและ World Bible ของ CaeLum",
     "assets": {
@@ -574,6 +574,307 @@
       "importance": "ใช้กำหนดลำดับการพัฒนาและข้อจำกัดทางสถาปัตยกรรมก่อนเพิ่ม Content หรือ Multiplayer",
       "readerLabel": "Prototype และข้อกำหนดทางเทคนิค",
       "updatedAt": "2026-10-11T22:39:00+07:00"
+    },
+    {
+      "id": "dev-game",
+      "name": "Game Design — ระบบเกมและเนื้อเรื่อง",
+      "readerLabel": "Game Design — ระบบเกมและเนื้อเรื่อง",
+      "icon": "◈",
+      "parentId": null,
+      "visibility": "public",
+      "sort": 5,
+      "group": "dev",
+      "description": "เอกสารข้อกำหนดระบบเกม CaeLum ครอบคลุม Gameplay Loop, ชีวิตนักศึกษา, การเรียน, การสำรวจกรุงเทพฯ, พื้นที่ต่อสู้, ความสัมพันธ์, Co-op และ Narrative Design",
+      "importance": "ใช้เป็นแหล่งอ้างอิงการออกแบบเกมฉบับปัจจุบัน แยกจาก World Bible และสเปก Combat เชิงเทคนิค โดยยังแยกประเด็นที่ไม่ได้ข้อสรุป",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-direction",
+      "name": "ทิศทางและหลักการออกแบบ",
+      "readerLabel": "ทิศทางและหลักการออกแบบ",
+      "icon": "◈",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 10,
+      "description": "เกม RPG ชีวิตนักศึกษาเวทมนตร์ที่ผสมการเรียน การสำรวจ การต่อสู้ และการค้นหาเรื่องราวอย่างสมดุล",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ทิศทางและหลักการออกแบบ",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-presets",
+      "name": "ตัวละครผู้เล่นและ Character Preset",
+      "readerLabel": "ตัวละครผู้เล่นและ Character Preset",
+      "icon": "♙",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 20,
+      "description": "เลือกนักศึกษาที่มีตัวตนสำเร็จรูป โดยแต่ละ Preset มีเอกลักษณ์และใช้ได้ทั้ง Single Player และ Co-op",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ตัวละครผู้เล่นและ Character Preset",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-opening",
+      "name": "ช่วงเปิดเกมและการสอบเข้า",
+      "readerLabel": "ช่วงเปิดเกมและการสอบเข้า",
+      "icon": "▷",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 30,
+      "description": "เริ่มหน้ามหาวิทยาลัยในบรรยากาศปกติ การสอบเข้าเป็น Combat Tutorial ที่ข้ามได้ ไม่ใช่เหตุการณ์สำคัญของเนื้อเรื่อง",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ช่วงเปิดเกมและการสอบเข้า",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-calendar",
+      "name": "ปฏิทิน ภาคเรียน และโครงสร้างเวลา",
+      "readerLabel": "ปฏิทิน ภาคเรียน และโครงสร้างเวลา",
+      "icon": "◷",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 40,
+      "description": "หนึ่งวันแบ่งเช้า บ่าย กลางคืน โดยเวลาเปลี่ยนตาม Action และปฏิทินเป็นตัวกำหนดเหตุการณ์ของโลก",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ปฏิทิน ภาคเรียน และโครงสร้างเวลา",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-daily",
+      "name": "วงจรชีวิตนักศึกษาและ Action",
+      "readerLabel": "วงจรชีวิตนักศึกษาและ Action",
+      "icon": "☀",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 50,
+      "description": "การใช้เวลามีต้นทุนจากกิจกรรมที่เสร็จสิ้น ไม่ใช่การเดินสำรวจหรือสนทนาทั่วไป",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด วงจรชีวิตนักศึกษาและ Action",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-learning",
+      "name": "ระบบการเรียนและ Subject Progression",
+      "readerLabel": "ระบบการเรียนและ Subject Progression",
+      "icon": "▤",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 60,
+      "description": "การเรียนซ้ำในศาสตร์เดิมเปิดเวทใหม่เป็นลำดับ ไม่มีการอัปเกรดเลเวลสกิลเดิม",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ระบบการเรียนและ Subject Progression",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-exams",
+      "name": "การสอบและกิจกรรมมหาวิทยาลัย",
+      "readerLabel": "การสอบและกิจกรรมมหาวิทยาลัย",
+      "icon": "✓",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 70,
+      "description": "การสอบกลางภาคและปลายภาคเป็นโอกาสปลดล็อกสกิลของวิชาที่มีเงื่อนไขพิเศษ ไม่ใช่การบังคับทุกวิชา",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด การสอบและกิจกรรมมหาวิทยาลัย",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-progression",
+      "name": "ความก้าวหน้าตัวละครและการจัด Build",
+      "readerLabel": "ความก้าวหน้าตัวละครและการจัด Build",
+      "icon": "✦",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 80,
+      "description": "ไม่มี Character Level และไม่มีการอัปเกรดสกิลเดิม ความสามารถเพิ่มจากการเรียน การค้นพบ และความสัมพันธ์",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ความก้าวหน้าตัวละครและการจัด Build",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-resources",
+      "name": "หัวใจ Mana และการฟื้นฟู",
+      "readerLabel": "หัวใจ Mana และการฟื้นฟู",
+      "icon": "♥",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 90,
+      "description": "ระบบ Heart, Mana และ Ultimate ใช้หลัก Combat Specification เดิม โดยเพิ่มกติกาความก้าวหน้าและ Healing ที่ตกลงล่าสุด",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด หัวใจ Mana และการฟื้นฟู",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-city",
+      "name": "กรุงเทพฯ การเดินทางและกิจกรรม",
+      "readerLabel": "กรุงเทพฯ การเดินทางและกิจกรรม",
+      "icon": "⌖",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 100,
+      "description": "เมืองแบ่งเป็นโซนที่สำรวจได้โดยไม่เสีย Action และมีกิจกรรมที่ให้ผลตอบแทนแตกต่างกัน",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด กรุงเทพฯ การเดินทางและกิจกรรม",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-night",
+      "name": "การตัดสินใจกลางคืนและพื้นที่ต่อสู้",
+      "readerLabel": "การตัดสินใจกลางคืนและพื้นที่ต่อสู้",
+      "icon": "☾",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 110,
+      "description": "เลือกพักหรือออกต่อสู้ผ่านการโหวต ก่อนเลือกหนึ่งพื้นที่และหนึ่งระดับสำหรับคืนนี้",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด การตัดสินใจกลางคืนและพื้นที่ต่อสู้",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-encounters",
+      "name": "ศัตรู ความยาก การล้ม และการชุบชีวิต",
+      "readerLabel": "ศัตรู ความยาก การล้ม และการชุบชีวิต",
+      "icon": "⚔",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 120,
+      "description": "ความยากปรับตามจำนวนผู้เล่น พร้อมระบบช่วยเพื่อนที่ล้มด้วยการโจมตีเพื่อชุบชีวิต",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ศัตรู ความยาก การล้ม และการชุบชีวิต",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-economy",
+      "name": "เงิน รางวัล และทรัพยากร",
+      "readerLabel": "เงิน รางวัล และทรัพยากร",
+      "icon": "◫",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 130,
+      "description": "ผู้เล่นมีเศรษฐกิจส่วนตัว ได้รางวัลจากหลายกิจกรรม ไม่มีการซื้อขายแลกเปลี่ยนระหว่างผู้เล่น",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด เงิน รางวัล และทรัพยากร",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-npc",
+      "name": "NPC ตำแหน่งและกิจกรรมตามวัน",
+      "readerLabel": "NPC ตำแหน่งและกิจกรรมตามวัน",
+      "icon": "♟",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 140,
+      "description": "NPC ประจำตำแหน่งเป็นหลัก และเปลี่ยนที่อยู่ตามวันพิเศษในปฏิทิน",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด NPC ตำแหน่งและกิจกรรมตามวัน",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-relationships",
+      "name": "ความสัมพันธ์ ของขวัญ และสถานะคนรัก",
+      "readerLabel": "ความสัมพันธ์ ของขวัญ และสถานะคนรัก",
+      "icon": "♡",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 150,
+      "description": "พัฒนาความสัมพันธ์ส่วนบุคคลเพื่อเปิดกิจกรรม ข้อมูล โอกาส และเวทพิเศษ โดยไม่ใช้ระบบความสัมพันธ์ที่ลดลง",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ความสัมพันธ์ ของขวัญ และสถานะคนรัก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-signature",
+      "name": "Ultimate และเวทพิเศษเฉพาะตัว",
+      "readerLabel": "Ultimate และเวทพิเศษเฉพาะตัว",
+      "icon": "✧",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 160,
+      "description": "สะสมความสามารถพิเศษจาก NPC ได้ไม่จำกัดตามที่ปลดล็อก แต่ติดตั้ง Ultimate ได้ครั้งละหนึ่งสกิล",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด Ultimate และเวทพิเศษเฉพาะตัว",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-quests",
+      "name": "ภารกิจ การค้นพบ และบันทึก",
+      "readerLabel": "ภารกิจ การค้นพบ และบันทึก",
+      "icon": "▣",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 170,
+      "description": "ภารกิจค้นพบจากการสำรวจ มีบันทึกแต่ไม่ปักตำแหน่ง และไม่แสดงรางวัลก่อนทำสำเร็จ",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ภารกิจ การค้นพบ และบันทึก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-coop",
+      "name": "Co-op ห้องเล่นและตัวตนผู้เล่น",
+      "readerLabel": "Co-op ห้องเล่นและตัวตนผู้เล่น",
+      "icon": "♧",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 180,
+      "description": "โลกของ Host รองรับสูงสุด 4 คน ใช้ปฏิทินเดียวกันแต่แยกความก้าวหน้าส่วนบุคคล",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด Co-op ห้องเล่นและตัวตนผู้เล่น",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-sync",
+      "name": "Co-op การซิงก์เวลาและการโหวต",
+      "readerLabel": "Co-op การซิงก์เวลาและการโหวต",
+      "icon": "⇄",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 190,
+      "description": "ผู้เล่นแยกกิจกรรมกลางวันได้ แต่มีจุดรวมความพร้อมก่อนเปลี่ยนช่วงเวลาและตัดสินใจกลางคืน",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด Co-op การซิงก์เวลาและการโหวต",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-save",
+      "name": "การบันทึกและขอบเขตข้อมูลโลก",
+      "readerLabel": "การบันทึกและขอบเขตข้อมูลโลก",
+      "icon": "▱",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 200,
+      "description": "Auto Save ทุกครั้งที่เปลี่ยนช่วงเวลา โดยแยกสถานะของโลกกับข้อมูลผู้เล่น",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด การบันทึกและขอบเขตข้อมูลโลก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-narrative",
+      "name": "หลักการเล่าเรื่องและสมุดเบาะแส",
+      "readerLabel": "หลักการเล่าเรื่องและสมุดเบาะแส",
+      "icon": "✎",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 210,
+      "description": "Environmental Storytelling และ Optional Narrative: เกมให้ข้อมูลจริงตามที่ค้นพบ ไม่สรุปคำตอบแทนผู้เล่น",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด หลักการเล่าเรื่องและสมุดเบาะแส",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-world-events",
+      "name": "เหตุการณ์หลักและการเปลี่ยนแปลงของโลก",
+      "readerLabel": "เหตุการณ์หลักและการเปลี่ยนแปลงของโลก",
+      "icon": "△",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 220,
+      "description": "เหตุการณ์สำคัญเดินตามปฏิทิน มี Cutscene บังคับ แต่ไม่ผูกผลลัพธ์กับการค้นพบของผู้เล่น",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด เหตุการณ์หลักและการเปลี่ยนแปลงของโลก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-finale",
+      "name": "ทิศทางปริศนาและจุดสิ้นสุด",
+      "readerLabel": "ทิศทางปริศนาและจุดสิ้นสุด",
+      "icon": "◆",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 230,
+      "description": "หลายปริศนาและภัยคุกคามเชื่อมโยงกัน รุนแรงขึ้นจนเกิดเหตุระดับกรุงเทพฯ และการต่อสู้ครั้งสุดท้าย",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ทิศทางปริศนาและจุดสิ้นสุด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-scope",
+      "name": "ขอบเขตที่ยืนยันและข้อมูลรอพัฒนา",
+      "readerLabel": "ขอบเขตที่ยืนยันและข้อมูลรอพัฒนา",
+      "icon": "…",
+      "parentId": "dev-game",
+      "visibility": "public",
+      "sort": 240,
+      "description": "แยกสิ่งที่ตัดสินใจแล้วจากรายละเอียดที่ยังไม่ล็อก เพื่อให้เอกสารเป็นข้อกำหนดเกม ไม่ใช่การประกาศว่าพัฒนาระบบเสร็จแล้ว",
+      "importance": "ข้อกำหนดสำหรับการออกแบบและพัฒนาเกม CaeLum ในหมวด ขอบเขตที่ยืนยันและข้อมูลรอพัฒนา",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     }
   ],
   "entries": [
@@ -2766,13 +3067,13 @@
         "Specification"
       ],
       "summary": "ระบบต่อสู้หลักเป็น Real-time Action Combat ผู้เล่นต้องตัดสินใจและออกคำสั่งตลอดเวลา ทั้งการเคลื่อนที่ เลือกเป้าหมาย ใช้เวท หลบ และบริหารทรัพยากร ไม่มีการรอเทิร์นหรือเลือกคำสั่งแบบระบบเดิม",
-      "details": "## ทิศทางของระบบ\nCombat ของ CaeLum ใช้การควบคุมแบบเรียลไทม์เป็นแกน ผู้เล่นสามารถเคลื่อนที่ วิ่ง เล็ง Lock-on ใช้ Basic Attack ใช้ Spell และ Dodge ได้ระหว่างการต่อสู้ เป้าหมายคือให้การตัดสินใจเกิดจากจังหวะของศัตรูและทรัพยากรที่มีอยู่ ไม่ใช่การรอ Turn\n\n- ระบบปัจจุบันไม่ใช่ Turn-based\n- ไม่มี Turn Order หรือ Speed ที่ใช้กำหนดลำดับเทิร์น\n- ไม่ใช้ระบบ Rock-Paper-Scissors แบบต้นแบบเก่า\n- ไม่ใช้ Combat UI 6 ปุ่มแบบเดิม\n- Basic Attack, Spell และ Dodge เป็น Action ที่เกิดขึ้นทันทีตาม Input และ State ของตัวละคร\n\n## สิ่งที่ผู้เล่นต้องจัดการระหว่างต่อสู้\nผู้เล่นไม่ได้ดูเพียง HP ของศัตรู แต่ต้องดูสถานะของตัวเองหลายอย่างพร้อมกัน ระบบเหล่านี้ต้องทำงานแยกกันและส่งข้อมูลหากันผ่าน State หรือ Event ที่ชัดเจน\n\n- ตำแหน่งและระยะห่างจากศัตรู\n- Current Target หรือทิศทางที่กำลัง Aim\n- Mana ที่เหลืออยู่\n- Cooldown ของ Spell แต่ละช่อง\n- Dodge Charge ที่เหลือ\n- จำนวน Heart ปัจจุบัน\n- Ultimate Gauge\n- จังหวะ Wind-up และ Attack Pattern ของศัตรู\n\n## สถานะของข้อมูลในเอกสาร\nรายละเอียดในหมวด Combat ใช้สามระดับเพื่อให้ทีมรู้ว่าอะไรทำได้เลยและอะไรยังไม่ควรเขียนตายตัว\n\n- ล็อกแล้ว: หลักการของระบบยืนยันแล้ว เช่น Spell มี Cooldown รายสกิล หรือ Dodge มี I-Frame\n- ปรับค่าได้: ระบบยืนยันแล้ว แต่ตัวเลขยังใช้เพื่อ Prototype เช่น Mana สูงสุดหรือเวลาฟื้น Dodge\n- ยังไม่กำหนด: ยังไม่มีข้อสรุป เช่นสูตร Ultimate, Healing หรือ Respawn\n\n> ตัวเลขทดลองต้องอยู่ใน Data หรือ Config ที่แก้ได้ ไม่ควรถูกเขียนฝังไว้ใน Logic หลัก\n\n## ระบบที่ยังไม่ถือว่าเป็นส่วนของ Combat ปัจจุบัน\nรายการนี้ไม่ได้แปลว่าจะไม่มีตลอดไป แต่ยังไม่มีข้อมูลพอให้ถือเป็นข้อกำหนดสำหรับเดฟ\n\n- Guard\n- Parry\n- Heavy Attack\n- Stamina\n- Poise\n- Stagger Gauge\n- Critical Hit\n- Armor Formula\n- Consumable Combat Item\n- Weakness System\n- Status Resistance\n- Elemental Reaction\n\n## เป้าหมายของเอกสารชุดนี้\nเอกสาร 12 หัวข้อนี้เป็นสเปกกลางสำหรับ Gameplay, Code และ UI ทุกระบบที่เกี่ยวกับ Combat ควรอ้างอิงหลักเดียวกันก่อนเพิ่มรายละเอียดเฉพาะ Spell, Enemy หรือ Boss เพื่อป้องกันการมี Logic ซ้ำหรือพฤติกรรมไม่ตรงกันระหว่างระบบ",
+      "details": "## ทิศทางของระบบ\nCombat ของ CaeLum ใช้การควบคุมแบบเรียลไทม์เป็นแกน ผู้เล่นสามารถเคลื่อนที่ วิ่ง เล็ง Lock-on ใช้ Basic Attack ใช้ Spell และ Dodge ได้ระหว่างการต่อสู้ เป้าหมายคือให้การตัดสินใจเกิดจากจังหวะของศัตรูและทรัพยากรที่มีอยู่ ไม่ใช่การรอ Turn\n\n- ระบบปัจจุบันไม่ใช่ Turn-based\n- ไม่มี Turn Order หรือ Speed ที่ใช้กำหนดลำดับเทิร์น\n- ไม่ใช้ระบบ Rock-Paper-Scissors แบบต้นแบบเก่า\n- ไม่ใช้ Combat UI 6 ปุ่มแบบเดิม\n- Basic Attack, Spell และ Dodge เป็น Action ที่เกิดขึ้นทันทีตาม Input และ State ของตัวละคร\n\n## สิ่งที่ผู้เล่นต้องจัดการระหว่างต่อสู้\nผู้เล่นไม่ได้ดูเพียง HP ของศัตรู แต่ต้องดูสถานะของตัวเองหลายอย่างพร้อมกัน ระบบเหล่านี้ต้องทำงานแยกกันและส่งข้อมูลหากันผ่าน State หรือ Event ที่ชัดเจน\n\n- ตำแหน่งและระยะห่างจากศัตรู\n- Current Target หรือทิศทางที่กำลัง Aim\n- Mana ที่เหลืออยู่\n- Cooldown ของ Spell แต่ละช่อง\n- Dodge Charge ที่เหลือ\n- จำนวน Heart ปัจจุบัน\n- Ultimate Gauge\n- จังหวะ Wind-up และ Attack Pattern ของศัตรู\n\n## สถานะของข้อมูลในเอกสาร\nรายละเอียดในหมวด Combat ใช้สามระดับเพื่อให้ทีมรู้ว่าอะไรทำได้เลยและอะไรยังไม่ควรเขียนตายตัว\n\n- ล็อกแล้ว: หลักการของระบบยืนยันแล้ว เช่น Spell มี Cooldown รายสกิล หรือ Dodge มี I-Frame\n- ปรับค่าได้: ระบบยืนยันแล้ว แต่ตัวเลขยังใช้เพื่อ Prototype เช่น Mana สูงสุดหรือเวลาฟื้น Dodge\n- ยังไม่กำหนด: ยังไม่มีข้อสรุป เช่นสูตร Ultimate, ปริมาณ Healing และกฎ Respawn เฉพาะเหตุการณ์\n\n> ตัวเลขทดลองต้องอยู่ใน Data หรือ Config ที่แก้ได้ ไม่ควรถูกเขียนฝังไว้ใน Logic หลัก\n\n## ระบบที่ยังไม่ถือว่าเป็นส่วนของ Combat ปัจจุบัน\nรายการนี้ไม่ได้แปลว่าจะไม่มีตลอดไป แต่ยังไม่มีข้อมูลพอให้ถือเป็นข้อกำหนดสำหรับเดฟ\n\n- Guard\n- Parry\n- Heavy Attack\n- Stamina\n- Poise\n- Stagger Gauge\n- Critical Hit\n- Armor Formula\n- Weakness System\n- Status Resistance\n- Elemental Reaction (ยืนยันว่าไม่ใช้ระบบปฏิกิริยาธาตุ)\n\n## เป้าหมายของเอกสารชุดนี้\nเอกสาร 12 หัวข้อนี้เป็นสเปกกลางสำหรับ Gameplay, Code และ UI ทุกระบบที่เกี่ยวกับ Combat ควรอ้างอิงหลักเดียวกันก่อนเพิ่มรายละเอียดเฉพาะ Spell, Enemy หรือ Boss เพื่อป้องกันการมี Logic ซ้ำหรือพฤติกรรมไม่ตรงกันระหว่างระบบ\n\n## การเชื่อมกับ Game Design ปัจจุบัน\nยืนยันการฟื้น Heart ด้วยไอเทมและเวทรักษา การชุบเพื่อนใน Co-op และการปรับความยากตามจำนวนผู้เล่นแล้ว ดูหมวด Game Design — ระบบเกมและเนื้อเรื่อง สำหรับเงื่อนไขของกิจกรรมและความก้าวหน้า โดยไม่กำหนดค่าบาลานซ์ใน Combat Core",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-overview",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-controls-spec",
@@ -2804,13 +3105,13 @@
         "Specification"
       ],
       "summary": "Mana เป็นทรัพยากรหลักของการโจมตี ทั้ง Basic Attack และ Spell ใช้ Mana ส่วน Dodge ใช้ Charge ของตัวเอง ระบบเหล่านี้ต้องแยกค่าและกฎการฟื้นออกจากกัน",
-      "details": "## Mana\nMana ใช้เป็นข้อจำกัดหลักของการโจมตี ผู้เล่นจึงไม่สามารถกด Basic Attack หรือ Spell ต่อเนื่องโดยไม่ดูทรัพยากร\n\n- Basic Attack ใช้ Mana\n- Spell ทุกชนิดใช้ Mana\n- Mana Cost ของแต่ละ Spell กำหนดแยกกัน\n- หาก Mana ไม่พอ Action นั้นต้องไม่สำเร็จ\n- เมื่อ Cast ไม่สำเร็จจาก Mana ไม่พอ ห้ามหัก Mana\n\n## Max Mana\nเคยใช้ค่า 1000 เป็นตัวเลขสำหรับ Prototype เท่านั้น ค่านี้ยังไม่ใช่ Final Balance\n\nMaxMana ต้องเป็น Parameter ที่ปรับได้จากข้อมูลตัวละครหรือ Config เพื่อรองรับการบาลานซ์และ Progression ภายหลัง\n\n## Mana Cost\nตัวเลข 50, 70 และ 100 ที่เคยใช้เป็นเพียงตัวอย่างช่วงค่า ไม่ใช่ Tier ที่บังคับให้ทุก Spell ต้องใช้\n\nBasic Attack เองควรมี BasicAttackManaCost แยกจาก Spell Data เพื่อให้ปรับความถี่ของการโจมตีพื้นฐานได้โดยไม่กระทบ Spell\n\n## Mana Regeneration\nMana ฟื้นกลับตามเวลา เป้าหมายของระบบคือให้ผู้เล่นมีช่วงใช้ Mana และช่วงเว้นจังหวะเพื่อให้ทรัพยากรกลับมา โดยไม่ต้องออกจาก Combat ทุกครั้ง\n\nแนวคิดพื้นฐานของค่า Runtime คือ CurrentMana เพิ่มตาม ManaRegenRate ต่อวินาทีและไม่เกิน MaxMana\n\n- ManaRegenRate เป็นค่าปรับได้\n- สูตรการฟื้นยังสามารถเปลี่ยนภายหลังได้\n- UI ต้องอ่าน CurrentMana และ MaxMana จากระบบ Mana จริง\n\n## Resource อื่นที่แยกจาก Mana\nDodge Charge และ Ultimate Gauge ไม่ใช่ Mana รูปแบบอื่น จึงไม่ควรถูกเก็บรวมเป็นตัวแปร Resource ชุดเดียวที่ใช้กฎเดียวกัน\n\n- Dodge มีระบบ Charge และ Recharge ของตัวเอง\n- Ultimate มี Gauge และเงื่อนไขเพิ่มเกจของตัวเอง\n- Heart เป็น Health State ไม่ใช่ Mana\n\n## ข้อมูล Runtime ที่ Player ต้องมี\nอย่างน้อย Player Combat Data ต้องสามารถเข้าถึง Max/Current Hearts, Max/Current Mana, Mana Regen Rate, Dodge Charge, Dodge Recharge, I-Frame Duration, Ultimate Gauge และ Equipped Spell ได้ โดยไม่จำเป็นต้องเก็บทั้งหมดไว้ใน Component เดียว",
+      "details": "## Mana\nMana ใช้เป็นข้อจำกัดหลักของการโจมตี ผู้เล่นจึงไม่สามารถกด Basic Attack หรือ Spell ต่อเนื่องโดยไม่ดูทรัพยากร\n\n- Basic Attack ใช้ Mana\n- Spell ทุกชนิดใช้ Mana\n- Mana Cost ของแต่ละ Spell กำหนดแยกกัน\n- หาก Mana ไม่พอ Action นั้นต้องไม่สำเร็จ\n- เมื่อ Cast ไม่สำเร็จจาก Mana ไม่พอ ห้ามหัก Mana\n\n## Max Mana\nเคยใช้ค่า 1000 เป็นตัวเลขสำหรับ Prototype เท่านั้น ค่านี้ยังไม่ใช่ Final Balance\n\nMaxMana ต้องเป็น Parameter ที่ปรับได้จากข้อมูลตัวละครหรือ Config เพื่อรองรับการบาลานซ์และ Progression ภายหลัง\n\n## Mana Cost\nตัวเลข 50, 70 และ 100 ที่เคยใช้เป็นเพียงตัวอย่างช่วงค่า ไม่ใช่ Tier ที่บังคับให้ทุก Spell ต้องใช้\n\nBasic Attack เองควรมี BasicAttackManaCost แยกจาก Spell Data เพื่อให้ปรับความถี่ของการโจมตีพื้นฐานได้โดยไม่กระทบ Spell\n\n## Mana Regeneration\nMana ฟื้นกลับตามเวลา เป้าหมายของระบบคือให้ผู้เล่นมีช่วงใช้ Mana และช่วงเว้นจังหวะเพื่อให้ทรัพยากรกลับมา โดยไม่ต้องออกจาก Combat ทุกครั้ง\n\nแนวคิดพื้นฐานของค่า Runtime คือ CurrentMana เพิ่มตาม ManaRegenRate ต่อวินาทีและไม่เกิน MaxMana\n\n- ManaRegenRate เป็นค่าปรับได้\n- สูตรการฟื้นยังสามารถเปลี่ยนภายหลังได้\n- UI ต้องอ่าน CurrentMana และ MaxMana จากระบบ Mana จริง\n\n## Resource อื่นที่แยกจาก Mana\nDodge Charge และ Ultimate Gauge ไม่ใช่ Mana รูปแบบอื่น จึงไม่ควรถูกเก็บรวมเป็นตัวแปร Resource ชุดเดียวที่ใช้กฎเดียวกัน\n\n- Dodge มีระบบ Charge และ Recharge ของตัวเอง\n- Ultimate มี Gauge และเงื่อนไขเพิ่มเกจของตัวเอง\n- Heart เป็น Health State ไม่ใช่ Mana\n\n## ข้อมูล Runtime ที่ Player ต้องมี\nอย่างน้อย Player Combat Data ต้องสามารถเข้าถึง Max/Current Hearts, Max/Current Mana, Mana Regen Rate, Dodge Charge, Dodge Recharge, I-Frame Duration, Ultimate Gauge และ Equipped Spell ได้ โดยไม่จำเป็นต้องเก็บทั้งหมดไว้ใน Component เดียว\n\n## Max Mana Progression\nไม่มี Character Level การเพิ่ม Max Mana มาจากการเรียน/ฝึกฝน ไอเทมและอุปกรณ์ หรือการค้นพบความรู้พิเศษตามเงื่อนไขที่ออกแบบ ไม่เปลี่ยนกฎ Mana Regeneration ตามเวลาที่กำหนดไว้ข้างต้น",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-resources",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-spells-spec",
@@ -2823,13 +3124,13 @@
         "Specification"
       ],
       "summary": "ผู้เล่นมี Spell Slot 3 ช่องแบบไม่ล็อกประเภท แต่ละ Spell มี Mana Cost และ Cooldown ของตัวเอง ก่อน Cast ต้องผ่านการตรวจ State, Resource และ Targeting ให้ครบ",
-      "details": "## Spell Slot\nผู้เล่นติดตั้ง Spell ได้ 3 ช่อง ช่องทั้งหมดเป็น Slot แบบอิสระ ไม่มีข้อบังคับว่าแต่ละช่องต้องเป็นเวทประเภทใด\n\nตัวอย่าง Build ที่ถูกต้องสามารถเป็น Attack สามช่อง หรือผสม Attack, Buff และ Mobility ตามที่ผู้เล่นต้องการ\n\n- EquippedSpell มี 3 ช่อง\n- Basic Attack ไม่กินหนึ่งใน 3 ช่อง\n- Ultimate ไม่กินหนึ่งใน 3 ช่อง\n- การเลือก Spell เป็นส่วนของ Loadout ไม่ใช่การสุ่มระหว่าง Combat\n\n## Magic Type\nSpell แต่ละตัวมี Gameplay Type เพื่อบอกหน้าที่หลักของสกิล\n\n- Attack\n- Debuff\n- Buff\n- Mobility\n\nประเภทเหล่านี้ใช้สำหรับระบบเกมและการจัดข้อมูล ไม่ใช่ชื่อสาขาวิชาเวทใน Lore และไม่ควรนำไปบังคับว่าผู้เล่นต้องใส่ครบทุกประเภท\n\n## Mana Cost และ Cooldown\nSpell ใช้ Mana และมี Cooldown รายสกิล สองเงื่อนไขนี้ทำงานแยกกัน\n\nผู้เล่นอาจมี Mana พอ แต่ยัง Cast ไม่ได้เพราะ Cooldown ไม่พร้อม หรือ Cooldown พร้อมแล้วแต่ Mana ไม่พอก็ Cast ไม่ได้เช่นกัน\n\n## Cast Validation\nก่อน Execute Spell ให้ตรวจเงื่อนไขตามลำดับที่ชัดเจนเพื่อหลีกเลี่ยงการเสีย Resource จาก Cast ที่ไม่สมบูรณ์\n\n1. Player อยู่ใน State ที่อนุญาตให้ Cast\n2. Spell ถูกติดตั้งใน Slot ที่เรียกใช้\n3. Mana เพียงพอ\n4. Cooldown พร้อม\n5. Target หรือ Aim Condition ถูกต้อง\n6. หัก Mana\n7. เริ่ม Cooldown\n8. เล่น Cast / Animation\n9. ทำ Hit Detection\n10. Apply Damage หรือ Effect\n\nลำดับจริงอาจปรับตาม Animation System แต่เงื่อนไขสำคัญคือต้องไม่ Spend Resource ก่อนรู้ว่า Cast ผ่าน Validation\n\n## Spell Data\nSpell ควรสร้างจาก Data มากกว่าการเขียน Logic ทุกตัวไว้ใน PlayerCombatController โดยข้อมูลขั้นต่ำควรรองรับ\n\n- SpellID และ SpellName\n- MagicType\n- ManaCost\n- Cooldown\n- CastType\n- TargetingType\n- Damage หรือ Effect\n- CastTime\n- Icon\n- Animation\n- VFX\n\nSpell บางตัวไม่จำเป็นต้องใช้ทุก Field แต่โครงสร้างควรรองรับโดยไม่ต้องเปลี่ยน Core System\n\n## Basic Attack\nBasic Attack เป็น Action พื้นฐานแยกจาก Spell Slot และยังใช้ Mana ตามกติกาของ Combat ปัจจุบัน\n\nวิธีจำกัดความถี่ของ Basic Attack เช่น Cooldown, Attack Rate หรือ Animation Lock ยังไม่ล็อก จึงควรแยกไว้ให้เปลี่ยนได้ภายหลัง\n\n## Loadout Lock\nผู้เล่นสามารถจัด Spell ก่อนเข้าสู่ Combat แต่เมื่อ Combat เริ่มแล้ว Loadout ต้องถูก Lock จนกว่าจะออกจาก Combat เพื่อให้การเตรียม Build มีความหมายและลดการสลับสกิลเพื่อแก้สถานการณ์ทันที\n\n## Combo และ Build Synergy\nคำว่า Combo ในระบบปัจจุบันหมายถึง Spell ที่ทำงานส่งต่อกัน เช่น Spell แรกใส่ Debuff แล้ว Spell ที่สองใช้ประโยชน์จากสถานะนั้น\n\n- ไม่มี Timed Combo Counter ที่ล็อกไว้\n- ไม่มีระบบกด 1 → 2 → 3 ตามจังหวะเป็นแกนหลัก\n- ไม่มี Elemental Reaction Engine ที่นำธาตุมาผสมเป็น Reaction ใหม่โดยอัตโนมัติ",
+      "details": "## Spell Slot\nผู้เล่นติดตั้ง Spell ได้ 3 ช่อง ช่องทั้งหมดเป็น Slot แบบอิสระ ไม่มีข้อบังคับว่าแต่ละช่องต้องเป็นเวทประเภทใด\n\nตัวอย่าง Build ที่ถูกต้องสามารถเป็น Attack สามช่อง หรือผสม Attack, Buff และ Mobility ตามที่ผู้เล่นต้องการ\n\n- EquippedSpell มี 3 ช่อง\n- Basic Attack ไม่กินหนึ่งใน 3 ช่อง\n- Ultimate ไม่กินหนึ่งใน 3 ช่อง\n- การเลือก Spell เป็นส่วนของ Loadout ไม่ใช่การสุ่มระหว่าง Combat\n\n## Magic Type\nSpell แต่ละตัวมี Gameplay Type เพื่อบอกหน้าที่หลักของสกิล\n\n- Attack\n- Debuff\n- Buff\n- Mobility\n\nประเภทเหล่านี้ใช้สำหรับระบบเกมและการจัดข้อมูล ไม่ใช่ชื่อสาขาวิชาเวทใน Lore และไม่ควรนำไปบังคับว่าผู้เล่นต้องใส่ครบทุกประเภท\n\n## Mana Cost และ Cooldown\nSpell ใช้ Mana และมี Cooldown รายสกิล สองเงื่อนไขนี้ทำงานแยกกัน\n\nผู้เล่นอาจมี Mana พอ แต่ยัง Cast ไม่ได้เพราะ Cooldown ไม่พร้อม หรือ Cooldown พร้อมแล้วแต่ Mana ไม่พอก็ Cast ไม่ได้เช่นกัน\n\n## Cast Validation\nก่อน Execute Spell ให้ตรวจเงื่อนไขตามลำดับที่ชัดเจนเพื่อหลีกเลี่ยงการเสีย Resource จาก Cast ที่ไม่สมบูรณ์\n\n1. Player อยู่ใน State ที่อนุญาตให้ Cast\n2. Spell ถูกติดตั้งใน Slot ที่เรียกใช้\n3. Mana เพียงพอ\n4. Cooldown พร้อม\n5. Target หรือ Aim Condition ถูกต้อง\n6. หัก Mana\n7. เริ่ม Cooldown\n8. เล่น Cast / Animation\n9. ทำ Hit Detection\n10. Apply Damage หรือ Effect\n\nลำดับจริงอาจปรับตาม Animation System แต่เงื่อนไขสำคัญคือต้องไม่ Spend Resource ก่อนรู้ว่า Cast ผ่าน Validation\n\n## Spell Data\nSpell ควรสร้างจาก Data มากกว่าการเขียน Logic ทุกตัวไว้ใน PlayerCombatController โดยข้อมูลขั้นต่ำควรรองรับ\n\n- SpellID และ SpellName\n- MagicType\n- ManaCost\n- Cooldown\n- CastType\n- TargetingType\n- Damage หรือ Effect\n- CastTime\n- Icon\n- Animation\n- VFX\n\nSpell บางตัวไม่จำเป็นต้องใช้ทุก Field แต่โครงสร้างควรรองรับโดยไม่ต้องเปลี่ยน Core System\n\n## Basic Attack\nBasic Attack เป็น Action พื้นฐานแยกจาก Spell Slot และยังใช้ Mana ตามกติกาของ Combat ปัจจุบัน\n\nวิธีจำกัดความถี่ของ Basic Attack เช่น Cooldown, Attack Rate หรือ Animation Lock ยังไม่ล็อก จึงควรแยกไว้ให้เปลี่ยนได้ภายหลัง\n\n## Loadout Lock\nผู้เล่นสามารถจัด Spell ก่อนเข้าสู่ Combat แต่เมื่อ Combat เริ่มแล้ว Loadout ต้องถูก Lock จนกว่าจะออกจาก Combat เพื่อให้การเตรียม Build มีความหมายและลดการสลับสกิลเพื่อแก้สถานการณ์ทันที\n\n## Combo และ Build Synergy\nคำว่า Combo ในระบบปัจจุบันหมายถึง Spell ที่ทำงานส่งต่อกัน เช่น Spell แรกใส่ Debuff แล้ว Spell ที่สองใช้ประโยชน์จากสถานะนั้น\n\n- ไม่มี Timed Combo Counter ที่ล็อกไว้\n- ไม่มีระบบกด 1 → 2 → 3 ตามจังหวะเป็นแกนหลัก\n- ไม่มี Elemental Reaction Engine ที่นำธาตุมาผสมเป็น Reaction ใหม่โดยอัตโนมัติ\n\n## ข้อตกลงการจัด Build ล่าสุด\nเปลี่ยน Spell Loadout ได้ทุกเวลานอก Combat ไม่สามารถเปลี่ยนระหว่าง Combat ผู้เล่นปลดล็อกเวทใหม่เป็นรายการแยกจากเวทเดิม ไม่มี Spell Upgrade หรือระบบ Elemental Reaction และไม่มีการสอนเวทที่ปลดล็อกแล้วให้สมาชิก Co-op โดยตรง",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-spells",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-dodge-spec",
@@ -2861,13 +3162,13 @@
         "Specification"
       ],
       "summary": "Player ใช้ Heart แทน HP ตัวเลขแบบ RPG ทั่วไป โดยเริ่มประมาณ 3 Hearts ความเสียหายผ่าน Damage Event กลางและต้องตรวจ I-Frame ก่อนเปลี่ยน Current Heart",
-      "details": "## Heart-based Health\nฐานปัจจุบันคือ Player เริ่มด้วย 3 Hearts แนวคิดนี้ต้องการให้ผู้เล่นอ่านจำนวนครั้งที่ยังพลาดได้ง่ายกว่าการดู HP หลักร้อยหรือหลักพัน\n\n- Base Max Hearts = 3\n- Current Hearts เริ่มเท่ากับ Max Hearts เมื่อเข้าสู่สภาพพร้อมเล่น\n- เมื่อ Current Hearts เหลือ 0 ให้เข้าสู่ Defeated State\n- Max Hearts สามารถเพิ่มจาก Progression ได้\n\n## Damage ต่อหนึ่ง Attack\nแนวคิดเริ่มต้นคือ Attack มาตรฐานประมาณ 1 Valid Hit ต่อ 1 Heart แต่ต้องไม่ Hard-code กฎนี้ไว้กับ Damage Receiver\n\nAttack แต่ละชนิดควรกำหนด HeartDamage ของตัวเอง เพื่อให้ Boss, Attack พิเศษ หรือกลไกในอนาคตสามารถสร้างความเสียหายต่างกันได้\n\n## Damage Event กลาง\nการโจมตีไม่ควรแก้ค่า Heart หรือ Enemy Health โดยตรงจาก Script ของสกิลแต่ละตัว ให้ผ่าน Damage Event / Damage Receiver กลางแทน\n\n1. Attacker สร้าง Hit\n2. Hit Detection ยืนยันว่าโดนเป้าหมาย\n3. สร้าง Damage Event\n4. Target Damage Receiver ตรวจ State\n5. Apply หรือ Ignore Damage\n6. ส่งผลลัพธ์กลับไปยังระบบที่ต้องรู้ว่า Damage สำเร็จหรือไม่\n\nแนวทางนี้ทำให้ Ultimate Gauge, Hit Feedback และระบบอื่นฟังผลจากเหตุการณ์เดียวกันได้\n\n## Incoming Damage ต่อ Player\nก่อนลด Heart ต้องตรวจ I-Frame ของ Player\n\n- ถ้า I-Frame Active: ไม่ลด Heart\n- ถ้าไม่มี I-Frame: Apply HeartDamage\n- หลังรับ Damage ให้ตรวจ Current Hearts\n- หาก Current Hearts <= 0 ให้เข้าสู่ Defeated State\n\n## Damage ที่ Player ทำ\nUltimate Gauge เพิ่มเมื่อ Damage ต่อ Enemy ถูกยืนยันแล้ว ไม่ควรเพิ่มจากการกดปุ่มโจมตีเพียงอย่างเดียว เพราะ Attack ที่พลาดเป้าหมายไม่ได้สร้าง Damage จริง\n\n## ส่วนที่ยังไม่กำหนด\nHealing, วิธีคืน Heart ระหว่างหรือหลัง Combat, Damage Reduction, Armor และตำแหน่ง Respawn หลัง Defeated ยังไม่มีข้อสรุป ระบบ Heart จึงไม่ควรเขียนสมมติฐานเหล่านี้เพิ่มเอง",
+      "details": "## Heart-based Health\nฐานปัจจุบันคือ Player เริ่มด้วย 3 Hearts แนวคิดนี้ต้องการให้ผู้เล่นอ่านจำนวนครั้งที่ยังพลาดได้ง่ายกว่าการดู HP หลักร้อยหรือหลักพัน\n\n- Base Max Hearts = 3\n- Current Hearts เริ่มเท่ากับ Max Hearts เมื่อเข้าสู่สภาพพร้อมเล่น\n- เมื่อ Current Hearts เหลือ 0 ให้เข้าสู่ Defeated State\n- Max Hearts สามารถเพิ่มจาก Progression ได้\n\n## Damage ต่อหนึ่ง Attack\nแนวคิดเริ่มต้นคือ Attack มาตรฐานประมาณ 1 Valid Hit ต่อ 1 Heart แต่ต้องไม่ Hard-code กฎนี้ไว้กับ Damage Receiver\n\nAttack แต่ละชนิดควรกำหนด HeartDamage ของตัวเอง เพื่อให้ Boss, Attack พิเศษ หรือกลไกในอนาคตสามารถสร้างความเสียหายต่างกันได้\n\n## Damage Event กลาง\nการโจมตีไม่ควรแก้ค่า Heart หรือ Enemy Health โดยตรงจาก Script ของสกิลแต่ละตัว ให้ผ่าน Damage Event / Damage Receiver กลางแทน\n\n1. Attacker สร้าง Hit\n2. Hit Detection ยืนยันว่าโดนเป้าหมาย\n3. สร้าง Damage Event\n4. Target Damage Receiver ตรวจ State\n5. Apply หรือ Ignore Damage\n6. ส่งผลลัพธ์กลับไปยังระบบที่ต้องรู้ว่า Damage สำเร็จหรือไม่\n\nแนวทางนี้ทำให้ Ultimate Gauge, Hit Feedback และระบบอื่นฟังผลจากเหตุการณ์เดียวกันได้\n\n## Incoming Damage ต่อ Player\nก่อนลด Heart ต้องตรวจ I-Frame ของ Player\n\n- ถ้า I-Frame Active: ไม่ลด Heart\n- ถ้าไม่มี I-Frame: Apply HeartDamage\n- หลังรับ Damage ให้ตรวจ Current Hearts\n- หาก Current Hearts <= 0 ให้เข้าสู่ Defeated State\n\n## Damage ที่ Player ทำ\nUltimate Gauge เพิ่มเมื่อ Damage ต่อ Enemy ถูกยืนยันแล้ว ไม่ควรเพิ่มจากการกดปุ่มโจมตีเพียงอย่างเดียว เพราะ Attack ที่พลาดเป้าหมายไม่ได้สร้าง Damage จริง\n\n## ส่วนที่ยังไม่กำหนด\nยืนยันว่า Max Hearts เพิ่มผ่านความท้าทายพิเศษ และสามารถฟื้น Heart ระหว่างต่อสู้ด้วยไอเทมและเวทมนตร์รักษา ปริมาณ Healing, การคืน Heart หลัง Combat, Damage Reduction, Armor และจำนวนหัวใจสูงสุดยังไม่มีข้อสรุป\n\nใน Co-op เมื่อ Heart เหลือ 0 ให้รองรับสถานะ Downed ที่เพื่อนสามารถช่วยฟื้นด้วยการโจมตีผู้เล่นที่ล้มจนผ่านเงื่อนไขชุบ ไม่ลด Heart เพิ่มจากการโจมตีเพื่อชุบ หากทีมล้มทั้งหมดในพื้นที่ต่อสู้กลางคืน ให้กลับหอพักและเริ่มวันถัดไป โดยเก็บของที่ได้แล้วไว้ กฎพ่ายแพ้ของกิจกรรมชนิดอื่นยังขึ้นอยู่กับประเภทการต่อสู้",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-damage",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-ultimate-spec",
@@ -2880,13 +3181,13 @@
         "Specification"
       ],
       "summary": "Ultimate เป็นระบบแยกจาก Spell Slot, Mana และ Dodge ผู้เล่นสะสม Gauge จาก Damage ที่ทำสำเร็จ ส่วนกติกาการใช้ Ultimate ยังเปิดไว้เพื่อออกแบบภายหลัง",
-      "details": "## ตำแหน่งของ Ultimate ใน Combat\nUltimate เป็นความสามารถพิเศษที่มี Resource ของตัวเอง ไม่ใช่ Spell ช่องที่สี่และไม่ควรถูกยัดเข้าไปใน Spell Cooldown Manager โดยอัตโนมัติ\n\n- Ultimate แยกจาก Spell Slot 3 ช่อง\n- Ultimate Gauge แยกจาก Mana\n- Ultimate Gauge แยกจาก Dodge Charge\n- การแสดงผลอยู่ใน Combat HUD เป็น Resource อีกชุดหนึ่ง\n\n## การเพิ่ม Gauge\nหลักที่ล็อกไว้คือ Gauge เพิ่มเมื่อ Player เป็นฝ่ายสร้าง Damage ต่อศัตรูสำเร็จ\n\nจุดที่เหมาะสำหรับเพิ่ม Gauge คือหลัง Damage Event ยืนยันผล เช่น OnDamageDealt หรือ Damage Confirmed ไม่ใช่ตอนรับ Input Attack\n\nวิธีนี้ทำให้ Attack ที่พลาด, ถูก Block ในระบบอนาคต หรือไม่สร้าง Damage ไม่เพิ่ม Gauge โดยไม่ต้องเขียนเงื่อนไขซ้ำในทุกสกิล\n\n## ค่า Gauge\nHUD สามารถคิดเป็นช่วง 0–100% เพื่อให้ผู้เล่นอ่านง่าย แต่สูตรภายในและจำนวน Point จริงยังไม่ล็อก\n\n- UltimateMaxGauge: ปรับได้\n- Gauge Gain ต่อ Damage: ยังไม่ล็อก\n- Basic Attack และ Spell สามารถให้ Gauge ต่างกันได้ในอนาคต\n- Boss หรือ Target ประเภทต่าง ๆ อาจมี Modifier ได้หากภายหลังต้องการ\n\n## การปลดล็อก Ultimate\nUltimate สามารถเชื่อมกับ Relationship Progression ได้ หมายความว่าผู้เล่นอาจเรียนรู้หรือปลดล็อก Ultimate จากพัฒนาการความสัมพันธ์กับตัวละคร โดย Combat System เพียงรับข้อมูลว่า Ultimate ใดถูกปลดล็อกแล้ว\n\n## สิ่งที่ยังไม่ล็อก\n- ต้องมี Gauge เท่าใดจึงกดใช้ได้\n- ใช้ Gauge ทั้งหมดหรือบางส่วน\n- Ultimate ใช้ Mana เพิ่มหรือไม่\n- มี Cooldown หลังใช้หรือไม่\n- Player ได้ Invulnerability ระหว่าง Animation หรือไม่\n- Gauge คงเหลือข้าม Combat หรือรีเซ็ต\n- สูตร Gain ที่สัมพันธ์กับ Damage จริง\n\n> ตอนทำ Prototype ให้สร้าง Gauge, Gain Event และ HUD ให้ทำงานก่อน โดยยังไม่ต้องผูกสูตร Final Balance",
+      "details": "## ตำแหน่งของ Ultimate ใน Combat\nUltimate เป็นความสามารถพิเศษที่มี Resource ของตัวเอง ไม่ใช่ Spell ช่องที่สี่และไม่ควรถูกยัดเข้าไปใน Spell Cooldown Manager โดยอัตโนมัติ\n\n- Ultimate แยกจาก Spell Slot 3 ช่อง\n- Ultimate Gauge แยกจาก Mana\n- Ultimate Gauge แยกจาก Dodge Charge\n- การแสดงผลอยู่ใน Combat HUD เป็น Resource อีกชุดหนึ่ง\n\n## การเพิ่ม Gauge\nหลักที่ล็อกไว้คือ Gauge เพิ่มเมื่อ Player เป็นฝ่ายสร้าง Damage ต่อศัตรูสำเร็จ\n\nจุดที่เหมาะสำหรับเพิ่ม Gauge คือหลัง Damage Event ยืนยันผล เช่น OnDamageDealt หรือ Damage Confirmed ไม่ใช่ตอนรับ Input Attack\n\nวิธีนี้ทำให้ Attack ที่พลาด, ถูก Block ในระบบอนาคต หรือไม่สร้าง Damage ไม่เพิ่ม Gauge โดยไม่ต้องเขียนเงื่อนไขซ้ำในทุกสกิล\n\n## ค่า Gauge\nHUD สามารถคิดเป็นช่วง 0–100% เพื่อให้ผู้เล่นอ่านง่าย แต่สูตรภายในและจำนวน Point จริงยังไม่ล็อก\n\n- UltimateMaxGauge: ปรับได้\n- Gauge Gain ต่อ Damage: ยังไม่ล็อก\n- Basic Attack และ Spell สามารถให้ Gauge ต่างกันได้ในอนาคต\n- Boss หรือ Target ประเภทต่าง ๆ อาจมี Modifier ได้หากภายหลังต้องการ\n\n## การปลดล็อก Ultimate\nUltimate ปลดล็อกได้จาก Relationship Progression ตามเงื่อนไขเฉพาะ NPC ผู้เล่นสะสมได้ไม่จำกัดตามที่ปลดล็อก และติดตั้งได้ครั้งละ 1 Ultimate แยกจาก Spell 3 ช่อง สามารถสลับไปใช้ความสามารถที่มีแล้วนอก Combat สมาชิก Co-op ปลดล็อกตามความสัมพันธ์ส่วนตัว Combat System เพียงรับ Unlock State และ Equipped Ultimate ไม่ต้องรู้แต้มความสัมพันธ์หรือเงื่อนไขเนื้อเรื่อง\n\n## สิ่งที่ยังไม่ล็อก\n- ต้องมี Gauge เท่าใดจึงกดใช้ได้\n- ใช้ Gauge ทั้งหมดหรือบางส่วน\n- Ultimate ใช้ Mana เพิ่มหรือไม่\n- มี Cooldown หลังใช้หรือไม่\n- Player ได้ Invulnerability ระหว่าง Animation หรือไม่\n- Gauge คงเหลือข้าม Combat หรือรีเซ็ต\n- สูตร Gain ที่สัมพันธ์กับ Damage จริง\n\n> ตอนทำ Prototype ให้สร้าง Gauge, Gain Event และ HUD ให้ทำงานก่อน โดยยังไม่ต้องผูกสูตร Final Balance",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-ultimate",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-enemy-spec",
@@ -2899,13 +3200,13 @@
         "Specification"
       ],
       "summary": "Enemy ต้องมี Attack Pattern ที่อ่านจังหวะได้ เพื่อให้ Dodge, Positioning และการเลือกช่วง Cast มีความหมาย ไม่ควรพึ่ง AI ที่เดินเข้าหาผู้เล่นแล้วสุ่มโจมตีอย่างเดียว",
-      "details": "## เป้าหมายของ Enemy Combat\nCombat ต้องทำให้ผู้เล่นสังเกตและเรียนรู้พฤติกรรมของศัตรูได้ ความยากจึงควรมาจากการอ่าน Pattern, Timing และการจัดการพื้นที่ มากกว่าการสุ่ม Attack โดยไม่มีสัญญาณ\n\n## โครงสร้าง Attack Pattern\nAttack ขั้นพื้นฐานควรคิดอย่างน้อยเป็นสามช่วง\n\n- Wind-up: ช่วงเตรียมโจมตีและส่งสัญญาณให้ผู้เล่นอ่าน\n- Attack: ช่วงที่ Hitbox, Projectile หรือ Damage Logic ทำงาน\n- Recovery: ช่วงหลังโจมตีที่ Enemy ยังไม่กลับเข้าสู่ Action ถัดไปทันที\n\nเวลาของแต่ละช่วงกำหนดต่อ Attack ได้และไม่ควรถูกบังคับให้เท่ากันทุกศัตรู\n\n## Readability\nWind-up ต้องสื่อสารด้วย Animation, VFX, Pose, Sound หรือการเคลื่อนไหวที่ผู้เล่นเรียนรู้ได้ หาก Attack ต้องใช้ Dodge Timing ที่แม่น แต่ไม่มีสัญญาณก่อนโจมตี ระบบจะรู้สึกสุ่มมากกว่าท้าทาย\n\n## ความสัมพันธ์กับ Dodge\nI-Frame และ Dodge Charge จะมีความหมายก็ต่อเมื่อ Player สามารถคาดเดาช่วงอันตรายได้ Enemy Pattern จึงต้องออกแบบร่วมกับ Dodge Window ไม่ใช่ทำ AI เสร็จแล้วค่อยกำหนด Dodge ภายหลัง\n\n## Boss และศัตรูทั่วไป\nBoss สามารถมีหลาย Pattern, Chain หรือ Phase ได้ แต่ Core System ไม่จำเป็นต้องรู้เนื้อหาของ Pattern เหล่านั้น Enemy Attack Controller ควรเปิดให้ Content Layer ใส่ข้อมูล Attack ต่างกันได้\n\n## ส่วนที่ยังไม่ล็อก\nStagger, Poise, Weakness, Armor, Status Resistance และ Decision Tree ของ Enemy AI ยังไม่ได้กำหนด อย่าให้ระบบเหล่านี้กลายเป็น Dependency ของ Core Combat ใน Prototype แรก",
+      "details": "## เป้าหมายของ Enemy Combat\nCombat ต้องทำให้ผู้เล่นสังเกตและเรียนรู้พฤติกรรมของศัตรูได้ ความยากจึงควรมาจากการอ่าน Pattern, Timing และการจัดการพื้นที่ มากกว่าการสุ่ม Attack โดยไม่มีสัญญาณ\n\n## โครงสร้าง Attack Pattern\nAttack ขั้นพื้นฐานควรคิดอย่างน้อยเป็นสามช่วง\n\n- Wind-up: ช่วงเตรียมโจมตีและส่งสัญญาณให้ผู้เล่นอ่าน\n- Attack: ช่วงที่ Hitbox, Projectile หรือ Damage Logic ทำงาน\n- Recovery: ช่วงหลังโจมตีที่ Enemy ยังไม่กลับเข้าสู่ Action ถัดไปทันที\n\nเวลาของแต่ละช่วงกำหนดต่อ Attack ได้และไม่ควรถูกบังคับให้เท่ากันทุกศัตรู\n\n## Readability\nWind-up ต้องสื่อสารด้วย Animation, VFX, Pose, Sound หรือการเคลื่อนไหวที่ผู้เล่นเรียนรู้ได้ หาก Attack ต้องใช้ Dodge Timing ที่แม่น แต่ไม่มีสัญญาณก่อนโจมตี ระบบจะรู้สึกสุ่มมากกว่าท้าทาย\n\n## ความสัมพันธ์กับ Dodge\nI-Frame และ Dodge Charge จะมีความหมายก็ต่อเมื่อ Player สามารถคาดเดาช่วงอันตรายได้ Enemy Pattern จึงต้องออกแบบร่วมกับ Dodge Window ไม่ใช่ทำ AI เสร็จแล้วค่อยกำหนด Dodge ภายหลัง\n\n## Boss และศัตรูทั่วไป\nBoss สามารถมีหลาย Pattern, Chain หรือ Phase ได้ แต่ Core System ไม่จำเป็นต้องรู้เนื้อหาของ Pattern เหล่านั้น Enemy Attack Controller ควรเปิดให้ Content Layer ใส่ข้อมูล Attack ต่างกันได้\n\n## ส่วนที่ยังไม่ล็อก\nStagger, Poise, Weakness, Armor, Status Resistance และ Decision Tree ของ Enemy AI ยังไม่ได้กำหนด อย่าให้ระบบเหล่านี้กลายเป็น Dependency ของ Core Combat ใน Prototype แรก\n\n## Co-op Scaling และ Boss\nความยากเพิ่มตามจำนวนผู้เล่นที่ร่วม Encounter โดยสูตรการปรับยังไม่กำหนด พื้นที่ต่อสู้มีบอสเฉพาะระดับสำคัญ ไม่จำเป็นต้องมีบอสทุกระดับ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-enemy",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-flow-spec",
@@ -2918,13 +3219,13 @@
         "Specification"
       ],
       "summary": "Combat ใช้ State เพื่อบอกว่าขณะนั้น Player และระบบต่าง ๆ ทำอะไรได้บ้าง ช่วยป้องกันปัญหา Action ชนกัน เช่น Cast ระหว่าง Defeated หรือ Consume Dodge ซ้ำในจังหวะที่ไม่ควรเกิด",
-      "details": "## Combat State\nState ระดับภาพรวมขั้นต่ำที่ต้องรองรับคือ Exploration, Combat และ Defeated\n\nเมื่อเปลี่ยน State ระบบอื่นต้องรับรู้ผ่านจุดกลาง ไม่ควรให้แต่ละ Script เดาเองจากระยะของ Enemy หรือสถานะ Animation\n\n## Enter Combat\nเมื่อเข้าสู่ Combat อย่างน้อยให้เกิดผลดังนี้\n\n- Lock Spell Loadout\n- เปิด Combat HUD\n- เปิดระบบ Targeting ที่เกี่ยวข้อง\n- เตรียม Enemy Combat State\n- เก็บสถานะว่าผู้เล่นกำลังอยู่ใน Combat\n\nเงื่อนไขว่าอะไรถือเป็นจุดเริ่ม Combat เช่นระยะ Aggro, Trigger Area หรือ Encounter Script ยังปรับได้\n\n## Exit Combat\nเมื่อออกจาก Combat\n\n- Unlock Spell Loadout\n- Clear Current Target ที่ไม่ควรคงอยู่\n- ปิดหรือลด Combat HUD\n- คืนระบบที่เกี่ยวข้องกลับสู่ Exploration State\n\nกฎเรื่อง Mana, Ultimate หรือ Heart หลังออก Combat ให้ระบบเจ้าของ Resource เป็นคนตัดสิน ไม่ควรถูกรีเซ็ตจาก Combat State Manager โดยไม่มีสเปก\n\n## Player Action State\nPlayer ต้องมีวิธีบอกว่า Action ใดอนุญาตในขณะนั้น ตัวอย่าง State ที่ใช้เป็นฐานได้คือ Normal, Casting, Dodging, Hit, Disabled และ Defeated\n\nไม่จำเป็นต้องใช้ชื่อเหล่านี้ตรง ๆ แต่ระบบต้องตอบค่าอย่าง CanMove, CanAttack, CanCast และ CanDodge ได้ชัดเจน\n\n## Combat Flow ภาพรวม\nEncounter → Enter Combat → Lock Loadout → Target/Aim → Move / Attack / Cast / Dodge → Manage Resource → Deal or Receive Damage → Update Ultimate / Heart → Enemy Defeated → Exit Combat\n\nFlow นี้เป็นภาพรวม ไม่ได้บังคับว่าผู้เล่นต้องทำ Action ตามลำดับเดียวทุกครั้ง\n\n## Spell Cast Flow\nInput → ตรวจ Player State → ตรวจ Spell Slot → ตรวจ Mana → ตรวจ Cooldown → ตรวจ Target/Aim → Spend Mana → Execute Cast → Hit Detection → Damage/Effect\n\n## Incoming Attack Flow\nEnemy Attack → Hit Detection → Player Damage Receiver → ตรวจ I-Frame → Ignore หรือ Apply Heart Damage → ตรวจ Defeated State\n\nDodge มี Flow ของตัวเองในหัวข้อ Dodge & I-Frame แต่ต้องส่ง State ให้ Damage Receiver อ่านได้ในช่วง I-Frame",
+      "details": "## Combat State\nState ระดับภาพรวมขั้นต่ำที่ต้องรองรับคือ Exploration, Combat และ Defeated\n\nเมื่อเปลี่ยน State ระบบอื่นต้องรับรู้ผ่านจุดกลาง ไม่ควรให้แต่ละ Script เดาเองจากระยะของ Enemy หรือสถานะ Animation\n\n## Enter Combat\nเมื่อเข้าสู่ Combat อย่างน้อยให้เกิดผลดังนี้\n\n- Lock Spell Loadout\n- เปิด Combat HUD\n- เปิดระบบ Targeting ที่เกี่ยวข้อง\n- เตรียม Enemy Combat State\n- เก็บสถานะว่าผู้เล่นกำลังอยู่ใน Combat\n\nเงื่อนไขว่าอะไรถือเป็นจุดเริ่ม Combat เช่นระยะ Aggro, Trigger Area หรือ Encounter Script ยังปรับได้\n\n## Exit Combat\nเมื่อออกจาก Combat\n\n- Unlock Spell Loadout\n- Clear Current Target ที่ไม่ควรคงอยู่\n- ปิดหรือลด Combat HUD\n- คืนระบบที่เกี่ยวข้องกลับสู่ Exploration State\n\nกฎเรื่อง Mana, Ultimate หรือ Heart หลังออก Combat ให้ระบบเจ้าของ Resource เป็นคนตัดสิน ไม่ควรถูกรีเซ็ตจาก Combat State Manager โดยไม่มีสเปก\n\n## Player Action State\nPlayer ต้องมีวิธีบอกว่า Action ใดอนุญาตในขณะนั้น ตัวอย่าง State ที่ใช้เป็นฐานได้คือ Normal, Casting, Dodging, Hit, Disabled และ Defeated\n\nไม่จำเป็นต้องใช้ชื่อเหล่านี้ตรง ๆ แต่ระบบต้องตอบค่าอย่าง CanMove, CanAttack, CanCast และ CanDodge ได้ชัดเจน\n\n## Combat Flow ภาพรวม\nEncounter → Enter Combat → Lock Loadout → Target/Aim → Move / Attack / Cast / Dodge → Manage Resource → Deal or Receive Damage → Update Ultimate / Heart → Enemy Defeated → Exit Combat\n\nFlow นี้เป็นภาพรวม ไม่ได้บังคับว่าผู้เล่นต้องทำ Action ตามลำดับเดียวทุกครั้ง\n\n## Spell Cast Flow\nInput → ตรวจ Player State → ตรวจ Spell Slot → ตรวจ Mana → ตรวจ Cooldown → ตรวจ Target/Aim → Spend Mana → Execute Cast → Hit Detection → Damage/Effect\n\n## Incoming Attack Flow\nEnemy Attack → Hit Detection → Player Damage Receiver → ตรวจ I-Frame → Ignore หรือ Apply Heart Damage → ตรวจ Defeated State\n\nDodge มี Flow ของตัวเองในหัวข้อ Dodge & I-Frame แต่ต้องส่ง State ให้ Damage Receiver อ่านได้ในช่วง I-Frame\n\n## Downed และ Team Defeat\nสำหรับ Co-op ให้แยกผู้เล่นที่ล้มและรอชุบจาก Team Defeat ผู้เล่นอื่นโจมตีเป้าหมาย Downed เพื่อสะสมความก้าวหน้าการชุบ ไม่ใช่ Damage ปกติ หากทีมแพ้ทั้งหมดในพื้นที่ต่อสู้กลางคืนให้กลับหอพักและเริ่มวันถัดไป ผู้เล่นที่หลุดออกจาก Encounter รอเข้าร่วมวันถัดไป กฎของการต่อสู้ประเภทอื่นยังต้องออกแบบเฉพาะ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-flow",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-hud-spec",
@@ -2955,14 +3256,14 @@
         "Combat",
         "Specification"
       ],
-      "summary": "ระบบเรียนและ Progression ส่งผลให้ Combat มีความสามารถเพิ่มขึ้น แต่ Logic ของ Class, QTE หรือ Relationship ต้องอยู่นอก Combat Core แล้วส่งผลลัพธ์เข้ามาในรูป Unlock หรือค่าที่อัปเดตแล้ว",
-      "details": "## การเรียนกับ Spell\nผู้เล่นไม่ได้มี Spell ทุกตัวตั้งแต่เริ่มเกม การเข้าเรียนและพัฒนาความชำนาญเป็นหนึ่งในทางที่ใช้ปลดล็อกหรือพัฒนา Spell\n\nCombat System ไม่ต้องรู้ว่าผู้เล่นผ่านบทเรียนไหนมา เพียงตรวจข้อมูล Unlock ก่อนให้ Spell ถูก Equip หรือใช้งาน\n\n## Class QTE\nแนวคิดที่ล็อกไว้คือ Class สามารถมี QTE หรือกิจกรรมที่ใช้วัดการฝึก ผู้เล่นทำกิจกรรมเหล่านี้เพื่อพัฒนา Proficiency หรือผ่าน Requirement ของ Spell\n\n- Class QTE เป็นระบบภายนอก Combat\n- Difficulty ของ QTE สามารถเพิ่มตามความก้าวหน้า\n- วิชาหรือกิจกรรมสามารถหมุนเวียนตามวันหรือสัปดาห์\n- สูตรคะแนน, เกรด และ Threshold สำหรับ Unlock ยังไม่ล็อก\n\n## Spell Unlock\nSave / Progression System ควรเป็นเจ้าของข้อมูลว่า Spell ใดถูกปลดล็อกแล้ว Combat Loadout เพียงอ่านข้อมูลนี้ก่อนอนุญาตให้ Equip\n\nหากมี Spell Upgrade ภายหลัง ควรส่ง Level หรือ Variant ของ Spell เข้ามาผ่าน Data เช่นเดียวกัน\n\n## Heart Progression\nMax Hearts สามารถเพิ่มขึ้นจาก Progression ได้ Health System จึงต้องรับ MaxHearts ที่เปลี่ยนได้ และ HUD ต้องรองรับจำนวน Heart ที่มากกว่า 3\n\nวิธีได้ Heart เพิ่มและจำนวนสูงสุดยังไม่ล็อก\n\n## Ultimate และ Relationship\nUltimate สามารถปลดล็อกจาก Relationship Progression ได้ Combat System รับเพียง Unlock State และ Ultimate Data ที่ใช้งานได้ โดยไม่ควรอ่านค่าความสัมพันธ์หรือ Event เนื้อเรื่องโดยตรง\n\n## หลักการแยกระบบ\nPlayerCombatController ไม่ควรมี Class Schedule, QTE Score, Relationship Point หรือเงื่อนไขเนื้อเรื่องอยู่ข้างใน การแยกนี้ทำให้ทีมปรับ Progression ได้โดยไม่ต้องแก้ Combat Logic และกลับกัน",
+      "summary": "ระบบเรียนและ Progression ปลดล็อกเวทใหม่โดยไม่มี Character Level หรือ Spell Upgrade; Combat Core อ่าน Unlock State และค่าทรัพยากรที่อัปเดตแล้ว",
+      "details": "## การเรียนกับ Spell\nผู้เล่นไม่ได้มี Spell ทุกตัวตั้งแต่เริ่มเกม การเข้าเรียนและพัฒนาความชำนาญเป็นหนึ่งในทางที่ใช้ปลดล็อก Spell ใหม่ตามลำดับของศาสตร์\n\nCombat System ไม่ต้องรู้ว่าผู้เล่นผ่านบทเรียนไหนมา เพียงตรวจข้อมูล Unlock ก่อนให้ Spell ถูก Equip หรือใช้งาน\n\n## Class QTE\nแนวคิดที่ล็อกไว้คือ Class สามารถมี QTE หรือกิจกรรมที่ใช้วัดการฝึก ผู้เล่นทำกิจกรรมเหล่านี้เพื่อพัฒนา Proficiency หรือผ่าน Requirement ของ Spell\n\n- Class QTE เป็นระบบภายนอก Combat\n- Difficulty ของ QTE สามารถเพิ่มตามความก้าวหน้า\n- วิชาหรือกิจกรรมสามารถหมุนเวียนตามวันหรือสัปดาห์\n- สูตรคะแนน, เกรด และ Threshold สำหรับ Unlock ยังไม่ล็อก\n\n## Spell Unlock\nSave / Progression System ควรเป็นเจ้าของข้อมูลว่า Spell ใดถูกปลดล็อกแล้ว Combat Loadout เพียงอ่านข้อมูลนี้ก่อนอนุญาตให้ Equip\n\nไม่มี Character Level หรือ Spell Upgrade ในการออกแบบปัจจุบัน เวทขั้นถัดไปเป็น SpellID แยกต่างหาก และเวทเดิมยังคงอยู่ในรายการที่ปลดล็อก\n\n## Heart Progression\nMax Hearts สามารถเพิ่มขึ้นจาก Progression ได้ Health System จึงต้องรับ MaxHearts ที่เปลี่ยนได้ และ HUD ต้องรองรับจำนวน Heart ที่มากกว่า 3\n\nMax Hearts เพิ่มจากการผ่านความท้าทายพิเศษ จำนวนสูงสุดและความท้าทายรายรายการยังไม่ล็อก\n\n## Ultimate และ Relationship\nUltimate ปลดล็อกจาก Relationship Progression ตามเงื่อนไขเฉพาะ NPC และติดตั้งได้ครั้งละหนึ่งสกิล Combat System รับเพียง Unlock State และ Ultimate Data ที่ใช้งานได้ โดยไม่ควรอ่านค่าความสัมพันธ์หรือ Event เนื้อเรื่องโดยตรง\n\n## หลักการแยกระบบ\nPlayerCombatController ไม่ควรมี Class Schedule, QTE Score, Relationship Point หรือเงื่อนไขเนื้อเรื่องอยู่ข้างใน การแยกนี้ทำให้ทีมปรับ Progression ได้โดยไม่ต้องแก้ Combat Logic และกลับกัน\n\n## Subject Progression\nผู้เล่นเลือกเดินเข้าเรียนศาสตร์ต่าง ๆ ซ้ำได้ตามช่วงเวลาและผ่านเกณฑ์รายวิชาเพื่อปลดล็อกเวทใหม่ตามลำดับ หากพลาดการสอบที่เป็นเงื่อนไขสกิลจะพลาดสกิลนั้นถาวรในรอบนั้น Combat Core อ่านผล Unlock เท่านั้น",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-progression",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     },
     {
       "id": "dev-combat-prototype-spec",
@@ -2975,19 +3276,469 @@
         "Specification"
       ],
       "summary": "Prototype แรกควรพิสูจน์ Core Combat Loop ให้เล่นได้ครบก่อนเพิ่มระบบเสริม โดยแยก Component ตามหน้าที่และทำค่าบาลานซ์ทั้งหมดให้ปรับได้จาก Data หรือ Inspector",
-      "details": "## Minimum Prototype\nเวอร์ชันแรกที่ใช้ทดสอบความรู้สึกของ Combat ควรทำให้ชุดนี้ใช้งานร่วมกันได้จริง\n\n- Player Movement และ Run\n- Camera\n- Lock-on\n- Manual Aim\n- Basic Attack\n- Mana และ Mana Regeneration\n- Spell Slot 3 ช่อง\n- Spell Mana Cost\n- Spell Cooldown\n- Dodge 3 Charges\n- Sequential Dodge Recharge\n- I-Frame\n- Heart Health\n- Enemy รับ Damage ได้\n- Enemy โจมตี Player ได้\n- Ultimate Gauge เพิ่มจาก Damage\n- Combat HUD\n\nเมื่อชุดนี้เล่นได้ครบวงจรจึงค่อยตัดสินใจว่าระบบเสริมใดจำเป็นจริงจากการทดสอบ\n\n## Component Separation\nแนวทางการแบ่งหน้าที่ที่ใช้ได้กับ Unity\n\n- PlayerCombatController: ประสาน Action หลัก ไม่ถือ Logic ทุกระบบ\n- PlayerMovementController: Movement\n- TargetingSystem: Lock-on / Current Target / Aim Context\n- HealthHeartComponent: Heart และ Defeated Check\n- ManaComponent: Mana และ Regeneration\n- DodgeController: Charge, Recharge และ I-Frame\n- SpellCaster: Cast Request และ Execute\n- SpellCooldownManager: Cooldown ราย Spell\n- CombatLoadout: Equipped Spell และ Loadout Lock\n- UltimateGaugeComponent: Gauge และ Gain\n- DamageReceiver: รับ Damage Event\n- CombatStateManager: Exploration / Combat / Defeated\n- CombatHUD: แสดงข้อมูล\n- EnemyCombatController / EnemyAttackController / EnemyAI: ฝั่งศัตรู\n\nชื่อ Component สามารถเปลี่ยนตาม Coding Convention ได้ แต่หน้าที่ไม่ควรถูกรวมจนแก้ระบบหนึ่งแล้วกระทบอีกระบบโดยไม่จำเป็น\n\n## Player Combat Data\nข้อมูล Runtime ขั้นต่ำที่ควรเข้าถึงได้ประกอบด้วย Max/Current Hearts, Max/Current Mana, Mana Regen, Max/Current Dodge Charges, Dodge Recharge Time, I-Frame Duration, Ultimate Gauge และ Equipped Spell\n\nบางค่าอาจอยู่คนละ Component ได้ ไม่จำเป็นต้องมีคลาสข้อมูลยักษ์ตัวเดียว\n\n## ค่าที่ห้าม Hard-code\nค่าต่อไปนี้ต้องเปลี่ยนได้โดยไม่แก้ Flow หลัก\n\n- Max Mana\n- Mana Regen Rate\n- Basic Attack Mana Cost\n- Spell Mana Cost\n- Spell Cooldown\n- Max Hearts\n- Heart Damage\n- Dodge Recharge Time\n- Dodge I-Frame Duration\n- Ultimate Max Gauge\n- Ultimate Gain\n- Spell Damage และ Effect Value\n\nค่าทดลอง เช่น Mana 1000, Spell Cost 50/70/100 และ Dodge Recharge ประมาณ 20 วินาที เป็นจุดเริ่มทดสอบ ไม่ใช่ Final Balance\n\n## ลำดับการพัฒนาแนะนำ\nเริ่มจาก Movement และ Targeting → ทำ Damage Receiver กับ Enemy Dummy → ต่อ Basic Attack และ Mana → ต่อ Spell/Cooldown → ทำ Dodge/I-Frame → Heart/Defeated → Ultimate Gauge → HUD → ทดสอบ Enemy Pattern\n\nลำดับนี้ช่วยให้แต่ละขั้นมีสิ่งที่ทดสอบได้จริงและลดการทำ UI หรือ Content ก่อน Core Logic พร้อม\n\n## รายการที่ยัง TBD\n- Ultimate Activation และสูตร Gauge\n- Healing และ Heart Recovery\n- Death / Respawn\n- Boss Damage Rule\n- Basic Attack Rate / Cooldown\n- Exact Mana Regen Rate\n- Exact Mana Cost\n- Exact Dodge I-Frame Duration\n- Exact Dodge Recharge Time\n- Exact Enemy AI\n- Guard / Parry / Stagger / Poise\n- Weakness / Armor / Critical Hit\n\nอย่าเพิ่มระบบในรายการ TBD เป็น Dependency ของ Prototype จนกว่าจะมีการตัดสินใจใหม่",
+      "details": "## Minimum Prototype\nเวอร์ชันแรกที่ใช้ทดสอบความรู้สึกของ Combat ควรทำให้ชุดนี้ใช้งานร่วมกันได้จริง\n\n- Player Movement และ Run\n- Camera\n- Lock-on\n- Manual Aim\n- Basic Attack\n- Mana และ Mana Regeneration\n- Spell Slot 3 ช่อง\n- Spell Mana Cost\n- Spell Cooldown\n- Dodge 3 Charges\n- Sequential Dodge Recharge\n- I-Frame\n- Heart Health\n- Enemy รับ Damage ได้\n- Enemy โจมตี Player ได้\n- Ultimate Gauge เพิ่มจาก Damage\n- Combat HUD\n\nเมื่อชุดนี้เล่นได้ครบวงจรจึงค่อยตัดสินใจว่าระบบเสริมใดจำเป็นจริงจากการทดสอบ\n\n## Component Separation\nแนวทางการแบ่งหน้าที่ที่ใช้ได้กับ Unity\n\n- PlayerCombatController: ประสาน Action หลัก ไม่ถือ Logic ทุกระบบ\n- PlayerMovementController: Movement\n- TargetingSystem: Lock-on / Current Target / Aim Context\n- HealthHeartComponent: Heart และ Defeated Check\n- ManaComponent: Mana และ Regeneration\n- DodgeController: Charge, Recharge และ I-Frame\n- SpellCaster: Cast Request และ Execute\n- SpellCooldownManager: Cooldown ราย Spell\n- CombatLoadout: Equipped Spell และ Loadout Lock\n- UltimateGaugeComponent: Gauge และ Gain\n- DamageReceiver: รับ Damage Event\n- CombatStateManager: Exploration / Combat / Defeated\n- CombatHUD: แสดงข้อมูล\n- EnemyCombatController / EnemyAttackController / EnemyAI: ฝั่งศัตรู\n\nชื่อ Component สามารถเปลี่ยนตาม Coding Convention ได้ แต่หน้าที่ไม่ควรถูกรวมจนแก้ระบบหนึ่งแล้วกระทบอีกระบบโดยไม่จำเป็น\n\n## Player Combat Data\nข้อมูล Runtime ขั้นต่ำที่ควรเข้าถึงได้ประกอบด้วย Max/Current Hearts, Max/Current Mana, Mana Regen, Max/Current Dodge Charges, Dodge Recharge Time, I-Frame Duration, Ultimate Gauge และ Equipped Spell\n\nบางค่าอาจอยู่คนละ Component ได้ ไม่จำเป็นต้องมีคลาสข้อมูลยักษ์ตัวเดียว\n\n## ค่าที่ห้าม Hard-code\nค่าต่อไปนี้ต้องเปลี่ยนได้โดยไม่แก้ Flow หลัก\n\n- Max Mana\n- Mana Regen Rate\n- Basic Attack Mana Cost\n- Spell Mana Cost\n- Spell Cooldown\n- Max Hearts\n- Heart Damage\n- Dodge Recharge Time\n- Dodge I-Frame Duration\n- Ultimate Max Gauge\n- Ultimate Gain\n- Spell Damage และ Effect Value\n\nค่าทดลอง เช่น Mana 1000, Spell Cost 50/70/100 และ Dodge Recharge ประมาณ 20 วินาที เป็นจุดเริ่มทดสอบ ไม่ใช่ Final Balance\n\n## ลำดับการพัฒนาแนะนำ\nเริ่มจาก Movement และ Targeting → ทำ Damage Receiver กับ Enemy Dummy → ต่อ Basic Attack และ Mana → ต่อ Spell/Cooldown → ทำ Dodge/I-Frame → Heart/Defeated → Ultimate Gauge → HUD → ทดสอบ Enemy Pattern\n\nลำดับนี้ช่วยให้แต่ละขั้นมีสิ่งที่ทดสอบได้จริงและลดการทำ UI หรือ Content ก่อน Core Logic พร้อม\n\n## รายการที่ยัง TBD\n- Ultimate Activation และสูตร Gauge\n- ปริมาณ Healing, Heart Recovery และค่าฟื้นหลัง Encounter (วิธีฟื้นด้วยไอเทมและเวทได้รับการยืนยันแล้ว)\n- รายละเอียด Downed, Revive และ Respawn (ทีมแพ้ในพื้นที่ต่อสู้กลางคืนกลับหอพักและเริ่มวันถัดไปแล้ว)\n- Boss Damage Rule\n- Basic Attack Rate / Cooldown\n- Exact Mana Regen Rate\n- Exact Mana Cost\n- Exact Dodge I-Frame Duration\n- Exact Dodge Recharge Time\n- Exact Enemy AI\n- Guard / Parry / Stagger / Poise\n- Weakness / Armor / Critical Hit\n\nอย่าเพิ่มระบบในรายการ TBD เป็น Dependency ของ Prototype จนกว่าจะมีการตัดสินใจใหม่\n\n> เอกสารนี้ระบุขอบเขต Combat Prototype เดิมเท่านั้น ไม่ได้ยืนยันจำนวนวัน จำนวน Preset หรือขอบเขต Prototype ทั้งเกม ซึ่งยังไม่ได้ตัดสินใจ",
       "links": [],
       "openQuestions": "",
       "sectionId": "dev-combat-prototype",
       "featured": false,
       "kicker": "Developer Combat Specification",
-      "updatedAt": "2026-10-11T23:05:00+07:00"
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-direction-spec",
+      "title": "ทิศทางและหลักการออกแบบ",
+      "sectionId": "dev-game-direction",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เกม RPG ชีวิตนักศึกษาเวทมนตร์ที่ผสมการเรียน การสำรวจ การต่อสู้ และการค้นหาเรื่องราวอย่างสมดุล",
+      "details": "## ภาพรวมประสบการณ์\nCaeLum เป็นเกม RPG ที่ผู้เล่นรับบทนักศึกษาใหม่ปี 1 ของมหาวิทยาลัยเวทมนตร์ในกรุงเทพฯ โลกสมัยใหม่และศาสตร์เวทอยู่ร่วมกันตาม World Bible เดิม ผู้เล่นเลือกใช้ชีวิตผ่านการเรียน การออกสำรวจเมือง การทำกิจกรรม การพัฒนาความสัมพันธ์ และการต่อสู้แบบ Real-time Action โดยทั้งชีวิตนักศึกษา การสำรวจและต่อสู้ และเนื้อเรื่องปริศนาเป็นแกนหลักที่มีความสำคัญร่วมกัน ไม่จำเป็นต้องทำทุกกิจกรรมในหนึ่งรอบ\n\n## อิสระภายใต้เวลา\nความอิสระไม่ได้หมายถึงการหยุดเวลาโลกไว้จนกว่าผู้เล่นพร้อม โลกใช้ปฏิทินร่วมกับกิจกรรมและเหตุการณ์ที่มีวันที่กำหนด ผู้เล่นเลือกได้ว่าจะใช้เวลาช่วงใดไปทำอะไรหรือข้ามช่วงนั้น แต่สิ่งที่ไม่ได้เลือกอาจกลายเป็นโอกาสที่พลาดไป การตัดสินใจหลักคือการจัดสรรเวลา ไม่ใช่การเก็บ EXP เพื่อไล่ตามระดับตัวละคร\n\n## เนื้อเรื่องที่ค้นพบได้\nเนื้อเรื่องกระจายอยู่ในสภาพแวดล้อม ไอเทม เอกสาร ข่าวสาร และ NPC ผู้เล่นไม่จำเป็นต้องรู้ความจริงทั้งหมดจึงจะจบเกมได้ แต่ผู้ที่ตั้งใจสืบค้นสามารถเชื่อมโยงเบาะแส เข้าใจสถานการณ์ และอาจรู้ความจริงก่อนเหตุการณ์เกิดขึ้น เหตุการณ์สำคัญยังคงดำเนินไปและมี Cutscene บังคับตามกำหนด ผู้เล่นไม่ได้เป็นศูนย์กลางของจักรวาลและไม่สามารถเปลี่ยนผลลัพธ์ที่กำหนดไว้\n\n## ความก้าวหน้าผ่านความรู้\nไม่มี Character Level หรือวงจรบังคับฆ่ามอนสเตอร์เพื่อสะสม EXP การเรียนศาสตร์ต่าง ๆ เปิดเวทใหม่ทีละตัว การต่อสู้ การสำรวจ และความสัมพันธ์ให้ผลตอบแทนคนละลักษณะ ผู้เล่นนำความสามารถที่ปลดล็อกมาจัด Build ของตนเองแทนการเพิ่มเลเวลรวม\n\n## การเล่นร่วมกัน\nรองรับ Single Player และ Co-op สูงสุด 4 คน โดยใช้กฎโลกและปฏิทินร่วมกันในห้องของ Host กลางวันแต่ละคนเลือกใช้เวลาและพัฒนาตัวเองคนละทาง กลางคืนตัดสินใจร่วมกันว่าจะพักหรือออกต่อสู้ การออกแบบนี้ทำให้ผู้เล่นที่มีความสนใจต่างกันเล่นร่วมกันได้โดยไม่ต้องมีตารางกิจกรรมเหมือนกัน\n\n## ขอบเขตที่ยังไม่กำหนด\n- ระยะเวลาของเกมฉบับเต็มและขอบเขต Prototype ยังไม่ยืนยัน\n- ตัวอย่างการออกแบบในหมวดนี้ไม่ใช่พล็อตที่เขียนเสร็จหรือฟีเจอร์ที่สร้างแล้ว",
+      "links": [],
+      "openQuestions": "ระยะเวลาของเกมฉบับเต็มและขอบเขต Prototype ยังไม่ยืนยัน\nตัวอย่างการออกแบบในหมวดนี้ไม่ใช่พล็อตที่เขียนเสร็จหรือฟีเจอร์ที่สร้างแล้ว",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-presets-spec",
+      "title": "ตัวละครผู้เล่นและ Character Preset",
+      "sectionId": "dev-game-presets",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เลือกนักศึกษาที่มีตัวตนสำเร็จรูป โดยแต่ละ Preset มีเอกลักษณ์และใช้ได้ทั้ง Single Player และ Co-op",
+      "details": "## การเลือกตัวละคร\nเมื่อเริ่มโลกใหม่ ผู้เล่นเลือกหนึ่งตัวจากชุดตัวละคร Preset ที่เกมเตรียมไว้ แต่ละตัวมีชื่อ ประวัติพื้นฐาน รูปลักษณ์ และตัวตนที่กำหนดไว้แล้ว ความแตกต่างของภูมิหลังจึงเกิดจากการเลือก Preset ไม่ใช่การสร้างประวัติอิสระที่ขัดกับข้อมูลของตัวละคร ผู้เล่นทุกคนเริ่มในฐานะนักศึกษาใหม่ปี 1\n\n## ความสามารถเริ่มต้น\nPreset อาจมีความถนัด สกิลติดตัว Passive หรือเวทสายเลือด/ความสามารถพิเศษที่กำหนดไว้ล่วงหน้า ระดับความสามารถเริ่มต้นขึ้นอยู่กับตัวละครที่เลือก มีตัวเลือกนักศึกษาธรรมดาที่ไม่มีพลังพิเศษติดตัวด้วย เพื่อรองรับผู้เล่นที่ต้องการเริ่มจากพื้นฐานและสร้าง Build ผ่านการเรียนเอง\n\n## ข้อจำกัดใน Co-op\nผู้เล่นในโลกเดียวกันเลือก Preset ไม่ซ้ำกันเพื่อให้ระบุสมาชิกและตัวละครได้ชัดเจน รองรับสูงสุดสี่คน ผู้เล่นไม่สามารถเปลี่ยน Preset หลังเริ่มเกมแล้ว ข้อมูลความสามารถ เงิน ภารกิจ และความสัมพันธ์ผูกกับตัวละครในโลกนั้น ไม่สามารถนำความก้าวหน้าไปใช้ในโลกอื่นได้\n\n## ขอบเขตของประวัติตัวละคร\nแต่ละ Preset ต้องการเพียงประวัติพื้นฐาน ไม่บังคับให้มี Personal Story หรือเส้นเรื่องเฉพาะตัว จึงไม่ทำให้การเลือกตัวละครกำหนดเส้นเรื่องหลักหรือเปลี่ยนเหตุการณ์สำคัญ ตัวละครธรรมดาและตัวละครที่มีพลังพิเศษต่างต้องสามารถเล่นวงจรหลักได้\n\n## แนวทางข้อมูล\nแยกข้อมูล Preset คงที่ออกจากสถานะความก้าวหน้าที่บันทึกในโลกของ Host เพื่อให้เปลี่ยน Build ได้โดยไม่เปลี่ยนตัวตนตัวละคร เวทพิเศษที่ติดตั้งสามารถเปลี่ยนตามรายการที่ปลดล็อกแล้ว แต่ไม่ใช่การเปลี่ยน Preset หรือเขียนประวัติสายเลือดของตัวละครใหม่\n\n## ขอบเขตที่ยังไม่กำหนด\n- จำนวน Preset จริง ชื่อ รูปลักษณ์ Passive และชุดสกิลเริ่มต้นยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "จำนวน Preset จริง ชื่อ รูปลักษณ์ Passive และชุดสกิลเริ่มต้นยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-opening-spec",
+      "title": "ช่วงเปิดเกมและการสอบเข้า",
+      "sectionId": "dev-game-opening",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เริ่มหน้ามหาวิทยาลัยในบรรยากาศปกติ การสอบเข้าเป็น Combat Tutorial ที่ข้ามได้ ไม่ใช่เหตุการณ์สำคัญของเนื้อเรื่อง",
+      "details": "## ลำดับช่วงเปิดเกม\nเริ่มต้นด้วยการเลือก Preset ก่อนเข้าสอบที่มหาวิทยาลัยโดยตรง บริบทเป็นการเริ่มต้นชีวิตนักศึกษาในวันเปิดเทอมปกติ ไม่มีการบังคับให้ผู้เล่นค้นหาปริศนาหรือฟังประวัติศาสตร์โลกก่อนเล่น การสอบทำหน้าที่แนะนำระบบต่อสู้เท่านั้น\n\n## เนื้อหาการฝึก\nใช้หุ่นฝึกเวทเป็นเป้าหมายสำหรับการเรียนรู้การเคลื่อนที่และกล้อง การโจมตีพื้นฐาน การ Lock-on หรือเล็ง การใช้สกิลและ Mana การ Dash หลบ และ Ultimate แสดงคำสั่งหรือเป้าหมายฝึกทีละขั้น แล้วให้ผู้เล่นลงมือใช้ระบบจริงตามเงื่อนไขของบทฝึก ตัวอย่างลำดับนี้เป็นแนวทางการสอน ไม่ใช่ปริศนาเนื้อเรื่อง\n\n## ผ่านได้และข้ามได้\nผู้เล่นสามารถข้าม Tutorial ได้ทันที การสอบเข้าไม่ได้ใช้คะแนนเป็นตัวตัดสิทธิ์เรียนหรือความก้าวหน้า ผู้เล่นที่ทำคะแนนไม่ดีผ่านเข้าสู่เกมปกติได้ การผ่านบทฝึกควรตรวจความสำเร็จของวัตถุประสงค์ฝึก ไม่สร้างผลลัพธ์เนื้อเรื่องหรือโบนัสที่ยังไม่ได้กำหนด\n\n## Co-op Tutorial\nหากเริ่มเกมใน Co-op สมาชิกฝึกพร้อมกันเป็นทีม ใช้ระบบเดียวกับการต่อสู้จริงเพื่อเรียนรู้การประสานงาน การข้ามหรือจบช่วงฝึกต้องนำทีมเข้าสู่สถานะถัดไปโดยไม่ทำให้โลกหรือปฏิทินแยกกัน\n\n## หลังการสอบ\nผู้เล่นเข้าหอพักแบบห้องพักร่วมกันและรอเริ่มเรียนวันถัดไป ก่อนเปิดวงจรชีวิตนักศึกษาเต็มรูปแบบ รายละเอียดห้องและการจัดที่พักให้ยึดการออกแบบมหาวิทยาลัยเดิม ไม่มีบทเล่าประวัติศาสตร์โลกแบบยาวบังคับในช่วงนี้\n\n## ขอบเขตที่ยังไม่กำหนด\n- เงื่อนไขโหวตข้าม Tutorial ใน Co-op และสกิลตัวอย่างสำหรับผู้เล่นแต่ละ Preset ยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "เงื่อนไขโหวตข้าม Tutorial ใน Co-op และสกิลตัวอย่างสำหรับผู้เล่นแต่ละ Preset ยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-calendar-spec",
+      "title": "ปฏิทิน ภาคเรียน และโครงสร้างเวลา",
+      "sectionId": "dev-game-calendar",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "หนึ่งวันแบ่งเช้า บ่าย กลางคืน โดยเวลาเปลี่ยนตาม Action และปฏิทินเป็นตัวกำหนดเหตุการณ์ของโลก",
+      "details": "## หน่วยเวลา\nวันในเกมแบ่งเป็นช่วงเช้า ช่วงบ่าย และช่วงกลางคืน ไม่ใช้การนับนาทีจริงจากการเดินหรือยืนรอ ผู้เล่นเลือกใช้ Action หรือข้ามช่วงโดยไม่ทำกิจกรรมได้ วันที่และช่วงเวลาเป็นค่าระดับโลกที่ใช้ร่วมกันใน Co-op\n\n## ภาคเรียน\nหนึ่งภาคเรียนกำหนด 30 วันในปฏิทินเกม มีช่วงปิดเทอมที่ยังเล่นได้ตามปกติ โดยระยะเวลาปิดเทอมเบื้องต้นอาจเป็นไม่กี่วันถึงหนึ่งสัปดาห์ แต่จำนวนวันยังไม่ล็อก ความตั้งใจเบื้องต้นคือให้หนึ่งปีการศึกษาครอบคลุมอย่างน้อยประมาณสามเดือน ส่วนจำนวนภาคเรียนและจำนวนวันรวมของเกมยังไม่ยืนยัน ไม่ควรตีความว่า 30 วันคือระยะเวลาของเกมทั้งเกม\n\n## ปฏิทินที่ผู้เล่นเห็น\nแสดงกำหนดการตลอดภาคเรียน เช่น วันสอบ เหตุการณ์สำคัญ และกำหนดหมดเขตของภารกิจที่ค้นพบ อีเวนต์พิเศษบางรายการเพิ่มเข้ามาหลังเงื่อนไขของเกมถูก Trigger จึงไม่จำเป็นต้องเปิดเผยข้อมูลอนาคตทุกอย่างตั้งแต่แรก\n\n## การเปลี่ยนวัน\nหลังช่วงกลางคืน เมื่อพักผ่อนหรือจบการออกต่อสู้จึงเข้าสู่วันถัดไป ผู้เล่นเลือกจบช่วงและจบวันผ่านระบบความพร้อม ไม่ใช่ปล่อยให้เวลาหมดไปเอง เหตุการณ์ที่กำหนดไว้ตามวันยังต้องถูกประมวลผลแม้ผู้เล่นข้ามกิจกรรมปกติ\n\n## Chapter และวันสิ้นสุด\nChapter ผูกกับปฏิทิน ไม่ใช่การผ่านเควสต์หลักของผู้เล่น แต่ละ Chapter มีวิธีจบที่แตกต่างตามเหตุการณ์ เกมสิ้นสุดเมื่อผ่านเหตุการณ์สำคัญที่กำหนดไว้ของโลก ไม่ใช่ข้อบังคับว่าต้องเรียนจบหลักสูตรหรือเก็บทุกสกิล\n\n## ขอบเขตที่ยังไม่กำหนด\n- วันปิดเทอม จำนวน Chapter และปฏิทินเหตุการณ์จริงยังไม่กำหนด\n- ระยะเวลารวมต่อปีการศึกษาเป็นแนวคิดเบื้องต้น",
+      "links": [],
+      "openQuestions": "วันปิดเทอม จำนวน Chapter และปฏิทินเหตุการณ์จริงยังไม่กำหนด\nระยะเวลารวมต่อปีการศึกษาเป็นแนวคิดเบื้องต้น",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-daily-spec",
+      "title": "วงจรชีวิตนักศึกษาและ Action",
+      "sectionId": "dev-game-daily",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "การใช้เวลามีต้นทุนจากกิจกรรมที่เสร็จสิ้น ไม่ใช่การเดินสำรวจหรือสนทนาทั่วไป",
+      "details": "## ช่วงเช้า\nเป็นช่วงสำหรับการเรียนในมหาวิทยาลัย ผู้เล่นเลือกวิชาที่ต้องการเรียนหนึ่งกิจกรรม หรือเลือกข้ามได้ ไม่บังคับเข้าเรียนตามรายวิชาที่เกมกำหนดทุกวัน\n\n## ช่วงบ่าย\nเลือกกลับไปเรียนวิชาเดิมหรือวิชาอื่น หรือเดินทางไปสำรวจกรุงเทพฯ ทำงานพิเศษ กิจกรรมเมือง หรือกิจกรรมความสัมพันธ์ที่ใช้ Action ได้ การทำกิจกรรมในเมืองไม่ได้ปิดโอกาสกลับมหาวิทยาลัยก่อนใช้ Action\n\n## ช่วงกลางคืน\nเลือกพักผ่อนเพื่อเข้าสู่วันถัดไป หรือออกต่อสู้ในพื้นที่ที่เปิดแล้ว อาจมีอีเวนต์รวมตัวกับเพื่อนหรือกิจกรรมหอพักในบางวันเป็นเนื้อหาเสริมที่ยังไม่ล็อกจำนวนหรือรายละเอียด การออกต่อสู้ไม่ก่อบทลงโทษความเหนื่อยล้าต่อวันถัดไป\n\n## Action ที่ถูกใช้\nการเดินสำรวจ การเดินทางระหว่างโซน การซื้อของ และการพูดคุยทั่วไปไม่กิน Action การเรียน การจบมินิเกมหรือกิจกรรมที่ถูกกำหนด เช่น ตกปลา และกิจกรรมความสัมพันธ์สำคัญจึงใช้ Action ของช่วงนั้น การใช้ Action ถูกนับเมื่อกิจกรรมเสร็จสิ้นตามเงื่อนไข ไม่ใช่ทันทีที่เดินไปถึงสถานที่\n\n## เมื่อใช้ Action แล้ว\nผู้เล่นยังเคลื่อนที่ สำรวจ พูดคุย หรือซื้อของที่ไม่ใช้ Action ได้ แต่ไม่สามารถเริ่มกิจกรรมที่ต้องใช้ Action เพิ่มในช่วงเดิมได้ จนกว่าจะยืนยันไปช่วงถัดไป ใน Co-op ต้องรอสมาชิกที่กำลังเล่นในโลกนั้นพร้อมก่อนเปลี่ยนเวลา\n\n## การข้ามและวันหยุด\nผู้เล่นเลือกข้ามช่วงโดยไม่ใช้ Action ได้ วันหยุดมีการสำรวจเมือง กิจกรรม NPC และการเรียนเสริมหรือฝึกเวทตามกิจกรรมที่เปิดอยู่ ช่วงที่กิจกรรมพิเศษใช้ทั้งวัน เช่น วันสอบ ต้องใช้กฎกิจกรรมนั้นแทนวงจรปกติ\n\n## ขอบเขตที่ยังไม่กำหนด\n- ข้อยกเว้นการใช้ Action ของแต่ละกิจกรรมและหน้าตา UI ยังต้องระบุรายกิจกรรม",
+      "links": [],
+      "openQuestions": "ข้อยกเว้นการใช้ Action ของแต่ละกิจกรรมและหน้าตา UI ยังต้องระบุรายกิจกรรม",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-learning-spec",
+      "title": "ระบบการเรียนและ Subject Progression",
+      "sectionId": "dev-game-learning",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "การเรียนซ้ำในศาสตร์เดิมเปิดเวทใหม่เป็นลำดับ ไม่มีการอัปเกรดเลเวลสกิลเดิม",
+      "details": "## การเลือกเรียน\nผู้เล่นเลือกเรียนศาสตร์เวทที่สนใจได้อย่างอิสระ ไม่ล็อกตัวละครเข้ากับสายอาชีพหรือวิชาเอกเดียว การลงทะเบียนในความหมายของระบบเกมคือการเลือกเดินเข้าคลาสที่เปิดอยู่ ไม่จำเป็นต้องลงทะเบียนรายวิชาซ้ำด้วยระบบเมนูลงทะเบียนอย่างเป็นทางการ ผู้เล่นสามารถกลับมาเรียนวิชาเดียวกันซ้ำและเรียนวิชาเดียวกันมากกว่าหนึ่งครั้งในวันเดียวหากมีช่วงที่ใช้ได้\n\n## ความก้าวหน้ารายศาสตร์\nแต่ละวิชามี Subject Progression ของตัวเอง การเรียนกิจกรรมสำเร็จตามเงื่อนไขจะพัฒนาความก้าวหน้าของวิชานั้น เมื่อถึงเกณฑ์จึงปลดล็อกสกิลที่กำหนดไว้ ผู้เล่นต้องผ่านพื้นฐานตามลำดับก่อนเรียนเวทขั้นสูงในศาสตร์นั้น แต่สามารถเรียนศาสตร์อื่นสลับไปมาได้\n\n## การปลดล็อกแทนการอัปเกรด\nเวทแต่ละตัวเป็นความสามารถอิสระที่มีข้อมูลและพฤติกรรมของตัวเอง การเรียนต่อไม่ได้เพิ่ม Level หรือ Damage ให้สกิลเก่าโดยอัตโนมัติ ตัวอย่างเชิงอธิบาย: เวทไฟขั้นแรกอาจปลดล็อก Fireball ส่วนขั้นถัดไปอาจปลดล็อก Fire Arrow ผู้เล่นเก็บทั้งสองไว้และเลือกติดตั้งได้ ไม่ใช่ Fireball เปลี่ยนเป็น Fire Arrow ตัวอย่างเวทยันต์อัญเชิญกบแล้วค่อยปลดล็อกยันต์ขั้นสูงก็ใช้หลักเดียวกัน ชื่อเวทเหล่านี้เป็นตัวอย่าง ไม่ใช่รายการสกิลที่ยืนยันสำหรับเกมจริง\n\n## รูปแบบคลาส\nแต่ละวิชาเลือกวิธีประเมินให้สอดคล้องกับศาสตร์นั้นได้ เช่น QTE มินิเกม การตอบคำถาม Quiz การทดสอบความรู้ และการฝึกปฏิบัติจริง ไม่จำเป็นต้องให้ทุกศาสตร์ใช้วิธีเดียวกัน ความยากและเงื่อนไขอาจเพิ่มตามขั้นของ Subject Progression แต่สูตรคะแนนยังไม่ล็อก\n\n## การแสดงข้อมูลและสิทธิ์\nผู้เล่นเห็นแถบความก้าวหน้าของแต่ละวิชาและสกิลถัดไปที่สามารถปลดล็อกได้ สกิลที่ได้แล้วบันทึกในสมุดเวทมนตร์ สามารถกลับมาเรียนซ้ำจนกว่าจะปลดล็อกได้ เวทขั้นต่อไปเป็นรายการใหม่ ไม่ใช่ Rank ของเวทเดิม\n\n## การเรียนร่วมกัน\nสมาชิก Co-op เลือกเรียนคนละวิชาได้ในช่วงเวลาเดียวกัน แต่ละคนสะสมความก้าวหน้าและปลดล็อกสกิลของตนเอง ไม่สามารถสอนหรือโอนเวทที่ปลดล็อกให้เพื่อนโดยตรง การเรียนในโลกจริงของ CaeLum เช่น Foundation, Studio/Lab และ Practical เป็นบริบทเดิม ส่วนลำดับ Unlock เป็นข้อกำหนดของเกม\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายชื่อวิชาและลำดับสกิลทั้งหมด เกณฑ์ความก้าวหน้าต่อคลาส และกฎของวิชาเมื่อสกิลครบยังต้องออกแบบ",
+      "links": [],
+      "openQuestions": "รายชื่อวิชาและลำดับสกิลทั้งหมด เกณฑ์ความก้าวหน้าต่อคลาส และกฎของวิชาเมื่อสกิลครบยังต้องออกแบบ",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-exams-spec",
+      "title": "การสอบและกิจกรรมมหาวิทยาลัย",
+      "sectionId": "dev-game-exams",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "การสอบกลางภาคและปลายภาคเป็นโอกาสปลดล็อกสกิลของวิชาที่มีเงื่อนไขพิเศษ ไม่ใช่การบังคับทุกวิชา",
+      "details": "## การเข้าเรียนและผลของการขาด\nการเข้าเรียนเป็นทางเลือก ผู้เล่นสามารถเลือกไม่เรียนได้โดยเกมไม่บังคับเปลี่ยนเส้นทางหลัก แต่จะพลาดความก้าวหน้า โอกาส หรือกิจกรรมที่ต้องอาศัยการเรียน รวมถึงสกิลที่มีข้อกำหนดการสอบ\n\n## ประเภทการสอบ\nมีสอบกลางภาคและปลายภาคในปฏิทิน และใช้เวลาทั้งวัน การสอบเกี่ยวข้องเฉพาะวิชาที่มีเงื่อนไขพิเศษ ไม่จำเป็นต้องสอบทุกศาสตร์ที่เปิดอยู่ ต่างจากการสอบเข้า ซึ่งเป็น Tutorial และไม่ตัดสิทธิ์ผู้เล่น\n\n## เกณฑ์ผ่าน\nผู้เล่นไม่จำเป็นต้องทำคะแนนสูงสุดเพื่อรับสกิล เพียงผ่านเกณฑ์ที่วิชากำหนด เช่น ตัวอย่างข้อสอบปรนัย 50–60% หรือผ่านวัตถุประสงค์ของภาคปฏิบัติ ตัวเลขนี้เป็นตัวอย่างของเกณฑ์ ไม่ใช่เกณฑ์กลางที่ล็อกทุกวิชา\n\n## ผลการพลาดสอบ\nเลือกไม่สอบหรือสอบไม่ผ่านได้ แต่จะพลาดโอกาสปลดล็อกสกิลที่ผูกกับการสอบนั้นอย่างถาวรภายในรอบการเล่น ไม่มีระบบสอบซ่อมหรือแหล่งอื่นมาทดแทนสกิลสอบที่พลาดโดยอัตโนมัติ กฎนี้แยกจากคลาสเรียนปกติที่เรียนซ้ำได้\n\n## กิจกรรมมหาวิทยาลัย\nนอกจากการเรียนและสอบ อาจมีกิจกรรมเทศกาล งานชมรม การแข่งขันเวทมนตร์ และทัศนศึกษา โดยเพิ่มกำหนดการในปฏิทินตามเงื่อนไขของกิจกรรมที่ออกแบบไว้ กิจกรรมแต่ละชนิดต้องระบุการใช้ Action และผลตอบแทนอย่างชัดเจน\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายชื่อสกิลที่ผูกกับการสอบ วันสอบ และกฎการดำเนินวันสอบสำหรับผู้เล่น Co-op ที่ไม่เข้าสอบยังต้องลงรายละเอียด",
+      "links": [],
+      "openQuestions": "รายชื่อสกิลที่ผูกกับการสอบ วันสอบ และกฎการดำเนินวันสอบสำหรับผู้เล่น Co-op ที่ไม่เข้าสอบยังต้องลงรายละเอียด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-progression-spec",
+      "title": "ความก้าวหน้าตัวละครและการจัด Build",
+      "sectionId": "dev-game-progression",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ไม่มี Character Level และไม่มีการอัปเกรดสกิลเดิม ความสามารถเพิ่มจากการเรียน การค้นพบ และความสัมพันธ์",
+      "details": "## ไม่มีระบบเลเวลตัวละคร\nการฆ่ามอนสเตอร์ไม่ได้ใช้เป็นทางหลักเพื่อสะสม EXP และเพิ่ม Character Level เนื่องจากจุดหมายของเกมคือการเรียนศาสตร์เวทและนำสกิลหลายรูปแบบมาประยุกต์ใช้ การเรียน การต่อสู้ การสำรวจ และความสัมพันธ์มีผลตอบแทนของตนเอง ไม่ต้องผูกทั้งหมดเข้ากับตัวเลขเลเวลเดียว\n\n## เส้นทางปลดล็อก\nสกิลใหม่สามารถได้จากการเรียนและผ่านเงื่อนไขวิชา ค้นหาตำราหรือผู้สอน ฝึกฝนและต่อสู้ หรือกิจกรรมค้นพบที่กำหนด การต่อสู้ยังให้ทรัพยากรและรางวัล แต่ไม่ควรให้ EXP ที่นำไปเพิ่ม Character Level โดยอัตโนมัติ แหล่งเรียนรู้เฉพาะแต่ละเวทยังต้องกำหนดตามเนื้อหา\n\n## การสร้าง Build\nผู้เล่นสวมเวทที่ปลดล็อกแล้วลง Spell Slot อิสระ 3 ช่องตาม Combat Specification เดิม และติดตั้ง Ultimate แยกอีก 1 ช่อง Basic Attack ไม่กินช่อง Spell ผู้เล่นเปลี่ยน Loadout ได้ทุกเวลานอก Combat แต่ระบบล็อกการสลับระหว่างต่อสู้ ไม่มีข้อบังคับให้เลือกเวทอยู่ในศาสตร์เดียวกัน\n\n## ปฏิสัมพันธ์ของสกิล\nไม่มีระบบ Elemental Reaction ที่สร้างปฏิกิริยาธาตุโดยอัตโนมัติ การจัด Build ยังอาศัยหน้าที่ของสกิล เช่น การวางตำแหน่ง การโจมตี การเสริมพลัง หรือการลดสถานะศัตรูตามข้อมูลสกิล โดยไม่ต้องมีตาราง Reaction ใหม่หรืออัปเกรดสกิลเดิม\n\n## สมุดเวทมนตร์\nสมุดเวทมนตร์รวบรวมสกิลที่ผู้เล่นปลดล็อกแล้ว พร้อมคำอธิบาย ผลของสกิล ค่า Damage (ถ้ามี) Mana Cost Cooldown และรายละเอียดที่เกี่ยวข้อง รวมตัวอย่างการใช้งานเพื่อให้ผู้เล่นเปรียบเทียบและจัด Build ได้ สกิลประเภท Buff หรือ Mobility แสดงผลที่ตรงกับประเภทแทนการบังคับมี Damage\n\n## การเติบโตของทรัพยากร\nMax Hearts เพิ่มผ่านความท้าทายพิเศษ และ Max Mana เพิ่มผ่านการเรียน การฝึกฝน ไอเทม อุปกรณ์ หรือการค้นพบความรู้พิเศษตามเงื่อนไขที่กำหนด การเพิ่มทรัพยากรเหล่านี้ไม่ต้องผ่าน Character Level ตัวเลขและเงื่อนไขจริงยังรอการออกแบบบาลานซ์\n\n## ขอบเขตที่ยังไม่กำหนด\n- แหล่งปลดล็อกเฉพาะเวท เกณฑ์ Max Hearts/Max Mana และตัวเลขบาลานซ์ยังไม่ล็อก",
+      "links": [],
+      "openQuestions": "แหล่งปลดล็อกเฉพาะเวท เกณฑ์ Max Hearts/Max Mana และตัวเลขบาลานซ์ยังไม่ล็อก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-resources-spec",
+      "title": "หัวใจ Mana และการฟื้นฟู",
+      "sectionId": "dev-game-resources",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ระบบ Heart, Mana และ Ultimate ใช้หลัก Combat Specification เดิม โดยเพิ่มกติกาความก้าวหน้าและ Healing ที่ตกลงล่าสุด",
+      "details": "## Heart Health\nตัวละครมีหัวใจพื้นฐาน 3 หน่วย โดยการโจมตีมาตรฐานที่โดนจริงประมาณหนึ่ง Hit ต่อหนึ่ง Heart ตามกฎ Damage Receiver เดิม จำนวนหัวใจสูงสุดสามารถเพิ่มจากการผ่านความท้าทายพิเศษ ไม่ใช่เพิ่มตามเลเวลตัวละคร จำนวนสูงสุดและชนิดของความท้าทายยังไม่ล็อก การฟื้นฟูระหว่างต่อสู้ทำได้ทั้งไอเทมและเวทมนตร์รักษา\n\n## Mana\nคงกฎเดิม: Basic Attack และ Spell ใช้ Mana, Mana ฟื้นอัตโนมัติตามเวลาแม้อยู่ใน Combat และไม่เกิน Max Mana ค่า Mana Regen Rate, Cost และ Max Mana เป็นค่าปรับได้ ไม่กำหนดสูตรใหม่จากแบบสอบถาม ค่า 1000 ที่มีในสเปกเดิมเป็นตัวอย่าง Prototype ไม่ใช่ Final Balance\n\n## การเพิ่ม Max Mana\nMax Mana สามารถเติบโตจากการเรียน/ฝึกฝน ไอเทมและอุปกรณ์ ตลอดจนการค้นพบความรู้พิเศษหรือเงื่อนไขกิจกรรมที่เกี่ยวข้อง แยก Max Mana Progression จาก Mana Regeneration ระหว่างต่อสู้เพื่อให้ไม่สับสนระหว่างขนาดทรัพยากรกับการฟื้นฟู\n\n## ทรัพยากรอื่น\nDodge Charge และ Ultimate Gauge แยกออกจาก Mana ตามสเปกเดิม Dodge มี 3 Charge เป็นฐานและฟื้นตามกติกาเดิม ส่วน Ultimate Gauge เพิ่มจากการสร้าง Damage ต่อศัตรูสำเร็จ การชุบเพื่อนไม่ควรถูกนับเป็น Damage ต่อศัตรูเพียงเพราะใช้คำสั่งโจมตี\n\n## สถานะหลังต่อสู้\nการออกต่อสู้กลางคืนไม่มีผลเสียเป็นความเหนื่อยล้าหรือบทลงโทษต่อวันถัดไป ไม่ควรอนุมานจากกฎนี้ว่า HP และ Mana ทุกกรณีต้องรีเซ็ตด้วยสูตรเดียวกัน อัตราฟื้น ปริมาณ Healing และการคืนทรัพยากรหลังจบ Encounter ยังต้องกำหนดแยก\n\n## ขอบเขตที่ยังไม่กำหนด\n- ค่าฟื้นฟูหัวใจ ปริมาณฟื้น Mana ตัวเลข Max Hearts และการรีเซ็ตทรัพยากรหลังต่อสู้ยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "ค่าฟื้นฟูหัวใจ ปริมาณฟื้น Mana ตัวเลข Max Hearts และการรีเซ็ตทรัพยากรหลังต่อสู้ยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-city-spec",
+      "title": "กรุงเทพฯ การเดินทางและกิจกรรม",
+      "sectionId": "dev-game-city",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เมืองแบ่งเป็นโซนที่สำรวจได้โดยไม่เสีย Action และมีกิจกรรมที่ให้ผลตอบแทนแตกต่างกัน",
+      "details": "## โครงสร้างพื้นที่\nกรุงเทพฯ เป็นพื้นที่เล่นหลายเขตหรือโซน ไม่จำเป็นต้องสร้างเมืองทั้งเมืองแบบ Open World ต่อเนื่อง โซนแต่ละแห่งมีสภาพแวดล้อม ร้านค้า NPC กิจกรรม และข้อมูลที่ค้นพบได้ตามบริบทของพื้นที่ โดย CaeLum University เป็นพื้นที่ชีวิตนักศึกษาหลัก\n\n## วิธีเดินทาง\nรองรับการเลือกจุดหมายจากแผนที่เมือง การใช้รถไฟฟ้า และจุดเชื่อมระหว่างพื้นที่ตามรูปแบบพื้นที่นั้น การเดินทางหรือย้ายโซนไม่ใช้ Action ผู้เล่นจึงสำรวจหลายสถานที่ในช่วงเดียวกันได้จนกว่าจะเลือกทำกิจกรรมที่กิน Action\n\n## การเปิดพื้นที่\nสถานที่บางประเภทเปิดตั้งแต่ต้น บางแห่งเปิดตามปฏิทินหรือเงื่อนไขจากการสำรวจ ขึ้นอยู่กับประเภทของสถานที่และเหตุการณ์ ไม่ควรสับสนกับพื้นที่ต่อสู้กลางคืนซึ่งพื้นที่ใหม่ปลดล็อกตามวันที่กำหนด\n\n## กิจกรรมและผลตอบแทน\nกิจกรรมเมืองสามารถให้เงิน ไอเทม ความสัมพันธ์ ความรู้ หรือความสามารถใหม่ เช่น กิจกรรมตกปลาเป็นเพียงตัวอย่างของมินิเกมที่ใช้ Action เมื่อทำเสร็จ ผู้เล่นใช้เวลาช่วงบ่ายได้อย่างอิสระระหว่างเรียนและกิจกรรมเมือง\n\n## การเล่าเรื่องในพื้นที่\nร่องรอยในสิ่งแวดล้อม ข่าวสาร เอกสาร ไอเทมและบทสนทนาสามารถเป็นข้อมูลเกี่ยวกับเหตุการณ์ในโลก ผู้เล่นไม่ต้องตามเครื่องหมายเนื้อเรื่องไปทุกแห่ง หลังเหตุการณ์ใหญ่พื้นที่ที่ได้รับผลกระทบอาจเปลี่ยนแปลง และบางโอกาสหายไปอย่างถาวร\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายชื่อโซน เส้นทางเชื่อม และแผนที่จริงยังต้องออกแบบ ไม่กำหนดเขตตัวอย่างจากการสนทนาเป็นพื้นที่ยืนยัน",
+      "links": [],
+      "openQuestions": "รายชื่อโซน เส้นทางเชื่อม และแผนที่จริงยังต้องออกแบบ ไม่กำหนดเขตตัวอย่างจากการสนทนาเป็นพื้นที่ยืนยัน",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-night-spec",
+      "title": "การตัดสินใจกลางคืนและพื้นที่ต่อสู้",
+      "sectionId": "dev-game-night",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เลือกพักหรือออกต่อสู้ผ่านการโหวต ก่อนเลือกหนึ่งพื้นที่และหนึ่งระดับสำหรับคืนนี้",
+      "details": "## ลำดับการตัดสินใจ\nเมื่อจบกิจกรรมกลางวัน ทีมเข้าสู่ช่วงกลางคืนและโหวตว่าจะเข้านอนหรือออกต่อสู้ หากเสียงเท่ากันให้เข้านอนเป็นค่าเริ่มต้น หากผลคือออกต่อสู้ สมาชิกที่กำลังเล่นต้องเข้าร่วมทั้งหมด ไม่แยกบางคนลงดันเจี้ยนหรือพักอยู่ในช่วงเดียวกัน\n\n## การเลือกพื้นที่\nเมื่อทีมเลือกออกต่อสู้ จึงเปิดหน้าตัวเลือกพื้นที่ต่อสู้ที่สามารถเข้าได้ในกรุงเทพฯ แล้วโหวตเลือกพื้นที่ หากคะแนนเลือกพื้นที่เท่ากัน ให้สุ่มจากเฉพาะพื้นที่ที่ได้คะแนนสูงสุดเท่ากัน ไม่สุ่มจากพื้นที่ที่ยังไม่เปิดหรือไม่ได้อยู่ในกลุ่มเสมอ ใน Single Player ผู้เล่นเลือกได้โดยตรง\n\n## พื้นที่แทนชั้นกายภาพ\nคำว่า Dungeon ใช้ในความหมายของพื้นที่ต่อสู้ที่มีธีมและ Encounter ของเขตนั้น ไม่ได้หมายความว่าทุกพื้นที่เป็นอาคารหลายชั้น พื้นที่อาจใช้ Level 1, Level 2 และระดับต่อไปเพื่อแสดงความก้าวหน้าและความท้าทาย แต่ Level เป็นระดับของ Encounter ไม่ใช่เลเวลตัวละครหรือจำนวนชั้นจริง\n\n## ความก้าวหน้าระดับพื้นที่\nแต่ละพื้นที่มีความก้าวหน้าแยกกัน เมื่อผ่านระดับหนึ่งจึงปลดล็อกระดับถัดไป สามารถย้อนเล่นระดับเดิมที่เปิดแล้วได้ตลอดเมื่อเข้าสู่พื้นที่ได้ ในหนึ่งคืนเลือกเล่นได้หนึ่งระดับเท่านั้น ไม่ไต่หลายระดับต่อเนื่องในคืนเดียว พื้นที่ใหม่เปิดตามวันที่ในปฏิทิน ส่วนระดับใหม่ของพื้นที่เปิดจากการผ่านระดับก่อนหน้า\n\n## รูปแบบและ Encounter\nพื้นที่แต่ละแห่งมี Concept สภาพแวดล้อม ศัตรู และความเปลี่ยนแปลงเฉพาะตัว รองรับทั้งองค์ประกอบที่ออกแบบตายตัวและความแปรผันของพื้นที่ตามรูปแบบที่เหมาะสม บอสมีเฉพาะระดับสำคัญ ไม่จำเป็นต้องมีบอสทุกระดับ รายละเอียดว่าอะไรสุ่มหรือคงที่ยังต้องออกแบบ\n\n## ข้อจำกัดและการจบคืน\nไม่สามารถถอนตัวจากพื้นที่ระหว่างการต่อสู้จนกว่าจะจบ Encounter เมื่อชนะหรือทีมพ่ายแพ้ทั้งหมดให้กลับหอพักและเข้าสู่วันถัดไป ความล้มเหลวไม่ทำให้ย้อนวันหรือสูญเสียของที่เก็บมา และการออกต่อสู้ไม่ทำให้เกิดผลเสียด้านความเหนื่อยในวันถัดไป\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายชื่อพื้นที่และโครงสร้างแต่ละระดับยังไม่กำหนด\n- กฎการเข้าเล่นระดับที่เปิดแล้วในวันพิเศษหรือพื้นที่ที่ถูกเหตุการณ์ปิดยังต้องระบุ",
+      "links": [],
+      "openQuestions": "รายชื่อพื้นที่และโครงสร้างแต่ละระดับยังไม่กำหนด\nกฎการเข้าเล่นระดับที่เปิดแล้วในวันพิเศษหรือพื้นที่ที่ถูกเหตุการณ์ปิดยังต้องระบุ",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-encounters-spec",
+      "title": "ศัตรู ความยาก การล้ม และการชุบชีวิต",
+      "sectionId": "dev-game-encounters",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ความยากปรับตามจำนวนผู้เล่น พร้อมระบบช่วยเพื่อนที่ล้มด้วยการโจมตีเพื่อชุบชีวิต",
+      "details": "## ศัตรูและจำนวนผู้เล่น\nReal-time Action Combat ใช้หลักอ่านรูปแบบศัตรู Wind-up และจังหวะหลบตามสเปกเดิม ความยากเพิ่มตามจำนวนผู้เล่นที่ร่วมต่อสู้เพื่อให้ Solo และ Co-op มีความท้าทายเหมาะสม แต่ยังไม่กำหนดว่าปรับ HP, จำนวนศัตรู, Damage หรือสูตรใดเป็นหลัก\n\n## ระดับที่มีบอส\nบอสอยู่เฉพาะระดับสำคัญของพื้นที่ การต่อสู้ปกติยังต้องมีศัตรูและเงื่อนไขจบระดับที่อ่านได้ ไม่ควรบังคับว่าทุก Level ต้องมี Boss Encounter\n\n## Downed และการช่วยเพื่อน\nเมื่อผู้เล่นล้มใน Co-op เพื่อนสามารถฟื้นผู้เล่นได้ด้วยการกดโจมตีผู้เล่นที่ล้มซ้ำจนถึงเงื่อนไขการชุบ คล้ายแนวทางของ Elden Ring Nightreign การโจมตีเป้าหมายที่ล้มในบริบทนี้เป็น Revive Action ไม่ใช่การลด Heart เพิ่มของเพื่อน จำนวนครั้ง เกณฑ์ และ Heart หลังฟื้นยังไม่กำหนด\n\n## ความพ่ายแพ้\nหากทีมล้มทั้งหมด ให้จบการออกต่อสู้รอบนั้น กลับหอพักและดำเนินสู่วันถัดไป ไม่ย้อนกลับเพื่อเริ่มระดับใหม่และไม่สูญเสียของที่เก็บได้ กฎของการพ่ายแพ้ประเภทอื่น เช่น กิจกรรมฝึกหรือเหตุการณ์เนื้อเรื่อง ให้กำหนดตามประเภทของการต่อสู้ ไม่ใช้ Night Dungeon Rule บังคับทุกกรณี\n\n## สมาชิกหลุดจากการต่อสู้\nหากสมาชิกหลุดระหว่าง Encounter ตัวละครนั้นออกจากพื้นที่ต่อสู้และไม่มี AI ควบคุมแทน สามารถกลับเข้าร่วมได้เมื่อเริ่มวันถัดไป การปรับความยากหลังจำนวนสมาชิกเปลี่ยนกลาง Encounter ยังไม่กำหนด\n\n## การแยกสถานะ\nระบบต่อสู้ต้องแยกสถานะ Downed ที่รอชุบออกจากผล Team Defeat เพื่อให้เพื่อนช่วยได้ก่อนจบ Encounter กฎการฟื้น HP, Revive Progress และการตัดสินทีมแพ้ควรมีเจ้าของสถานะที่ชัดเจนในระบบเกม ตัวเลขเป็นงานบาลานซ์ภายหลัง\n\n## ขอบเขตที่ยังไม่กำหนด\n- สูตร Difficulty Scaling, จำนวนการโจมตีเพื่อชุบ, เวลาหรือข้อจำกัด Downed และกฎแพ้ของบอสสุดท้ายยังไม่ล็อก",
+      "links": [],
+      "openQuestions": "สูตร Difficulty Scaling, จำนวนการโจมตีเพื่อชุบ, เวลาหรือข้อจำกัด Downed และกฎแพ้ของบอสสุดท้ายยังไม่ล็อก",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-economy-spec",
+      "title": "เงิน รางวัล และทรัพยากร",
+      "sectionId": "dev-game-economy",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ผู้เล่นมีเศรษฐกิจส่วนตัว ได้รางวัลจากหลายกิจกรรม ไม่มีการซื้อขายแลกเปลี่ยนระหว่างผู้เล่น",
+      "details": "## ผลตอบแทนมอนสเตอร์\nเมื่อกำจัดมอนสเตอร์สามารถได้รับเงิน วัตถุดิบสร้างอุปกรณ์ และวัตถุดิบเกี่ยวกับเวทมนตร์ตามชนิดศัตรูและกิจกรรม รางวัลเป็นแรงจูงใจให้ต่อสู้โดยไม่ต้องสร้างระบบ Character EXP หรือ Character Level\n\n## รางวัล Co-op\nรางวัลการต่อสู้สุ่มแยกให้ผู้เล่นแต่ละคน ไม่ใช่กองกลางที่ต้องแย่งหรือแบ่งกัน สมาชิกแต่ละคนจัดการทรัพยากรและกระเป๋าเงินของตนเอง เมื่อทีมพ่ายแพ้ยังเก็บของที่ได้รับระหว่างการต่อสู้ทั้งหมดไว้ได้ ไม่รับรางวัลที่ยังไม่ได้จากการผ่านระดับโดยอัตโนมัติ\n\n## รายได้จากชีวิตประจำวัน\nนอกจากการต่อสู้ ผู้เล่นหาเงินผ่านงานพิเศษ รับจ้างใช้เวทมนตร์ และขายไอเทมหรือวัตถุดิบได้ กิจกรรมเหล่านี้เป็นทางเลือกให้ผู้เล่นที่สนใจชีวิตเมืองมากกว่าการออกต่อสู้ทุกคืน\n\n## การซื้อขาย\nผู้เล่นซื้อของจากร้านค้าได้และเก็บไอเทมในข้อมูลตัวเอง ไม่สามารถแลกเปลี่ยนไอเทมระหว่างผู้เล่น Co-op ได้ กฎนี้ไม่ห้ามการซื้อขายกับ NPC หรือร้านค้า และไม่ควรเพิ่มระบบเงินกองกลางหรือส่งของให้เพื่อนโดยไม่มีการยืนยัน\n\n## อุปกรณ์และการคราฟต์\nอุปกรณ์สามารถหาได้จากร้านค้า รางวัล การคราฟต์ และการสำรวจ ไม่มีระบบอัปเกรดอุปกรณ์ตามระดับที่กำหนดไว้ในปัจจุบัน ประเภทอุปกรณ์ ช่องสวมใส่ ค่าสถานะ และสูตรการคราฟต์ยังไม่ได้ข้อสรุป จึงแยกแนวคิดหาอุปกรณ์ออกจากการกำหนด Equipment Stats\n\n## ขอบเขตที่ยังไม่กำหนด\n- ประเภทอุปกรณ์ สูตรคราฟต์ ราคาและเงินเริ่มต้น Loot Table และกฎรางวัลเมื่อหลุดยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "ประเภทอุปกรณ์ สูตรคราฟต์ ราคาและเงินเริ่มต้น Loot Table และกฎรางวัลเมื่อหลุดยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-npc-spec",
+      "title": "NPC ตำแหน่งและกิจกรรมตามวัน",
+      "sectionId": "dev-game-npc",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "NPC ประจำตำแหน่งเป็นหลัก และเปลี่ยนที่อยู่ตามวันพิเศษในปฏิทิน",
+      "details": "## ตำแหน่งประจำ\nNPC เช่น อาจารย์ เพื่อน รุ่นพี่ และผู้คนในสถานที่ต่าง ๆ มีตำแหน่งที่คาดเดาได้ตามหน้าที่ เช่น อาจารย์อยู่ห้องเรียนของวิชา ไม่ต้องสร้างตารางเดินทางรายนาทีที่ซับซ้อนให้ NPC ทุกคน\n\n## เหตุการณ์ตามปฏิทิน\nNPC สามารถไปอยู่สถานที่อื่นตามวันพิเศษหรือเงื่อนไขของอีเวนต์เฉพาะตัว กำหนดการที่ค้นพบจะสัมพันธ์กับปฏิทินและช่วยให้ผู้เล่นวางแผนพบ NPC ความเปลี่ยนแปลงตำแหน่งต้องสอดคล้องกับสถานะเหตุการณ์ของโลก\n\n## การปฏิสัมพันธ์\nNPC ให้บทสนทนา ข้อมูล ภารกิจ กิจกรรม ความสัมพันธ์ และโอกาสปลดล็อกสกิล การพูดคุยทั่วไปไม่เสีย Action แต่กิจกรรมความสัมพันธ์สำคัญใช้ Action ตามกติกาช่วงเวลา\n\n## บทบาทในการต่อสู้\nNPC ไม่สามารถถูกชวนเข้าทีมต่อสู้ ไม่เป็น AI สมาชิกที่ใช้ทดแทนผู้เล่นในทีม Co-op การมี NPC ในชีวิตนักศึกษาหรือเรื่องราวไม่ใช่ระบบ Party Recruitment\n\n## เหตุการณ์ที่ทำให้ NPC ไม่อยู่\nNPC สำคัญสามารถหายตัวไปหรือเสียชีวิตตามเรื่องราวที่กำหนดไว้ แม้ผู้เล่นมีความสัมพันธ์สูง หากเกิดขึ้นผู้เล่นจะสูญเสียโอกาสเรียนรู้สกิลและภารกิจ/กิจกรรมที่ผูกกับ NPC นั้นที่ยังไม่ทำสำเร็จ การเปลี่ยนแปลงเป็นส่วนหนึ่งของปฏิทินโลก ไม่ขึ้นอยู่กับการช่วยเหลือของผู้เล่น\n\n## ขอบเขตที่ยังไม่กำหนด\n- ตาราง NPC รายตัว รายชื่อกิจกรรม และวันพิเศษยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "ตาราง NPC รายตัว รายชื่อกิจกรรม และวันพิเศษยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-relationships-spec",
+      "title": "ความสัมพันธ์ ของขวัญ และสถานะคนรัก",
+      "sectionId": "dev-game-relationships",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "พัฒนาความสัมพันธ์ส่วนบุคคลเพื่อเปิดกิจกรรม ข้อมูล โอกาส และเวทพิเศษ โดยไม่ใช้ระบบความสัมพันธ์ที่ลดลง",
+      "details": "## ความก้าวหน้าความสัมพันธ์\nเพิ่มได้จากการสนทนา ทำกิจกรรมร่วมกัน มอบของขวัญ และช่วยเหลือ NPC ตามเงื่อนไขที่กำหนด ค่าความสัมพันธ์เพิ่มได้อย่างเดียว ไม่ลดเพราะขาดการพบกันหรือคำตอบปกติ แสดงทั้งระดับความสัมพันธ์และแถบความก้าวหน้าให้ผู้เล่นวางแผนได้\n\n## ของขวัญและเวลาที่ใช้\nNPC แต่ละคนมีความชอบต่างกัน จึงไม่จำเป็นต้องให้ของทุกชิ้นมีผลเท่ากัน กิจกรรมสำคัญเพื่อเพิ่มความสัมพันธ์ใช้ Action ส่วนบทสนทนาทั่วไปไม่ใช้ Action กฎของขวัญหรือกิจกรรมรายตัวให้ระบุในข้อมูล NPC\n\n## ผลของความสัมพันธ์\nปลดล็อกบทสนทนา ความสนิทสนม การเข้าถึงข้อมูลและสถานที่ โอกาสพิเศษ และความช่วยเหลือตามที่ NPC นั้นมีให้ รวมถึงเวทพิเศษหรือ Ultimate ตามเงื่อนไขเฉพาะตัวละคร ไม่จำเป็นต้องผูกทุกผลตอบแทนกับระดับเดียวกัน\n\n## สถานะคนรัก\nมีเฉพาะ NPC บางคนและอยู่ในระดับความสัมพันธ์ที่สูงพอสมควร ผู้เล่นหนึ่งคนมีคนรักพร้อมกันได้หนึ่งคน ยุติความสัมพันธ์ได้แต่กลับไปคบ NPC คนเดิมไม่ได้ สถานะนี้แสดงเป็นสถานะความสัมพันธ์เท่านั้น ไม่มีระบบชีวิตคู่หรือกิจกรรมโรแมนซ์เชิงลึกเพิ่มเติมที่ยืนยันไว้ จุดประสงค์หลักของการพัฒนาความสัมพันธ์ยังเป็นสกิลและโอกาสที่เกี่ยวข้อง\n\n## Co-op และความเป็นส่วนตัว\nแต่ละผู้เล่นมีระดับความสัมพันธ์ของตนเอง ผู้เล่นหลายคนสามารถคบ NPC คนเดียวกันได้เพราะสถานะแยกกัน และปลดล็อกความสามารถของ NPC เดียวกันได้เมื่อผ่านเงื่อนไขของตนเอง ไม่แบ่งหรือแย่งค่าความสัมพันธ์กัน\n\n## การทำครบภายในรอบเดียว\nตั้งเป้าให้สามารถเพิ่มความสัมพันธ์กับ NPC ทุกคนจนถึงระดับสูงสุดได้ในหนึ่งรอบ หากบริหารเวลาได้ดี ทั้งนี้สถานะคนรักยังจำกัดหนึ่งคนต่อผู้เล่น และวันหมดโอกาสของ NPC ตามเนื้อเรื่องยังมีผล จึงต้องออกแบบจำนวนกิจกรรมและเกณฑ์ให้ความตั้งใจนี้เป็นไปได้จริง\n\n## ขอบเขตที่ยังไม่กำหนด\n- ระดับความสัมพันธ์ จำนวนแต้ม เกณฑ์ของขวัญ และผลการเลิกราต่อสถานะอื่นยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "ระดับความสัมพันธ์ จำนวนแต้ม เกณฑ์ของขวัญ และผลการเลิกราต่อสถานะอื่นยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-signature-spec",
+      "title": "Ultimate และเวทพิเศษเฉพาะตัว",
+      "sectionId": "dev-game-signature",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "สะสมความสามารถพิเศษจาก NPC ได้ไม่จำกัดตามที่ปลดล็อก แต่ติดตั้ง Ultimate ได้ครั้งละหนึ่งสกิล",
+      "details": "## ที่มาของความสามารถ\nเวทพิเศษหรือ Ultimate ที่เกี่ยวข้องกับ NPC สะท้อนประวัติ ตัวตน หรือภูมิหลังของ NPC นั้น เป็นกลุ่มความสามารถแยกจากเวทที่เรียนในคลาสหรือได้รับจากมอนสเตอร์ ผู้เล่นต้องพัฒนาความสัมพันธ์และผ่านเงื่อนไขเฉพาะตัวละคร ไม่กำหนดเกณฑ์เดียวให้ทุกคน และไม่จำเป็นต้องคบเป็นคนรักทุกคนเพื่อได้ Ultimate\n\n## การสะสมและติดตั้ง\nสามารถสะสม Ultimate จาก NPC ได้ไม่จำกัดตามจำนวนที่เกมเปิดให้ปลดล็อก แต่ใช้ Loadout Ultimate ได้เพียงหนึ่งสกิลในเวลาเดียวกัน แยกจาก Spell Slot ปกติ 3 ช่อง สามารถสลับไปใช้สกิลที่มีอยู่แล้วนอก Combat เท่านั้น\n\n## เวทสายเลือดของ Preset\nPreset บางตัวอาจเริ่มด้วยความสามารถพิเศษหรือเวทสายเลือดติดตัว ผู้เล่นสามารถเปลี่ยนเวทพิเศษที่ติดตั้งเป็นความสามารถที่ปลดล็อกผ่านความสัมพันธ์กับ NPC แล้วได้ ไม่จำเป็นต้องคงสกิลเริ่มต้นตลอดเกม ข้อนี้เป็นกฎด้าน Gameplay Loadout ไม่ได้หมายความว่าประวัติหรือสายเลือดตาม Lore ของตัวละครถูกเขียนใหม่\n\n## สิทธิ์การปลดล็อก\nสมาชิก Co-op ต้องผ่านเงื่อนไขความสัมพันธ์ของตนเอง แม้จะเป็น NPC คนเดียวกัน สกิลที่มีอยู่แล้วจึงเป็นรายการส่วนตัวที่ติดตั้งได้ ไม่สามารถแลกหรือสอนให้ผู้เล่นอื่นโดยตรง\n\n## กลไก Ultimate\nใช้ Ultimate Gauge ตาม Combat Specification เดิม แยกจาก Mana และ Dodge การสร้าง Damage ต่อศัตรูสำเร็จทำให้เกจเพิ่ม ส่วนเกณฑ์การกดใช้ การใช้เกจ คูลดาวน์ และเงื่อนไขระหว่าง Animation ยังอยู่ระหว่างบาลานซ์\n\n## ขอบเขตที่ยังไม่กำหนด\n- จำแนกคำว่าเวทสายเลือด Passive และ Ultimate รายสกิลให้ชัดเจนภายหลัง\n- กฎการคงอยู่ของสกิลที่ปลดล็อกแล้วหลัง NPC เสียชีวิตยังไม่ระบุโดยตรง",
+      "links": [],
+      "openQuestions": "จำแนกคำว่าเวทสายเลือด Passive และ Ultimate รายสกิลให้ชัดเจนภายหลัง\nกฎการคงอยู่ของสกิลที่ปลดล็อกแล้วหลัง NPC เสียชีวิตยังไม่ระบุโดยตรง",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-quests-spec",
+      "title": "ภารกิจ การค้นพบ และบันทึก",
+      "sectionId": "dev-game-quests",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ภารกิจค้นพบจากการสำรวจ มีบันทึกแต่ไม่ปักตำแหน่ง และไม่แสดงรางวัลก่อนทำสำเร็จ",
+      "details": "## การค้นพบภารกิจ\nผู้เล่นพบภารกิจผ่านการสำรวจ สถานที่ NPC หรือการพบเงื่อนไขในโลก ไม่พึ่งเครื่องหมายเควสต์ที่บังคับให้ไล่ตามตั้งแต่ต้น การพูดคุยหรือพบข้อมูลสามารถเปิดโอกาสใหม่โดยไม่บังคับรับภารกิจ\n\n## สมุดภารกิจ\nเมื่อค้นพบภารกิจแล้วมีบันทึกเพื่อทบทวนข้อมูลที่ได้รับ แต่ไม่แสดงจุดหมายหรือปักตำแหน่งบนแผนที่แทนผู้เล่น ผู้เล่นใช้คำบอกใบ้และข้อมูลที่รู้จริงในการตามหา ไม่เพิ่มระบบนำทางอัตโนมัติที่เฉลยสถานที่\n\n## ข้อจำกัดเวลา\nภารกิจที่มีวันหมดเขตแสดงกำหนดในปฏิทิน ผู้เล่นยังเลือกไม่ทำได้ เมื่อถึงวันหมดเขตหรือ NPC ไม่อยู่แล้ว โอกาสที่ผูกกับเหตุการณ์อาจสูญเสียถาวรตามกฎเนื้อเรื่อง\n\n## รางวัล\nไม่แสดงรางวัลล่วงหน้าก่อนทำภารกิจสำเร็จ ผู้เล่นตัดสินใจจากสถานการณ์และสิ่งที่สนใจ ไม่ใช่เพียงการเปรียบเทียบรางวัลที่หน้าเควสต์ เมื่อสำเร็จแล้วจึงแจ้งผลตอบแทนที่ได้รับ\n\n## Co-op\nความก้าวหน้าของภารกิจแยกตามผู้เล่นแต่ละคน การที่เพื่อนพบเบาะแสเนื้อเรื่องและระบบแชร์ให้ทุกคนไม่ได้แปลว่าภารกิจส่วนตัวของสมาชิกคนอื่นสำเร็จอัตโนมัติ ควรเก็บ Quest State และ Story Clue State แยกกัน\n\n## ขอบเขตที่ยังไม่กำหนด\n- จำนวนภารกิจ เงื่อนไขหมดเขตรายภารกิจ และการตรวจความสำเร็จจากกิจกรรมร่วมยังต้องกำหนด",
+      "links": [],
+      "openQuestions": "จำนวนภารกิจ เงื่อนไขหมดเขตรายภารกิจ และการตรวจความสำเร็จจากกิจกรรมร่วมยังต้องกำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-coop-spec",
+      "title": "Co-op ห้องเล่นและตัวตนผู้เล่น",
+      "sectionId": "dev-game-coop",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "โลกของ Host รองรับสูงสุด 4 คน ใช้ปฏิทินเดียวกันแต่แยกความก้าวหน้าส่วนบุคคล",
+      "details": "## การเปิดโลก\nHost เป็นผู้เปิดห้องและสร้างหรือโหลดโลกที่สมาชิกเข้าร่วม ห้องหนึ่งรองรับผู้เล่นรวม Host สูงสุด 4 คน ตัวละคร Preset ในโลกนั้นไม่ซ้ำกันและไม่เปลี่ยนหลังเริ่มเกม ข้อมูลของตัวละครและความก้าวหน้าผูกกับโลกของ Host ไม่สามารถส่งออกไปเป็นตัวละครพร้อมสกิลในอีกโลกได้\n\n## ผู้เล่นที่มีอยู่และผู้เล่นใหม่\nสมาชิกใหม่เข้าร่วมโลกที่ดำเนินไปแล้วได้เฉพาะช่วงเริ่มวันใหม่ ผู้เข้าร่วมภายหลังไม่มีระบบชดเชยความก้าวหน้าหรือแจกสกิลตามวันโดยอัตโนมัติ ต้องพัฒนาความสามารถด้วยตนเองตามกิจกรรมที่ยังเปิดอยู่\n\n## สมาชิกไม่ออนไลน์\nสมาชิกที่เหลือเล่นต่อได้เมื่อ Host ยังอยู่ ตัวละครของผู้ที่ไม่ได้ออนไลน์ถือว่าพัก ไม่ต้องรอให้สมาชิกครบสี่คนทุกครั้ง การเล่นต่อทำให้ปฏิทินโลกดำเนินไปตามจริง ไม่มีการหยุดวันที่เพื่อรอสมาชิกที่ไม่ได้อยู่ในห้องโดยอัตโนมัติ\n\n## Host ออกจากเกม\nโลกหยุดชั่วคราวเมื่อ Host ออก ไม่ให้สมาชิกคนอื่นดำเนินโลกต่ออย่างอิสระ ไม่มีระบบ Host Migration ที่ยืนยันไว้ สามารถเริ่มเล่นต่อเมื่อโลกของ Host กลับมาเปิดตามกฎการบันทึกและเข้าร่วม\n\n## ความก้าวหน้าส่วนตัว\nเงิน ไอเทม สกิล Subject Progression ความสัมพันธ์ และ Quest State แยกตามผู้เล่น แต่เบาะแสเนื้อเรื่องที่สมาชิกคนหนึ่งค้นพบแชร์และบันทึกให้ทุกคนโดยอัตโนมัติ ความก้าวหน้าของระดับพื้นที่ต่อสู้ ปฏิทิน และเหตุการณ์สำคัญเป็นสถานะของโลก\n\n## สมาชิกหลุดและกลับมา\nหากหลุดระหว่างต่อสู้ ตัวละครออกจาก Encounter และกลับเข้าร่วมได้เมื่อเริ่มวันถัดไป ไม่ให้เข้ามาแทนกลางการต่อสู้ รูปแบบการเชื่อมต่อและการกลับเข้าห้องนอก Combat ยังไม่กำหนดละเอียด\n\n## ขอบเขตที่ยังไม่กำหนด\n- การจัดการช่องว่างของ Preset เมื่อสมาชิกออกถาวร การโอนสิทธิ์ Host และ Reconnect นอก Combat ยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "การจัดการช่องว่างของ Preset เมื่อสมาชิกออกถาวร การโอนสิทธิ์ Host และ Reconnect นอก Combat ยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-sync-spec",
+      "title": "Co-op การซิงก์เวลาและการโหวต",
+      "sectionId": "dev-game-sync",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "ผู้เล่นแยกกิจกรรมกลางวันได้ แต่มีจุดรวมความพร้อมก่อนเปลี่ยนช่วงเวลาและตัดสินใจกลางคืน",
+      "details": "## สถานะความพร้อม\nสมาชิกแต่ละคนเลือกกิจกรรมเองในช่วงเช้าหรือบ่าย เมื่อทำกิจกรรมที่ใช้ Action เสร็จจะเข้าสู่สถานะใช้ Action แล้ว แต่ยังเดินเล่น คุยทั่วไป ซื้อของ หรือสำรวจได้จนกว่าจะยืนยันพร้อมไปต่อ ไม่สามารถทำกิจกรรมที่ใช้ Action ครั้งที่สองในช่วงเดิม\n\n## การเปลี่ยนช่วงเวลา\nเมื่อสมาชิกที่กำลังเล่นในโลกทุกคนทำกิจกรรมเสร็จหรือเลือกข้ามและกดพร้อมแล้ว จึงเปลี่ยนช่วงเวลาร่วมกัน ไม่มีการให้ผู้เล่นที่เสร็จก่อนข้ามเวลาเฉพาะตัวเอง การรอสมาชิกคนอื่นไม่ควรบังคับให้ผู้เล่นยืนอยู่หน้าเมนูโดยทำอะไรไม่ได้\n\n## ตัวอย่างวันร่วมกัน\nช่วงเช้าคนหนึ่งเรียนเวทไฟ อีกคนเรียนเวทยันต์ ทั้งคู่จบกิจกรรมคนละเวลาได้ แต่โลกเปลี่ยนเป็นช่วงบ่ายเมื่อทุกคนพร้อม ช่วงบ่ายคนหนึ่งกลับไปเรียน อีกคนไปทำกิจกรรมในเมือง เมื่อจบจึงรวมการตัดสินใจในช่วงกลางคืน ตัวอย่างนี้อธิบายการแยกกิจกรรม ไม่ได้ยืนยันรายวิชาที่มีในเกมจริง\n\n## การโหวตกลางคืน\nทีมโหวตพักหรือออกต่อสู้ เสมอให้พัก หากออกต่อสู้โหวตพื้นที่ที่เปิดให้เข้า เสมอให้สุ่มจากกลุ่มคะแนนสูงสุดที่เสมอ ทุกคนที่กำลังเล่นต้องเข้าพื้นที่เดียวกันและเล่นหนึ่งระดับต่อคืน ผู้เล่นที่ไม่ออนไลน์และตัวละครพักไม่ถูกบังคับให้มาโหวต\n\n## การประสานข้อมูล\nปฏิทิน Action Phase ผลโหวต ความก้าวหน้าระดับพื้นที่ และ World Event ต้องเป็นสถานะเดียวของห้อง ไม่ควรให้ Client แต่ละคนเปลี่ยนผลเอง ข้อมูล UI ควรบอกสถานะ Action/Ready ของสมาชิกเพื่อให้เข้าใจเหตุผลที่ยังไปต่อไม่ได้ นี่เป็นแนวทางเชิงระบบที่อนุมานจากข้อกำหนด ไม่ใช่การล็อกเทคโนโลยี Networking\n\n## ขอบเขตที่ยังไม่กำหนด\n- ขั้นตอนเมื่อสมาชิกไม่กดพร้อม การถอนโหวต และการแก้ผลโหวตกรณีหลุดระหว่างโหวตยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "ขั้นตอนเมื่อสมาชิกไม่กดพร้อม การถอนโหวต และการแก้ผลโหวตกรณีหลุดระหว่างโหวตยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-save-spec",
+      "title": "การบันทึกและขอบเขตข้อมูลโลก",
+      "sectionId": "dev-game-save",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "Auto Save ทุกครั้งที่เปลี่ยนช่วงเวลา โดยแยกสถานะของโลกกับข้อมูลผู้เล่น",
+      "details": "## จังหวะบันทึก\nบันทึกความก้าวหน้าอัตโนมัติทุกครั้งที่เปลี่ยนช่วงเวลา รวมการเปลี่ยนวัน บันทึกจากสถานะที่ยืนยันของโลกหลังจบกิจกรรมหรือเหตุการณ์ที่เกี่ยวข้อง ไม่กำหนด Manual Save เพิ่มในตอนนี้\n\n## ข้อมูลระดับโลก\nเก็บวันที่ ช่วงเวลา Chapter สถานะเหตุการณ์ตามปฏิทิน สถานที่ที่เปิดแล้ว ระดับที่ผ่านของพื้นที่ต่อสู้ สถานะ NPC ตามเนื้อเรื่อง และเบาะแสเรื่องราวที่แชร์ร่วมกัน รวมถึงความเชื่อมโยงกับตัวละครสมาชิกในโลก\n\n## ข้อมูลระดับตัวละคร\nเก็บ Preset ที่เลือกแล้ว รายการสกิลที่ปลดล็อก Loadout ความก้าวหน้ารายวิชา Heart/Mana Progression เงิน ไอเทม ความสัมพันธ์ สถานะคนรัก และสถานะภารกิจส่วนตัว ข้อมูลเหล่านี้เป็นของตัวละครในโลกนั้น ไม่ใช่ Profile ที่โอนเข้าโลกอื่นได้\n\n## Host และความต่อเนื่อง\nHost เป็นเจ้าของโลกที่สมาชิกเล่นร่วมกัน หาก Host ออกให้หยุดโลก ไม่เปลี่ยนปฏิทินต่อ เมื่อเริ่มเล่นใหม่ใช้สถานะที่บันทึกไว้ตามกฎ Auto Save โดยไม่ถือว่ากลไกย้อนเซฟหรือโหลดช่วงเวลาใดก็ได้ได้รับอนุมัติแล้ว\n\n## แนวทางทางเทคนิค\nให้การเปลี่ยน Phase บันทึกผลกิจกรรมและสถานะโลกอย่างสอดคล้องกัน เพื่อไม่ให้เกิดการได้รับรางวัลซ้ำหรือเบาะแสหายหลังเปิดห้องใหม่ นี่เป็นแนวทางความถูกต้องของข้อมูลจากระบบที่ตกลง ไม่ใช่ข้อกำหนดไฟล์เซฟหรือรูปแบบ Network ที่ตายตัว\n\n## ขอบเขตที่ยังไม่กำหนด\n- รูปแบบไฟล์เซฟ การจัดการไฟดับ/เกมค้างระหว่าง Action และจำนวนช่องเซฟยังต้องออกแบบ",
+      "links": [],
+      "openQuestions": "รูปแบบไฟล์เซฟ การจัดการไฟดับ/เกมค้างระหว่าง Action และจำนวนช่องเซฟยังต้องออกแบบ",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-narrative-spec",
+      "title": "หลักการเล่าเรื่องและสมุดเบาะแส",
+      "sectionId": "dev-game-narrative",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Narrative"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "Environmental Storytelling และ Optional Narrative: เกมให้ข้อมูลจริงตามที่ค้นพบ ไม่สรุปคำตอบแทนผู้เล่น",
+      "details": "## ความสัมพันธ์กับ Gameplay\nผู้เล่นสามารถใช้ชีวิตมหาวิทยาลัย ต่อสู้ และจบเกมได้โดยไม่ต้องค้นหาเรื่องราวเชิงลึก แต่การสนใจรายละเอียดจะทำให้เข้าใจเหตุการณ์ ตัวละครและสิ่งที่เกิดขึ้นรอบตัวมากกว่าเดิม เนื้อเรื่องไม่ใช่ชุดเควสต์หลักที่ต้องไล่ทำจึงจะเลื่อนปฏิทิน\n\n## ช่องทางของเบาะแส\nใช้สภาพแวดล้อม สิ่งของ คำอธิบายไอเทม เอกสาร ข่าวสาร โทรศัพท์ และการสนทนากับ NPC เป็นช่องทางนำเสนอข้อมูล แต่ละชิ้นมีบริบทของผู้ให้ข้อมูลหรือสถานที่ที่พบ ไม่ต้องแยกออกเป็นฉากอธิบายยาวทุกครั้ง\n\n## ข้อมูลที่ขัดแย้งกัน\nแหล่งข้อมูลสามารถบอกเรื่องเดียวกันต่างมุมมองหรือขัดแย้งกันได้ เพราะผู้ให้ข้อมูลมีความรู้และความเข้าใจต่างกัน ไม่จำเป็นต้องให้ทุกเบาะแสเป็นข้อเท็จจริงทั้งหมด ผู้เล่นที่รวบรวมข้อมูลได้มากพอสามารถอนุมานความจริงก่อนเหตุการณ์สำคัญจะเกิดขึ้น แต่ความรู้นั้นไม่เปลี่ยนผลลัพธ์ที่กำหนดไว้\n\n## สมุดบันทึก\nเมื่อค้นพบเบาะแสให้บันทึกข้อมูลดิบโดยอัตโนมัติ เก็บสิ่งที่ผู้เล่นพบหรือได้ยิน ไม่สรุป เชื่อมโยง หรือเฉลยความจริงแทนผู้เล่น ใน Co-op เบาะแสที่ผู้เล่นคนหนึ่งพบจะถูกบันทึกให้ทุกคน การแบ่งปันนี้ไม่เปิดข้อมูลที่ไม่มีสมาชิกคนใดค้นพบ\n\n## เวลาที่สูญเสีย\nเบาะแสที่พลาดจากเงื่อนไขเวลาไม่สามารถค้นพบย้อนหลังได้โดยอัตโนมัติและถือว่าพลาดถาวรในรอบนั้น ไม่เพิ่มแหล่งทดแทนเพื่อบังคับให้ทุกคนรู้ความจริงได้ครบทุกครั้ง การออกแบบเบาะแสต้องกำหนดเวลาเปิด/ปิดที่สอดคล้องกับเหตุการณ์\n\n## ตอนจบ\nตอนจบไม่เฉลยความจริงทั้งหมด ให้ผู้เล่นตีความจากข้อมูลที่ค้นพบ แม้จะจบเกมโดยไม่เข้าใจปริศนาทั้งหมดก็ถือว่าเป็นการเล่นที่สมบูรณ์ได้ ความแตกต่างของแต่ละรอบเกิดจากข้อมูล โอกาส และความสามารถที่ผู้เล่นเลือกค้นหา\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายละเอียดปริศนา คำให้การ เอกสารและข้อมูลจริงที่ซ่อนไว้ยังไม่ได้เขียน",
+      "links": [],
+      "openQuestions": "รายละเอียดปริศนา คำให้การ เอกสารและข้อมูลจริงที่ซ่อนไว้ยังไม่ได้เขียน",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-world-events-spec",
+      "title": "เหตุการณ์หลักและการเปลี่ยนแปลงของโลก",
+      "sectionId": "dev-game-world-events",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Narrative"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "เหตุการณ์สำคัญเดินตามปฏิทิน มี Cutscene บังคับ แต่ไม่ผูกผลลัพธ์กับการค้นพบของผู้เล่น",
+      "details": "## ปฏิทินและ Chapter\nเหตุการณ์สำคัญเกิดตามวันที่กำหนด แม้ผู้เล่นไม่สนใจหรือไม่ทำภารกิจที่เกี่ยวข้อง Chapter แบ่งตามปฏิทิน แต่จบแต่ละ Chapter แตกต่างกันตามเหตุการณ์ อีเวนต์ตามเงื่อนไขอื่นสามารถเพิ่มเข้าปฏิทินเมื่อถูก Trigger โดยไม่เปลี่ยนกฎผลลัพธ์ของเหตุการณ์หลัก\n\n## บทบาทของผู้เล่น\nในแต่ละเหตุการณ์ผู้เล่นอาจเป็นผู้พบเห็น ผู้ที่ได้รับผลกระทบ หรือผู้มีส่วนร่วมแตกต่างกันไป แต่ไม่สามารถเปลี่ยนผลลัพธ์ของเหตุการณ์สำคัญที่กำหนดไว้ ไม่ว่าสร้างความสัมพันธ์สูงหรือสืบรู้ล่วงหน้าเพียงใด\n\n## การนำเสนอ\nเหตุการณ์สำคัญมี Cutscene บังคับเพื่อให้ผู้เล่นรับรู้ว่าสถานการณ์เปลี่ยนไปจริง ข้อมูลเบื้องหลังยังไม่จำเป็นต้องถูกเฉลยใน Cutscene นั้น ผู้เล่นอาจรับรู้ผ่านข่าวสาร โทรศัพท์ การเปลี่ยนแปลงสภาพแวดล้อมและบทสนทนา NPC ร่วมกัน\n\n## ผลกระทบต่อพื้นที่และ NPC\nเปลี่ยนบรรยากาศเฉพาะพื้นที่ที่ได้รับผลกระทบ ไม่จำเป็นต้องเปลี่ยนทุกโซนพร้อมกัน หลังเหตุการณ์ใหญ่ชีวิตมหาวิทยาลัยเปลี่ยนบางส่วนอย่างถาวร เช่น การหายไปของ NPC ทำให้กิจกรรมหรือโอกาสปลดล็อกสกิลที่ยังไม่ทำหายไป ตัวอย่างนี้สอดคล้องกับกฎ NPC ไม่ได้ระบุว่า NPC คนใดจะเสียชีวิต\n\n## ข้อมูลของประชาชน\nประชาชนทั่วไปเห็นเพียงเหตุการณ์ภายนอกหรือผลกระทบที่รับรู้ได้ ไม่จำเป็นต้องเข้าใจสาเหตุแท้จริงของภัยคุกคาม การนำเสนอข่าวและบทสนทนาควรคงความแตกต่างระหว่างสิ่งที่สังคมรู้กับข้อมูลลึกที่ผู้เล่นอาจค้นพบ\n\n## ขอบเขตการเล่าเรื่อง\nไม่มี NPC คนเดียวเป็นศูนย์กลางของเรื่อง และตัวละคร Preset มีประวัติพื้นฐานเท่านั้น เหตุการณ์หลักจึงเป็นเรื่องของโลกและผู้คนที่เกี่ยวข้อง ไม่กำหนดให้ผู้เล่นเป็นผู้ถูกเลือกหรือกอบกู้ทุกเหตุการณ์\n\n## ขอบเขตที่ยังไม่กำหนด\n- รายการ Cutscene เหตุการณ์รายวัน และผลกระทบถาวรที่แน่นอนยังไม่กำหนด",
+      "links": [],
+      "openQuestions": "รายการ Cutscene เหตุการณ์รายวัน และผลกระทบถาวรที่แน่นอนยังไม่กำหนด",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-finale-spec",
+      "title": "ทิศทางปริศนาและจุดสิ้นสุด",
+      "sectionId": "dev-game-finale",
+      "visibility": "public",
+      "status": "canon",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Narrative"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "หลายปริศนาและภัยคุกคามเชื่อมโยงกัน รุนแรงขึ้นจนเกิดเหตุระดับกรุงเทพฯ และการต่อสู้ครั้งสุดท้าย",
+      "details": "## ทิศทางหลัก\nปริศนาหลักประกอบด้วยหลายเรื่องที่เชื่อมโยงกัน ภัยคุกคามไม่ได้จำกัดว่าเป็นมอนสเตอร์ Mana องค์กร หรือความขัดแย้งมนุษย์เพียงอย่างเดียว แต่จะออกแบบสาเหตุหลายปัจจัยที่สัมพันธ์กัน เหตุการณ์ผิดปกติทยอยปรากฏและรุนแรงขึ้น ไม่เฉลยว่าปัจจัยใดเป็นคำตอบหลักในเอกสาร Gameplay นี้\n\n## ขนาดเหตุการณ์ท้ายเกม\nเหตุการณ์สำคัญช่วงท้ายมีขนาดระดับกรุงเทพมหานคร โดยไม่จำเป็นต้องยกระดับเป็นภัยระดับโลก บทบาทของมหาวิทยาลัยและผู้เล่นต้องอ้างอิง Lore เดิมและเหตุการณ์ที่ยังต้องเขียน ไม่สร้างพล็อตหรือชื่อศัตรูขึ้นเอง\n\n## การต่อสู้สุดท้าย\nการต่อสู้ครั้งสุดท้ายเริ่มโดยอัตโนมัติเมื่อถึงวันที่กำหนดและผู้เล่นทุกคนที่เข้าร่วมการเล่นต้องมีส่วนร่วม เป็นกิจกรรมบังคับที่แยกจากความสมัครใจในการค้นหาเรื่องราว การไม่ค้นพบเบาะแสไม่ตัดสิทธิ์เข้าสู่ฉากจบ\n\n## จบเกม\nเมื่อผ่านเหตุการณ์สำคัญที่กำหนดไว้ถือว่าจบเกม ไม่เปิดให้เล่นต่อหลังจบในรอบเดิม ต้องเริ่มรอบใหม่หากต้องการสำรวจสิ่งที่พลาด ไม่กำหนด New Game Plus ในขอบเขตปัจจุบัน และยังสามารถพิจารณาได้ภายหลัง\n\n## อารมณ์ตอนจบ\nโศกนาฏกรรมเป็นแนวทางที่ผู้สร้างเสนอเบื้องต้น แต่ยังระบุชัดว่าไม่ได้คิดรายละเอียด จึงไม่ถือว่าเหตุการณ์สูญเสียหรือผลลัพธ์แบบใดเป็น Canon ตอนจบยังต้องเปิดให้ตีความและไม่เฉลยความจริงทั้งหมดตามหลักการเล่าเรื่อง\n\n## ขอบเขตที่ยังไม่กำหนด\n- พล็อตจริง วันที่สุดท้าย ศัตรูสุดท้าย เงื่อนไขผ่านหรือแพ้ และอารมณ์ตอนจบยังไม่ยืนยัน",
+      "links": [],
+      "openQuestions": "พล็อตจริง วันที่สุดท้าย ศัตรูสุดท้าย เงื่อนไขผ่านหรือแพ้ และอารมณ์ตอนจบยังไม่ยืนยัน",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
+    },
+    {
+      "id": "dev-game-scope-spec",
+      "title": "ขอบเขตที่ยืนยันและข้อมูลรอพัฒนา",
+      "sectionId": "dev-game-scope",
+      "visibility": "public",
+      "status": "draft",
+      "featured": false,
+      "tags": [
+        "Developer",
+        "Game Design",
+        "Gameplay"
+      ],
+      "kicker": "Game Design Specification",
+      "summary": "แยกสิ่งที่ตัดสินใจแล้วจากรายละเอียดที่ยังไม่ล็อก เพื่อให้เอกสารเป็นข้อกำหนดเกม ไม่ใช่การประกาศว่าพัฒนาระบบเสร็จแล้ว",
+      "details": "## หลักสถานะ\nหมวด Game Design นี้สรุปการออกแบบที่ยืนยันจากการสนทนาและขยายความเชิงระบบเพื่ออธิบายการใช้งาน ไม่ใช่รายการฟีเจอร์ที่สร้างเสร็จแล้ว ตัวอย่างสกิล สถานที่ หรือเงื่อนไขที่ใช้ประกอบคำอธิบายไม่ใช่การยืนยัน Content จริง กฎใหม่ที่ตกลงชัดเจนใช้ร่วมกับ Combat Specification เดิม โดยแยกกฎ Gameplay ออกจากข้อมูล Lore\n\n## รายละเอียดอุปกรณ์\nยังไม่ได้ตัดสินใจประเภทช่องสวมใส่ อาวุธ ชุดเกราะ เครื่องประดับ ค่าสถานะ หรือผลของอุปกรณ์แต่ละชิ้น มีเพียงแหล่งที่ได้อุปกรณ์และข้อกำหนดว่าไม่ใช้ระบบอัปเกรดอุปกรณ์ในขอบเขตปัจจุบัน การเพิ่ม Max Mana ผ่านอุปกรณ์เป็นแนวทางที่ยืนยันโดยยังไม่กำหนดรายการอุปกรณ์จริง\n\n## ระยะเวลาและเนื้อหา\nกำหนดภาคเรียน 30 วัน แต่จำนวนภาคเรียน ปฏิทินตลอดเกม จำนวน Chapter ความยาวปิดเทอม รายชื่อวิชา/สกิล NPC เขตและดันเจี้ยนยังไม่ล็อก ความตั้งใจให้มีช่วงเวลาอย่างน้อยสามเดือนต่อปีการศึกษาเป็นแนวทางเบื้องต้น\n\n## เนื้อเรื่องจริง\nยังไม่ได้เขียนพล็อตหลัก เหตุการณ์ราย Chapter หรือวันสุดท้าย และยังไม่ยืนยันโศกนาฏกรรมเป็นผลลัพธ์จริงของตอนจบ ไม่กู้คืนเนื้อเรื่องเก่าหรือระบุชื่อ NPC จากร่างที่เลิกใช้แล้ว\n\n## Prototype\nการกำหนดขอบเขต Prototype ชุดถัดไปยังไม่ได้ตอบ จึงไม่กำหนดจำนวนวัน ตัวละคร ระบบที่ต้องทำก่อน หรือกำหนดการเริ่ม Co-op ใหม่ในฐานะข้อสรุปจากการสนทนานี้ สเปก Combat Prototype เดิมยังเป็นเอกสารเทคนิคอ้างอิงเฉพาะด้าน ไม่ถือเป็นการตัดสินใจขอบเขต Prototype ทั้งเกม\n\n## ค่าบาลานซ์และกรณีพิเศษ\nสูตร Damage, Mana, Revive, Loot, Difficulty Scaling, คะแนนคลาส, คะแนนความสัมพันธ์ และกฎเครือข่ายกรณีพิเศษให้ระบุเมื่อออกแบบหรือทดสอบต่อ ใช้ค่าที่ปรับได้ตามสเปกเทคนิคเดิมและไม่เพิ่มระบบที่ผู้สร้างยังไม่อนุมัติ\n\n## ขอบเขตที่ยังไม่กำหนด\n- พักการตอบคำถามชุด Prototype ไว้จนกว่าผู้สร้างจะกลับมาพิจารณา",
+      "links": [],
+      "openQuestions": "พักการตอบคำถามชุด Prototype ไว้จนกว่าผู้สร้างจะกลับมาพิจารณา",
+      "updatedAt": "2026-11-27T16:45:00+07:00"
     }
   ]
-,
-  "syncVerification": {
-    "purpose": "ทดสอบการซิงก์เอกสารเท่านั้น ไม่ใช่ข้อมูลเนื้อเรื่องหรือ Canon",
-    "code": "CAELUM-SYNC-118-JADE",
-    "temporary": true
-  }
 }
