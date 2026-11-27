@@ -6,10 +6,13 @@ No existing website files or workflows are changed. No credentials are stored in
 ## Setup once (owner's Google account)
 1. Open https://script.google.com/ and create a standalone project named CaeLum Knowledge Sync.
 2. Copy the entire contents of [Code.gs](./Code.gs) into the default editor file. Save.
-3. Select `setupCaeLumSync` and Run. Approve Google permissions for Drive, Docs, external requests and triggers. The script creates six private Google Docs in a Drive folder, performs the first sync, then installs a one-minute trigger. If the run errors, inspect Executions and run setup again after fixing it.
+3. In the Apps Script editor, click **Services (+)**, select **Google Docs API**, keep the identifier `Docs`, and click Add. If using a custom Google Cloud project, enable the Docs API there too. Select `setupCaeLumSync` and Run. Approve Google permissions for Drive, Docs, external requests and triggers. The script creates six private Google Docs in a Drive folder, performs the first sync, then installs a one-minute trigger. If the run errors, inspect Executions and run setup again after fixing it.
 4. Open the Drive folder **CaeLum - NotebookLM Sources** or run `showCaeLumDocs` to see links.
 5. In NotebookLM, add all six sources using Google Drive (not downloaded copies). Keep these same sources as updates occur. Do not add legacy source documents. Keep the notebook private if it includes author-only material.
 6. Check the version and SHA-256 in the Project Index and all other documents before asking important questions. Refresh/re-sync Drive sources if NotebookLM has not picked up changes.
+
+## Recovery from the original saveAndClose error
+Replace the old script with the current Code.gs in the same Apps Script project, enable Google Docs API under Services (+), and run setupCaeLumSync again. Existing document IDs are retained; no need to create a new project or delete existing documents. The updated writer uses a single atomic Docs API batch update with revision protection and retries.
 
 ## Operation
 - GPT Browser / Author Mode updates GitHub as before.
