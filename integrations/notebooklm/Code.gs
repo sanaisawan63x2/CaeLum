@@ -47,6 +47,7 @@ function stopCaeLumSync() {
 }
 
 function syncCaeLum() {
+  if (typeof Docs === 'undefined') throw new Error('Enable Google Docs API under Services (+) in Apps Script first.');
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(1000)) return;
   const p = PropertiesService.getScriptProperties();
@@ -77,15 +78,12 @@ function syncCaeLum() {
     CAELUM.docs.forEach(([key, title]) => {
       let id = p.getProperty('DOC_' + key);
       if (!id) {
-        const doc = DocumentApp.create(title);
-        id = doc.getId();
-        doc.saveAndClose();
+        id = Docs.Documents.create({ title: title }).documentId;
         p.setProperty('DOC_' + key, id);
         DriveApp.getFileById(id).moveTo(folder);
       }
-      const doc = DocumentApp.openById(id);
-      doc.getBody().setText(texts[key]);
-      doc.saveAndClose();
+      console.log('Writing ' + title + ' (' + texts[key].length + ' chars)');
+      replaceCaeLumDoc(id, texts[key]);
     });
     p.setProperties({ SYNC_HASH: hash, LAST_SUCCESS: now, LAST_VERSION: String(db.version) });
     p.deleteProperty('LAST_ERROR');
@@ -95,6 +93,33 @@ function syncCaeLum() {
     throw err;
   } finally {
     lock.releaseLock();
+  }
+}
+
+// Atomic replacement of the generated first-tab body using Docs API.
+// Never deletes the required final newline; uses UTF-16 indexes from the API.
+function replaceCaeLumDoc(id, text) {
+  const cleaned = text.replace(/\r\n?/g, '\n');
+  if (/[\u0000-\u0008\u000C-\u001F\uE000-\uF8FF]/.test(cleaned))
+    throw new Error('Unsupported control/private-use character in source; fix source before sync.');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const doc = Docs.Documents.get(id, {fields: 'revisionId,body(content(endIndex))'});
+      const content = doc.body.content;
+      const end = content[content.length - 1].endIndex;
+      const requests = [];
+      if (end > 2) requests.push({deleteContentRange: {range: {startIndex: 1, endIndex: end - 1}}});
+      if (cleaned) requests.push({insertText: {location: {index: 1}, text: cleaned}});
+      if (requests.length) {
+        Docs.Documents.batchUpdate({requests: requests,
+          writeControl: {requiredRevisionId: doc.revisionId}}, id);
+      }
+      return;
+    } catch (err) {
+      if (attempt === 2) throw err;
+      console.warn('Retrying Docs write: ' + String(err));
+      Utilities.sleep(1500 * Math.pow(2, attempt));
+    }
   }
 }
 
